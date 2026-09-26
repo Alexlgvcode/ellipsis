@@ -75,6 +75,25 @@ Defined in [common/schemas.py](common/schemas.py).
 }
 ```
 
+## API
+
+`make api`, then open http://localhost:8000/docs to try each endpoint.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/health` | `{"status": "ok", "mock_mode": ...}` |
+| GET | `/cameras` | From `data/cameras.json`, loaded at startup |
+| GET | `/events` | Newest first; optional `camera_id`, `type`, `limit` |
+| GET | `/events/{id}` | 404 if unknown |
+| POST | `/events` | Create, or update by the same `id` (e.g. growing duration); 422 if it doesn't match the schema |
+| GET | `/events/{id}/snapshot` | JPEG of the raw frame; draw `bbox` on top of it yourself |
+| POST | `/recommendations` | Create, or update by `event_id` (e.g. to add `sim` later); 404 if the event is unknown |
+| GET | `/recommendations/{event_id}` | 404 if none yet |
+
+With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events and
+recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to
+start fresh.
+
 ## Data sources
 
 - Cameras: `https://webcams.nyctmc.org/api/cameras/` (public, undocumented; IDs can change)
