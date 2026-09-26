@@ -1,0 +1,17 @@
+{
+  "camera_id": "1e60ade7-c760-48cf-acd9-d9d6cbfa9420",
+  "name": "7 Ave @ 32 St",
+  "frame_size": [352, 240],
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [352, 128], [175, 128], [0, 124]]},
+    {"name": "far_lanes", "type": "travel",
+     "polygon": [[142, 128], [189, 129], [197, 158], [145, 157], [103, 154]]},
+    {"name": "far_lane_right", "type": "curb_adjacent",
+     "polygon": [[190, 129], [200, 129], [217, 156], [197, 156], [194, 146]]},
+    {"name": "approach_lanes", "type": "travel",
+     "polygon": [[41, 186], [121, 187], [221, 193], [229, 216], [236, 239], [0, 240], [1, 206]]},
+    {"name": "Taxi_stop", "type": "ignore",
+     "polygon": [[227, 196], [254, 198], [292, 239], [236, 239], [231, 221], [225, 200]]}
+  ]
+}

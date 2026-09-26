@@ -38,6 +38,12 @@ the road). Outside every polygon the zone is `none`. Where polygons overlap:
 | 7 Ave @ 36 St | Long straight avenue, parked cars on the left, deliveries/police stopping by the right planters |
 | 8 Ave @ 34 St | Looks straight down into the intersection: blocked box |
 | 8th Ave @ 31st St | Penn Station taxi stand as an `ignore` zone, so waiting cabs aren't alerts |
+| Broadway @ 38 St | Garment district: parked cars on the left, trucks stopping in the right lane |
+| 7 Ave @ 32 St | Wide avenue: far block's curb lane; crosswalk and approach lanes as travel (red-light queue) |
+| 7 Ave @ 34 St | Facing north, traffic **toward** the camera; 34th St crossing as the box |
+| 6 Ave @ 34 St | Lane next to the bike-lane buffer, middle lanes, right curb lane, box |
+| 6 Ave @ 30 St | Parking along the right curb and the lane next to it |
+| Broadway @ 6 Ave / 33 St | Mostly plaza, one Broadway lane and the 33rd St crossing; rarely fires |
 
 ## Adding or fixing a mask
 
