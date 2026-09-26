@@ -11,7 +11,7 @@ out of scope. Full plan: [docs/plan.md](docs/plan.md). Task list: [TODO.md](TODO
 ## Pipeline
 
 ```
-cameras -> ingest (poll, dedupe, health) -> vision (YOLO + ByteTrack)
+cameras -> ingest (poll, dedupe, health) -> vision (YOLO + IoU tracker)
         -> events (lane masks + dwell rules) -> api (REST + websocket) -> dashboard
                                               \-> signals (retime) -> sim (SUMO A/B) -/
 ```

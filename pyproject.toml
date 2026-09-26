@@ -24,7 +24,6 @@ dependencies = [
 # Vision lead: detector + tracker
 vision = [
     "ultralytics>=8.3",
-    "supervision>=0.22",
     "opencv-python-headless>=4.9",
 ]
 # Sim lead: SUMO + TraCI (eclipse-sumo ships the binaries)
