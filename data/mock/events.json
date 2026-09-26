@@ -5,7 +5,12 @@
     "type": "double_parked",
     "start_ts": "2026-09-26T15:58:40Z",
     "duration_s": 255,
-    "bbox": [104, 92, 134, 126],
+    "bbox": [
+      104,
+      92,
+      134,
+      126
+    ],
     "lane_zone": "curb_adjacent",
     "confidence": 0.84,
     "snapshot_path": "data/mock/snapshots/double_parked.jpg"
@@ -16,18 +21,28 @@
     "type": "stopped_in_lane",
     "start_ts": "2026-09-26T15:59:50Z",
     "duration_s": 185,
-    "bbox": [147, 136, 185, 165],
+    "bbox": [
+      147,
+      136,
+      185,
+      165
+    ],
     "lane_zone": "travel",
     "confidence": 0.71,
     "snapshot_path": "data/mock/snapshots/stopped_in_lane.jpg"
   },
   {
     "id": "evt_mock_003",
-    "camera_id": "f2964d50-042c-4021-8b52-992c08c6ff6f",
+    "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
     "type": "blocked_box",
-    "start_ts": "2026-09-26T16:02:41Z",
+    "start_ts": "2026-09-26T20:13:19Z",
     "duration_s": 28,
-    "bbox": [222, 48, 318, 100],
+    "bbox": [
+      152,
+      179,
+      268,
+      232
+    ],
     "lane_zone": "box",
     "confidence": 0.77,
     "snapshot_path": "data/mock/snapshots/blocked_box.jpg"

@@ -1,0 +1,33 @@
+# Evaluation
+
+How well does the event engine catch real blockages? Targets from the plan: precision
+≥ 80%, recall ≥ 70%, median time to alert < 90 s.
+
+```bash
+python scripts/evaluate.py                          # masks + events/rules.yaml
+python scripts/evaluate.py --rules my_rules.yaml    # try other thresholds (takes seconds)
+python scripts/evaluate.py --exclude bus_lane police camera_moved
+```
+
+| File | What |
+|---|---|
+| `ground_truth.yaml` | Reviewed windows, real `blockages`, and rejected alerts (`not_blockages`) with the reason |
+| `metrics.py` | Matching (same camera, overlapping in time, box IoU ≥ 0.3) and the scores |
+| `detections/` | Cached YOLO detections per window (+ frozen flag + view similarity), so the evaluation runs without frames or the model |
+
+**Reading the report.** Every alert is a true positive, a duplicate (second alert on
+one incident), a known false alert, or **unreviewed**: it matches nothing in the
+ground truth. Unreviewed alerts count as false and are listed. After a rule or mask
+change, judge them and add each one to `ground_truth.yaml`.
+
+**Verdict rule:** does the vehicle **block traffic**? Parked out of the flow, even
+illegally, is not a blockage. Debatable groups get a `category` (`bus_lane`,
+`police`, `camera_moved`), so results can be shown with and without them.
+
+**Adding footage.**
+1. Record it with `scripts/record_frames.py`.
+2. Add a `windows` entry per camera to `ground_truth.yaml`.
+3. Run `python scripts/evaluate.py --refresh-cache` (needs `.[vision]`) to cache its detections.
+4. Judge the unreviewed alerts it lists, and look for blockages it missed.
+
+Recall is only as good as that last step: a blockage nobody tagged can't be counted as missed.

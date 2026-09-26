@@ -38,7 +38,7 @@ dev = ["pytest>=8.0", "pytest-asyncio>=1.0", "ruff>=0.4"]
 all = ["lane-watch[vision,sim,llm,dev]"]
 
 [tool.setuptools]
-packages = ["common", "ingest", "vision", "events", "signals", "sim", "api"]
+packages = ["common", "ingest", "vision", "events", "signals", "sim", "api", "evaluation"]
 
 [tool.setuptools.package-data]
 events = ["rules.yaml", "mask_editor.html"]

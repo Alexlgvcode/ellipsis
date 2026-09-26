@@ -36,7 +36,6 @@ USER_AGENT = "LaneWatch/0.1 (hackathon research; polite polling)"
 # Almost every NYCTMC camera is PTZ hardware; these were picked because their view held
 # still across repeated frames.
 CHOSEN: list[tuple[str, float, float]] = [
-    ("8 Ave @ 34 St", 40.752197, -73.993456),
     ("8th Ave @ 31st St", 40.750297, -73.994830),
     ("8th Ave @ 33rd St", 40.751512, -73.993913),
     ("7 Ave @ 32 St", 40.749508, -73.991493),
@@ -47,6 +46,10 @@ CHOSEN: list[tuple[str, float, float]] = [
     ("Broadway @ 6 Ave / 33 St", 40.749412, -73.988060),
     ("Broadway @ 38 St", 40.752453, -73.987123),
 ]
+
+# Cameras left out of the system entirely: not written to data/cameras.json, not recorded.
+# 8 Ave @ 34 St pans and zooms between views, so no lane mask holds on it (2026-09-26).
+EXCLUDED: set[str] = {"8 Ave @ 34 St"}
 
 NAME_MATCH_MAX_M = 150.0
 COORD_MATCH_MAX_M = 75.0
@@ -207,8 +210,11 @@ def read_cameras(path: Path) -> list[Camera]:
 
 def scrape(client: httpx.Client, url: str, bbox: tuple[float, float, float, float],
            chosen: Iterable[tuple[str, float, float]] = CHOSEN) -> list[Camera]:
-    """Fetch the live list and return the area cameras plus any chosen ones outside it."""
-    all_cams = parse_cameras(fetch_raw(client, url))
+    """Fetch the live list and return the area cameras plus any chosen ones outside it,
+    minus EXCLUDED ones."""
+    excluded = {normalize_name(n) for n in EXCLUDED}
+    all_cams = [c for c in parse_cameras(fetch_raw(client, url))
+                if normalize_name(c.name) not in excluded]
     area = filter_to_area(all_cams, bbox)
     if not area:
         raise CameraListError(f"no cameras inside area box {bbox}")

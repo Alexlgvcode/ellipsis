@@ -200,7 +200,6 @@ def test_real_footage_7_ave_36_st_double_parked_trucks():
 @pytest.mark.parametrize("camera_id, why", [
     ("6a85384f-d82e-4bff-b5f1-15c22cca70e6", "SUV in the parking lane, red-light queue"),
     ("ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c", "cabs at the taxi stand, cut-off vehicles"),
-    ("f2964d50-042c-4021-8b52-992c08c6ff6f", "cab waiting ~20 s to turn while people cross"),
 ])
 def test_real_footage_without_incidents_stays_quiet(camera_id, why):
     assert replay_fixture(camera_id) == [], why

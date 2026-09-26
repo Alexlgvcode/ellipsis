@@ -91,13 +91,6 @@ KNOWN_VEHICLES = [
     # recording 18:22:09-18:29:06 UTC (the detector labels both "bus")
     ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [191, 79, 226, 129], LaneZone.CURB_ADJACENT),
     ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [188, 67, 208, 95], LaneZone.CURB_ADJACENT),
-    # 8 Ave @ 34 St: minivan in the middle of the intersection
-    ("f2964d50-042c-4021-8b52-992c08c6ff6f", [222, 48, 318, 100], LaneZone.BOX),
-    # 8 Ave @ 34 St: cab waiting at the right crosswalk to turn while pedestrians cross
-    # (18:06:34): not a blocked box, so it sits outside the intersection zone
-    ("f2964d50-042c-4021-8b52-992c08c6ff6f", [280, 34, 351, 75], LaneZone.NONE),
-    # 8 Ave @ 34 St: car waiting beyond the far crosswalk: no zone
-    ("f2964d50-042c-4021-8b52-992c08c6ff6f", [100, 14, 125, 36], LaneZone.NONE),
     # Broadway @ 38 St: truck stopped in the right lane (16:14), next to it parked cars on the left
     ("83655dbc-7902-4fdb-926c-15fee4396b83", [190, 110, 245, 185], LaneZone.CURB_ADJACENT),
     ("83655dbc-7902-4fdb-926c-15fee4396b83", [45, 165, 90, 200], LaneZone.CURB),

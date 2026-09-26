@@ -9,7 +9,7 @@
   {
     "event_id": "evt_mock_003",
     "intersections": [
-      {"id": "tls_8av_34st", "phase": 2, "change_s": -5}
+      {"id": "tls_7av_34st_cross", "phase": 2, "change_s": -5}
     ],
     "sim": {"delay_default": 36.4, "delay_new": 31.8, "queue_default": 14, "queue_new": 10}
   },

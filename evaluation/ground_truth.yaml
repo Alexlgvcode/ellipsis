@@ -1,0 +1,237 @@
+# Hand-tagged ground truth for the event engine (issue #16).
+#
+# windows:        footage that was reviewed. Recall only counts blockages inside these.
+# blockages:      real incidents: a vehicle stopped where it blocks traffic.
+# not_blockages:  alerts we checked and rejected, with the reason. An alert matching
+#                 neither list is "unreviewed" and gets flagged for a human.
+#
+# Times are UTC. bbox is [x1, y1, x2, y2] in 352x240 frame pixels, roughly where the
+# vehicle stood. start/end marked clipped were cut off by the recording, so they're
+# excluded from time-to-alert. category lets the report show results with and without
+# debatable groups (bus_lane, police, camera_moved).
+#
+# Verdict rule: does it block traffic? Parked (even illegally) out of the flow = not a blockage.
+
+windows:
+  - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "session 1: the delivery-truck recording"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "session 1: the delivery-truck recording"
+  - camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "session 1: the delivery-truck recording"
+  - camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+  - camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2: fresh footage recorded after the engine was built"
+
+blockages:
+  - id: gt_001
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
+    end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
+    bbox: [191, 79, 226, 129]
+    note: "white delivery box truck by the planters (near); detector calls it 'bus'"
+  - id: gt_002
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
+    end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
+    bbox: [188, 67, 208, 95]
+    note: "white delivery box truck by the planters (far)"
+  - id: gt_003
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T18:24:38Z
+    end: 2026-09-26T18:26:25Z
+    bbox: [202, 128, 242, 163]
+    category: police
+    note: "NYPD SUV stopped behind the near truck, officer on foot"
+  - id: gt_004
+    camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    type: double_parked
+    start: 2026-09-26T20:12:17Z
+    end: 2026-09-26T20:13:47Z
+    bbox: [204, 170, 260, 223]
+    note: "cab stopped for a pickup in the right lane"
+  - id: gt_005
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: double_parked
+    start: 2026-09-26T20:14:44Z
+    end: 2026-09-26T20:32:12Z   # clipped: still there when recording stopped
+    bbox: [193, 126, 208, 144]
+    category: bus_lane
+    note: "vehicle standing in the bus lane for 17 min"
+  - id: gt_006
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:25:00Z
+    end: 2026-09-26T20:28:09Z
+    bbox: [164, 159, 193, 185]
+    note: "cab stopped in the lane next to the bike lane, blocking the road"
+  - id: gt_007
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: double_parked
+    start: 2026-09-26T20:28:09Z
+    end: 2026-09-26T20:31:00Z
+    bbox: [203, 92, 231, 130]
+    note: "white delivery van stopped in the right lane"
+  - id: gt_008
+    camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    type: double_parked
+    start: 2026-09-26T20:28:44Z
+    end: 2026-09-26T20:31:11Z
+    bbox: [188, 108, 245, 186]
+    note: "tow truck stopped in the right lane"
+
+not_blockages:
+  - id: no_002
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: double_parked
+    start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
+    end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
+    bbox: [110, 101, 136, 125]
+    note: "SUV legally parked in the floating parking lane"
+  - id: no_003
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
+    end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
+    bbox: [263, 159, 302, 184]
+    note: "cabs waiting at the Penn Station taxi stand"
+  - id: no_004
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: blocked_box
+    start: 2026-09-26T18:24:38Z
+    end: 2026-09-26T18:25:45Z
+    bbox: [297, 159, 352, 238]
+    note: "cab cut off at the frame edge, near the taxi stand"
+  - id: no_005
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: blocked_box
+    start: 2026-09-26T18:25:14Z
+    end: 2026-09-26T18:25:45Z
+    bbox: [242, 220, 337, 240]
+    note: "vehicle cut off by the bottom of the frame"
+  - id: no_006
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: blocked_box
+    start: 2026-09-26T18:28:12Z
+    end: 2026-09-26T18:28:55Z
+    bbox: [259, 106, 352, 206]
+    note: "first car of a red-light queue, stopped on the crosswalk"
+  - id: no_007
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: stopped_in_lane
+    start: 2026-09-26T20:12:16Z   # clipped: already there when recording started
+    end: 2026-09-26T20:32:12Z   # clipped: still there when recording stopped
+    bbox: [275, 112, 332, 146]
+    note: "illegally parked at the corner but not blocking traffic"
+  - id: no_008
+    camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    type: double_parked
+    start: 2026-09-26T20:12:17Z
+    end: 2026-09-26T20:23:03Z
+    bbox: [248, 160, 279, 177]
+    note: "traffic jam: every lane stopped"
+  - id: no_011
+    camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    type: double_parked
+    start: 2026-09-26T20:13:15Z
+    end: 2026-09-26T20:20:50Z
+    bbox: [234, 151, 256, 168]
+    note: "traffic jam: every lane stopped"
+  - id: no_012
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: stopped_in_lane
+    start: 2026-09-26T20:13:42Z
+    end: 2026-09-26T20:16:07Z
+    bbox: [126, 122, 169, 173]
+    note: "waiting at the stop line to turn left"
+  - id: no_013
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: double_parked
+    start: 2026-09-26T20:14:08Z
+    end: 2026-09-26T20:15:10Z
+    bbox: [136, 92, 171, 120]
+    note: "waiting at the red light"
+  - id: no_015
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: blocked_box
+    start: 2026-09-26T20:14:48Z
+    end: 2026-09-26T20:15:26Z
+    bbox: [221, 125, 352, 173]
+    note: "different buses passing the same spot, linked as one vehicle"
+  - id: no_017
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: double_parked
+    start: 2026-09-26T20:16:26Z
+    end: 2026-09-26T20:18:39Z
+    bbox: [140, 120, 185, 165]
+    note: "waiting at the stop line to turn left"
+  - id: no_030
+    camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    type: double_parked
+    start: 2026-09-26T20:21:01Z
+    end: 2026-09-26T20:22:04Z
+    bbox: [242, 175, 276, 198]
+    note: "traffic jam: every lane stopped"
+  - id: no_034
+    camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    type: double_parked
+    start: 2026-09-26T20:25:21Z
+    end: 2026-09-26T20:28:03Z
+    bbox: [248, 161, 279, 178]
+    note: "traffic jam: every lane stopped"
+  - id: no_035
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: blocked_box
+    start: 2026-09-26T20:25:48Z
+    end: 2026-09-26T20:26:26Z
+    bbox: [297, 179, 352, 233]
+    note: "different vehicles passing the same spot, linked as one vehicle"
+  - id: no_036
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:28:03Z
+    end: 2026-09-26T20:30:27Z
+    bbox: [304, 177, 352, 208]
+    note: "cab in the taxi-stand line, just outside the ignore zone"
