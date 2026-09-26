@@ -25,10 +25,13 @@ python -m sim.network.validate --full
 
 # 5. GUI (lights on 8th Ave and 34th St)
 sumo-gui -c sim/network/midtown.sumocfg
+
+# 6. Blockage A/B (8th Ave @ 33 St). `--full` is the 15 min, 3-seed run.
+python -m sim.run_scenario --demo
 ```
 
 Makefile aliases: `make sim-network`, `make sim-routes`, `make sim-validate`,
-`make sim-gui`.
+`make sim-gui`, `make sim-scenario`.
 
 Rebuild without re-downloading OSM:
 
