@@ -9,8 +9,12 @@ signal_cycle_s: 90
 track_lost_frames: 3
 
 stationary:
-  max_center_shift_frac: 0.05   # of box width
-  min_iou: 0.7
+  # still = at least `min_still_edges` of the 4 box edges moved < max_edge_shift_frac of the
+  # box diagonal, and IoU > min_iou. Edges, not the center: occlusion (a passing car hiding a
+  # parked truck's bottom) moves one edge; driving moves two or more.
+  max_edge_shift_frac: 0.05
+  min_still_edges: 3
+  min_iou: 0.5
   reset_after_frames: 2   # moved frames in a row (vs where it parked) before the timer resets;
                           # 1 would let a single glitchy box wipe out the stationary time
 

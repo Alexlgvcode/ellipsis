@@ -32,11 +32,26 @@ def tracker():
     return CameraTracker(load_rules())
 
 
-def test_is_still_uses_both_shift_and_iou():
-    box = (100.0, 100.0, 200.0, 150.0)  # width 100 -> 5 px shift allowed
-    assert is_still(box, (102, 101, 202, 151), 0.05, 0.7)
-    assert not is_still(box, (106, 100, 206, 150), 0.05, 0.7)   # IoU 0.89 but 6 px shift
-    assert not is_still(box, (100, 100, 200, 180), 0.05, 0.7)   # grew: IoU 0.63 < 0.7
+def test_is_still_counts_steady_edges():
+    box = (100.0, 100.0, 200.0, 150.0)  # diagonal 111.8 -> each edge may move < 5.6 px
+    assert is_still(box, (102, 101, 202, 151), 0.05, 0.5)        # jitter on every edge
+    assert is_still(box, (100, 100, 200, 135), 0.05, 0.5)        # bottom hidden: 1 edge moved
+    assert not is_still(box, (106, 100, 206, 150), 0.05, 0.5)    # slid sideways: 2 edges
+    assert not is_still(box, (100, 110, 200, 160), 0.05, 0.5)    # drove forward: 2 edges
+    assert not is_still(box, (100, 100, 200, 124), 0.05, 0.5)    # 1 edge, but IoU 0.48
+    assert not is_still(box, (100, 100, 200, 135), 0.05, 0.5, min_edges=4)
+
+
+def test_truck_with_bottom_edge_hidden_on_and_off_keeps_its_timer(tracker):
+    # 7 Ave @ 36 St: a double-parked box truck whose bottom keeps disappearing behind a
+    # police SUV and pedestrians (real box range from the footage: bottom y 116-134)
+    bottoms = [129, 124, 133, 120, 129, 134, 127, 116, 131, 125, 129, 118, 133, 129,
+               122, 130, 134, 126, 129, 121, 128, 133, 125, 129]   # 24 frames = 115 s
+    tracks = run(tracker, [[det(191, 79, 226, y, cls=BUS)] for y in bottoms])
+    t = tracks[0]
+    assert t.id == 1
+    assert t.stationary_since == T0
+    assert t.stationary_s == 115
 
 
 def test_parked_car_with_jitter_builds_stationary_time(tracker):
@@ -58,9 +73,9 @@ def test_moving_car_keeps_id_but_never_builds_stationary_time(tracker):
 
 
 def test_sustained_change_resets_timer(tracker):
-    # grow the box evenly top and bottom: center doesn't move, only IoU drops
+    # top and bottom both move 9 px (> 5% of the 72 px diagonal): 2 edges moved
     still = [[det(100, 100, 160, 140)]] * 5                     # still for 20 s
-    moved = [[det(100, 91, 160, 149)]] * 4                       # IoU 40/58 = 0.69 vs anchor
+    moved = [[det(100, 91, 160, 149)]] * 4
     tracks = run(tracker, still + moved)
     t = tracks[0]
     assert 0.68 < iou((100, 100, 160, 140), (100, 91, 160, 149)) < 0.7

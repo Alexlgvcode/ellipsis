@@ -87,6 +87,10 @@ KNOWN_VEHICLES = [
     ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [28, 130, 86, 170], LaneZone.CURB),
     # 7 Ave @ 36 St: police SUV stopped in the right lane next to the planters
     ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [203, 128, 238, 161], LaneZone.CURB_ADJACENT),
+    # 7 Ave @ 36 St: two delivery box trucks double parked by the planters, in view the whole
+    # recording 18:22:09-18:29:06 UTC (the detector labels both "bus")
+    ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [191, 79, 226, 129], LaneZone.CURB_ADJACENT),
+    ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [188, 67, 208, 95], LaneZone.CURB_ADJACENT),
     # 8 Ave @ 34 St: minivan in the middle of the intersection
     ("f2964d50-042c-4021-8b52-992c08c6ff6f", [222, 48, 318, 100], LaneZone.BOX),
     # 8 Ave @ 34 St: car waiting beyond the far crosswalk: no zone
