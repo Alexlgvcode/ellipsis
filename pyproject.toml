@@ -41,7 +41,7 @@ all = ["lane-watch[vision,sim,llm,dev]"]
 packages = ["common", "ingest", "vision", "events", "signals", "sim", "api"]
 
 [tool.setuptools.package-data]
-events = ["rules.yaml"]
+events = ["rules.yaml", "mask_editor.html"]
 ingest = ["placeholders/*"]
 
 [tool.ruff]

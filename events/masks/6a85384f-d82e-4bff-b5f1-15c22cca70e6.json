@@ -1,0 +1,19 @@
+{
+  "camera_id": "6a85384f-d82e-4bff-b5f1-15c22cca70e6",
+  "name": "8th Ave @ 33rd St",
+  "frame_size": [352, 240],
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [352, 48], [0, 48]]},
+    {"name": "parking_left", "type": "curb",
+     "polygon": [[95, 116], [117, 75], [146, 131], [122, 143]]},
+    {"name": "lane_left", "type": "curb_adjacent",
+     "polygon": [[112, 63], [129, 58], [147, 80], [168, 106], [218, 162], [166, 170]]},
+    {"name": "lane_middle", "type": "travel",
+     "polygon": [[129, 57], [145, 56], [263, 156], [217, 160], [168, 106]]},
+    {"name": "lane_right_docks", "type": "curb_adjacent",
+     "polygon": [[146, 56], [161, 56], [199, 81], [256, 121], [298, 152], [261, 156]]},
+    {"name": "crosswalk_box", "type": "box",
+     "polygon": [[112, 178], [300, 150], [352, 150], [352, 240], [112, 240]]}
+  ]
+}
