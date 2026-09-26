@@ -13,7 +13,7 @@ dependencies = [
     "pydantic-settings>=2.2",
     "httpx>=0.27",
     "numpy>=1.26",
-    "pillow>=10.0",
+    "pillow>=10.1",
     "pyyaml>=6.0",
     "fastapi>=0.110",
     "uvicorn[standard]>=0.29",
@@ -35,11 +35,13 @@ sim = [
 ]
 # Product lead: incident summaries
 llm = ["anthropic>=0.40"]
-dev = ["pytest>=8.0", "pytest-asyncio>=1.0", "ruff>=0.4"]
+# Operator dashboard (Streamlit; pydeck ships with it). Also in dev so CI runs its smoke test.
+dashboard = ["streamlit>=1.60"]
+dev = ["pytest>=8.0", "pytest-asyncio>=1.0", "ruff>=0.4", "streamlit>=1.60"]
 all = ["lane-watch[vision,sim,llm,dev]"]
 
 [tool.setuptools]
-packages = ["common", "ingest", "vision", "events", "signals", "sim", "api"]
+packages = ["common", "ingest", "vision", "events", "signals", "sim", "api", "dashboard"]
 
 [tool.setuptools.package-data]
 events = ["rules.yaml"]

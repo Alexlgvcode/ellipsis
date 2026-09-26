@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     database_url: str = Field("sqlite:///data/lanewatch.db", alias="LW_DATABASE_URL")
     mock_mode: bool = Field(True, alias="LW_MOCK_MODE")
 
+    # Dashboard
+    api_url: str = Field("http://localhost:8000", alias="LW_API_URL")
+
     # Summaries
     anthropic_api_key: str | None = Field(None, alias="ANTHROPIC_API_KEY")
     summary_model: str = Field("claude-opus-5", alias="LW_SUMMARY_MODEL")
