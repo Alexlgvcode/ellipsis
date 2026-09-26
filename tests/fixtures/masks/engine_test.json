@@ -1,0 +1,20 @@
+{
+  "camera_id": "engine_test",
+  "name": "Synthetic test street",
+  "frame_size": [352, 240],
+  "traffic": "away",
+  "zones": [
+    {"name": "parking", "type": "curb",
+     "polygon": [[0, 0], [60, 0], [60, 180], [0, 180]]},
+    {"name": "lane_curbside", "type": "curb_adjacent",
+     "polygon": [[60, 0], [120, 0], [120, 180], [60, 180]]},
+    {"name": "lane_middle", "type": "travel",
+     "polygon": [[120, 0], [240, 0], [240, 180], [120, 180]]},
+    {"name": "bus_stop", "type": "bus_stop",
+     "polygon": [[240, 0], [300, 0], [300, 180], [240, 180]]},
+    {"name": "far_right", "type": "ignore",
+     "polygon": [[300, 0], [352, 0], [352, 180], [300, 180]]},
+    {"name": "intersection", "type": "box",
+     "polygon": [[0, 180], [352, 180], [352, 240], [0, 240]]}
+  ]
+}
