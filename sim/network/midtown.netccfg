@@ -1,0 +1,42 @@
+<configuration>
+    <input>
+        <osm-files value="midtown.osm.xml"/>
+    </input>
+    <output>
+        <output-file value="midtown.raw.net.xml"/>
+        <output.street-names value="true"/>
+        <output.original-names value="true"/>
+    </output>
+    <projection>
+        <proj.utm value="true"/>
+    </projection>
+    <tls>
+        <tls.guess-signals value="true"/>
+        <tls.join value="true"/>
+        <tls.join-dist value="25"/>
+        <tls.default-type value="static"/>
+        <tls.cycle.time value="90"/>
+        <tls.discard-simple value="false"/>
+    </tls>
+    <junctions>
+        <junctions.join value="true"/>
+        <junctions.join-dist value="20"/>
+    </junctions>
+    <edge_removal>
+        <keep-edges.by-vclass value="passenger,bus,truck,taxi"/>
+        <remove-edges.isolated value="true"/>
+        <no-turnarounds value="true"/>
+    </edge_removal>
+    <processing>
+        <geometry.remove value="true"/>
+        <offset.disable-normalization value="false"/>
+        <default.spreadtype value="roadCenter"/>
+    </processing>
+    <speed>
+        <!-- 25 mph default where OSM has no maxspeed (NYC citywide limit). -->
+        <speed.minimum value="5"/>
+    </speed>
+    <report>
+        <verbose value="true"/>
+    </report>
+</configuration>

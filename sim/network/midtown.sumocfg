@@ -1,0 +1,30 @@
+<configuration>
+    <input>
+        <net-file value="midtown.net.xml"/>
+        <route-files value="../routes/midtown.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="1200"/>
+        <step-length value="1"/>
+    </time>
+    <processing>
+        <time-to-teleport value="300"/>
+        <collision.action value="warn"/>
+        <collision.check-junctions value="true"/>
+    </processing>
+    <report>
+        <verbose value="false"/>
+        <no-step-log value="true"/>
+        <duration-log.statistics value="true"/>
+    </report>
+    <random_number>
+        <seed value="42"/>
+    </random_number>
+    <output>
+        <tripinfo-output value="../results/tripinfo.xml"/>
+        <summary-output value="../results/summary.xml"/>
+        <queue-output value="../results/queue.xml"/>
+        <collision-output value="../results/collisions.xml"/>
+    </output>
+</configuration>

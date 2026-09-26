@@ -1,0 +1,33 @@
+# Verified geometry applied after netconvert. Each rule is checked by validate.py.
+
+broadway_closed:
+  description: >
+    Broadway is closed to vehicles from 33rd to 36th Street (pedestrian plazas
+    since 2009 at 33-35, plaza at 35-36 since spring 2026).
+  street: Broadway
+  lat_range: [40.7490, 40.7518]
+  action: close_vehicles
+  source: broadway_closed_33_36
+
+turn_bans_34st:
+  description: >
+    34th Street left turns banned except buses. At 7th Ave and at 6th Ave /
+    Broadway, all traffic continues straight.
+  street: 34 St
+  ban_left: true
+  straight_only_at: ["7 Ave", "6 Ave", "Broadway"]
+  source: turn_ban_34st_left
+
+bus_lanes_34st:
+  description: Curb (rightmost) lane on 34th St is bus/taxi during 7 AM-7 PM weekdays.
+  street: 34 St
+  allow: "bus taxi"
+  source: bus_lane_34st
+
+oneway_grid:
+  description: Enforce the FEIS one-way grid if OSM disagrees on a named corridor.
+  source: oneway_grid
+
+midblock_signals:
+  description: Keep / tag mid-block pedestrian signals from exclusive_ped.json.
+  source: midblock_ped_signals

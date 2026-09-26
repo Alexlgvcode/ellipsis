@@ -1,0 +1,1798 @@
+{
+ "meta": {
+  "bbox": [
+   40.7455,
+   -73.9985,
+   40.7545,
+   -73.9845
+  ],
+  "count": 88
+ },
+ "nodes": [
+  {
+   "id": "10168210239",
+   "name": "33 St",
+   "lat": 40.747057260212614,
+   "lon": -73.98333884814217,
+   "streets": [
+    "33 St"
+   ],
+   "incoming": [
+    "46520833#1"
+   ],
+   "feis_name": "33 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "10171337690",
+   "name": "24 St",
+   "lat": 40.74471118309295,
+   "lon": -73.99503172664564,
+   "streets": [
+    "24 St"
+   ],
+   "incoming": [
+    "1529521816#3"
+   ],
+   "feis_name": "24 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "42427423",
+   "name": "24 St",
+   "lat": 40.7435682227025,
+   "lon": -73.99231798526826,
+   "streets": [
+    "24 St"
+   ],
+   "incoming": [
+    "1529521816#4"
+   ],
+   "feis_name": "24 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "7341378759",
+   "name": "28 St",
+   "lat": 40.74959834507678,
+   "lon": -73.9988978084754,
+   "streets": [
+    "28 St"
+   ],
+   "incoming": [
+    "1088321124#0"
+   ],
+   "feis_name": "28 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "8119462477",
+   "name": "33 St",
+   "lat": 40.74650145874337,
+   "lon": -73.9820123992317,
+   "streets": [
+    "33 St"
+   ],
+   "incoming": [
+    "46520833#0"
+   ],
+   "feis_name": "33 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "8119462507",
+   "name": "31 St",
+   "lat": 40.74523781257729,
+   "lon": -73.98286671483456,
+   "streets": [
+    "31 St"
+   ],
+   "incoming": [
+    "447001271#0"
+   ],
+   "feis_name": "31 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10166333097_10166333098_10166333099_10166333100_#1more",
+   "name": "6 Ave @ 39 St",
+   "lat": 40.75294110607138,
+   "lon": -73.98548823167793,
+   "streets": [
+    "39 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "36806906#1",
+    "384649120#9"
+   ],
+   "feis_name": "6 Ave @ 39 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 80,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10167162597_10167162598_42438544",
+   "name": "5 Ave",
+   "lat": 40.744683477723854,
+   "lon": -73.98729695786687,
+   "streets": [
+    "5 Ave"
+   ],
+   "incoming": [
+    "464515614#7"
+   ],
+   "feis_name": "5 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 40,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10167162604_10167162605_42427786_9910668354",
+   "name": "5 Ave",
+   "lat": 40.745313616331465,
+   "lon": -73.98687603445242,
+   "streets": [
+    "5 Ave"
+   ],
+   "incoming": [
+    "464515614#4"
+   ],
+   "feis_name": "5 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 40,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10167162610_10167162611_10167162612_10167162613_#1more",
+   "name": "5 Ave @ 30 St",
+   "lat": 40.74592015283877,
+   "lon": -73.98639375021924,
+   "streets": [
+    "30 St",
+    "5 Ave"
+   ],
+   "incoming": [
+    "46334597#1",
+    "464515614#1"
+   ],
+   "feis_name": "5 Ave @ 30 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 33,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168210235_42445903",
+   "name": "33 St",
+   "lat": 40.74712331952111,
+   "lon": -73.98349537992368,
+   "streets": [
+    "33 St"
+   ],
+   "incoming": [
+    "46520833#2"
+   ],
+   "feis_name": "33 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168260246_10168260248_10168260250_10168260252_#1more",
+   "name": "5 Ave @ 31 St",
+   "lat": 40.746532560942505,
+   "lon": -73.98594429660295,
+   "streets": [
+    "31 St",
+    "5 Ave"
+   ],
+   "incoming": [
+    "447001271#4",
+    "588168464#1"
+   ],
+   "feis_name": "5 Ave @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 26,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168260254_10168260257_42445896",
+   "name": "31 St",
+   "lat": 40.74586037972204,
+   "lon": -73.98434930962175,
+   "streets": [
+    "31 St"
+   ],
+   "incoming": [
+    "447001271#1"
+   ],
+   "feis_name": "31 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168381341_10168381343_42433620",
+   "name": "8 Ave",
+   "lat": 40.754667970425466,
+   "lon": -73.99159824298414,
+   "streets": [
+    "8 Ave"
+   ],
+   "incoming": [
+    "1124078898#1"
+   ],
+   "feis_name": "8 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911543_10168911545_10168911547_10168911548_#1more",
+   "name": "6 Ave @ 30 St",
+   "lat": 40.747277610277465,
+   "lon": -73.9896170052483,
+   "streets": [
+    "30 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "226041020#1",
+    "968394455#1"
+   ],
+   "feis_name": "6 Ave @ 30 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 17,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911552_10168911554_10168911556_10168911557_#1more",
+   "name": "6 Ave @ 29 St",
+   "lat": 40.74666464717389,
+   "lon": -73.99006643879393,
+   "streets": [
+    "29 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "5669669#5",
+    "968394453#0"
+   ],
+   "feis_name": "6 Ave @ 29 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 10,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911563_10168911565_10168911567_10168911569_#1more",
+   "name": "7 Ave @ 30 St",
+   "lat": 40.74847341257502,
+   "lon": -73.99246366568148,
+   "streets": [
+    "30 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "1038939784#0",
+    "68668556#1"
+   ],
+   "feis_name": "7 Ave @ 30 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 38,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911571_10168911573_10168911575_10168911576_#1more",
+   "name": "7 Ave @ 29 St",
+   "lat": 40.74786094772563,
+   "lon": -73.99290952037407,
+   "streets": [
+    "7 Ave",
+    "29 St"
+   ],
+   "incoming": [
+    "1022184080#1",
+    "1022184081#1"
+   ],
+   "feis_name": "7 Ave @ 29 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 45,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911584_10168911585_10168911587_10168911589_#1more",
+   "name": "6 Ave @ 31 St",
+   "lat": 40.747898216202486,
+   "lon": -73.98916614464002,
+   "streets": [
+    "31 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "46490538#6",
+    "968394456#0"
+   ],
+   "feis_name": "6 Ave @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 24,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911591_10168911593_10168911595_10168911597_#1more",
+   "name": "6 Ave @ 28 St",
+   "lat": 40.74603882460138,
+   "lon": -73.9905186642902,
+   "streets": [
+    "28 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "1022184083#1",
+    "968394452#1"
+   ],
+   "feis_name": "6 Ave @ 28 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 3,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10168911602_10168911604_10168911606_10168911608_#1more",
+   "name": "7 Ave @ 28 St",
+   "lat": 40.74723709861321,
+   "lon": -73.99336205319466,
+   "streets": [
+    "7 Ave",
+    "28 St"
+   ],
+   "incoming": [
+    "1040766903",
+    "1088321125#1"
+   ],
+   "feis_name": "7 Ave @ 28 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 52,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169157386_10169157387_10169157388_10169157390_#1more",
+   "name": "5 Ave @ 33 St",
+   "lat": 40.747775925238905,
+   "lon": -73.98504496382385,
+   "streets": [
+    "5 Ave",
+    "33 St"
+   ],
+   "incoming": [
+    "195743343#1",
+    "46520833#4"
+   ],
+   "feis_name": "5 Ave @ 33 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 12,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169505515_10169505516_10169532517_10169532518_#1more",
+   "name": "7 Ave @ 37 St",
+   "lat": 40.7528983646002,
+   "lon": -73.98924097764062,
+   "streets": [
+    "7 Ave",
+    "37 St"
+   ],
+   "incoming": [
+    "1376929274#1",
+    "500717399#1"
+   ],
+   "feis_name": "7 Ave @ 37 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 79,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532523_10169532524_10169532525_10169532526_#1more",
+   "name": "Broadway @ 37 St",
+   "lat": 40.75217996664895,
+   "lon": -73.98751715068518,
+   "streets": [
+    "37 St",
+    "Broadway"
+   ],
+   "incoming": [
+    "46522005#1",
+    "700951338#1"
+   ],
+   "feis_name": "Broadway @ 37 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 4,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532539_10169532540_10169532541_10169532542_#1more",
+   "name": "7 Ave @ 39 St",
+   "lat": 40.754146492242064,
+   "lon": -73.98832733024865,
+   "streets": [
+    "39 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "1049920715#0",
+    "1049920716#1"
+   ],
+   "feis_name": "7 Ave @ 39 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 65,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532546_10169532547_42439952_9945692441_#1more",
+   "name": "7 Ave @ 35 St",
+   "lat": 40.75166132640281,
+   "lon": -73.99013594322489,
+   "streets": [
+    "35 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "1051750426#1",
+    "464543615#1"
+   ],
+   "feis_name": "7 Ave @ 35 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 3,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532556_10169532557_10169532558_10169532559_#1more",
+   "name": "6 Ave @ 37 St",
+   "lat": 40.75170269662921,
+   "lon": -73.98639809530854,
+   "streets": [
+    "37 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "1036712190",
+    "384649120#3"
+   ],
+   "feis_name": "6 Ave @ 37 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 66,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532564_10169532565_10169532566_10169532567_#1more",
+   "name": "7 Ave @ 38 St",
+   "lat": 40.75351042875333,
+   "lon": -73.98879221774574,
+   "streets": [
+    "7 Ave",
+    "38 St"
+   ],
+   "incoming": [
+    "1049920718#1",
+    "542257008#1"
+   ],
+   "feis_name": "7 Ave @ 38 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 72,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532572_10169532573_10169532574_10169532575_#1more",
+   "name": "7 Ave @ 36 St",
+   "lat": 40.75228700667531,
+   "lon": -73.98968829699982,
+   "streets": [
+    "7 Ave",
+    "36 St"
+   ],
+   "incoming": [
+    "1135620538#1",
+    "46481747#1"
+   ],
+   "feis_name": "7 Ave @ 36 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 86,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532581_10169532584_10169532585_42428258",
+   "name": "Broadway @ 36 St",
+   "lat": 40.751451261964604,
+   "lon": -73.98765933749965,
+   "streets": [
+    "36 St",
+    "Broadway"
+   ],
+   "incoming": [
+    "1135620537#1",
+    "700951339#1"
+   ],
+   "feis_name": "Broadway @ 36 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 11,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532590_10169532591_10169532592_10169532593_#1more",
+   "name": "6 Ave @ 40 St",
+   "lat": 40.753559473802085,
+   "lon": -73.9850408812644,
+   "streets": [
+    "6 Ave",
+    "40 St"
+   ],
+   "incoming": [
+    "384649120#12",
+    "542258061#2"
+   ],
+   "feis_name": "6 Ave @ 40 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 87,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532598_10169532599_10169532600_10169532601_#1more",
+   "name": "6 Ave @ 38 St",
+   "lat": 40.75231708318731,
+   "lon": -73.98594833470538,
+   "streets": [
+    "6 Ave",
+    "38 St"
+   ],
+   "incoming": [
+    "384649120#6",
+    "542257009#1"
+   ],
+   "feis_name": "6 Ave @ 38 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 73,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10169532642_10169532643_10169532644_42430329",
+   "name": "6 Ave @ 41 St",
+   "lat": 40.754191301763,
+   "lon": -73.98462873781286,
+   "streets": [
+    "6 Ave"
+   ],
+   "incoming": [
+    "1021068251#1"
+   ],
+   "feis_name": "6 Ave @ 41 St",
+   "has_lpi": false,
+   "exclusive_ped": true,
+   "mid_block": false,
+   "offset_s": 4,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10170593057_10170593058_10170593059_42435633_#1more",
+   "name": "8 Ave @ 28 St",
+   "lat": 40.74843753517858,
+   "lon": -73.99619283726133,
+   "streets": [
+    "28 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "1088321124#1",
+    "127693383#1"
+   ],
+   "feis_name": "8 Ave @ 28 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 83,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10170593069_10170593070_10170593071_42434810",
+   "name": "8 Ave @ 27 St",
+   "lat": 40.74781871071296,
+   "lon": -73.99660309944709,
+   "streets": [
+    "8 Ave",
+    "27 St"
+   ],
+   "incoming": [
+    "1532218058#1",
+    "420512232#1"
+   ],
+   "feis_name": "8 Ave @ 27 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 76,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10170593074_10170593075_10170593076_42427812_#1more",
+   "name": "8 Ave @ 29 St",
+   "lat": 40.74905480060797,
+   "lon": -73.9957381709227,
+   "streets": [
+    "8 Ave",
+    "29 St"
+   ],
+   "incoming": [
+    "1027181004#0",
+    "968394454#1"
+   ],
+   "feis_name": "8 Ave @ 29 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10170593079_10170593080_10170593081_4443775464_#1more",
+   "name": "8 Ave @ 30 St",
+   "lat": 40.74967615409539,
+   "lon": -73.99529800438738,
+   "streets": [
+    "8 Ave",
+    "30 St"
+   ],
+   "incoming": [
+    "1027181003#1",
+    "1041018377#0"
+   ],
+   "feis_name": "8 Ave @ 30 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 7,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10171326400_12152867565",
+   "name": "31 St",
+   "lat": 40.75217217884689,
+   "lon": -73.99929678807655,
+   "streets": [
+    "31 St"
+   ],
+   "incoming": [
+    "460069727#1"
+   ],
+   "feis_name": "31 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10171337687_42427426",
+   "name": "24 St",
+   "lat": 40.74479387724121,
+   "lon": -73.99522793037387,
+   "streets": [
+    "24 St"
+   ],
+   "incoming": [
+    "1529521816#1"
+   ],
+   "feis_name": "24 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10171484158_42444933",
+   "name": "26 St",
+   "lat": 40.748399769434805,
+   "lon": -73.99987394229005,
+   "streets": [
+    "26 St"
+   ],
+   "incoming": [
+    "1312939984#2"
+   ],
+   "feis_name": "26 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10171484176_10171484177_10171484178_11147382150_#2more",
+   "name": "8 Ave @ 26 St",
+   "lat": 40.74722595455968,
+   "lon": -73.99712110689012,
+   "streets": [
+    "26 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "1312939984#4",
+    "630828583#1"
+   ],
+   "feis_name": "8 Ave @ 26 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 69,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10171509224_10171509226_12152905373_12152905374_#3more",
+   "name": "8 Ave @ 24 St",
+   "lat": 40.74595834233705,
+   "lon": -73.99803999691385,
+   "streets": [
+    "24 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "396444294#2",
+    "420598366#1"
+   ],
+   "feis_name": "8 Ave @ 24 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 55,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173032938_10268944197_42428283",
+   "name": "41 St",
+   "lat": 40.75500996623459,
+   "lon": -73.98662494971173,
+   "streets": [
+    "41 St"
+   ],
+   "incoming": [
+    "5673323#1"
+   ],
+   "feis_name": "41 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173045237_10173045239_10173045241_10173045243_#1more",
+   "name": "5 Ave @ 32 St",
+   "lat": 40.747154523115675,
+   "lon": -73.98549563702349,
+   "streets": [
+    "5 Ave",
+    "32 St"
+   ],
+   "incoming": [
+    "195743343#4",
+    "415849235#1"
+   ],
+   "feis_name": "5 Ave @ 32 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 19,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173125251_42428227_8265964370_9198484656_#1more",
+   "name": "Broadway @ 30 St",
+   "lat": 40.74679304472752,
+   "lon": -73.9884649610629,
+   "streets": [
+    "Broadway",
+    "30 St"
+   ],
+   "incoming": [
+    "1224490987#1",
+    "226041019#1"
+   ],
+   "feis_name": "Broadway @ 30 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 53,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173309977_10173309978_10173309979_10173309980_#2more",
+   "name": "9 Ave @ 30 St",
+   "lat": 40.750971297671576,
+   "lon": -73.99815830314847,
+   "streets": [
+    "9 Ave",
+    "30 St"
+   ],
+   "incoming": [
+    "1027130505#1",
+    "36806658#0"
+   ],
+   "feis_name": "9 Ave @ 30 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 63,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173490585_10173490587_10173490588_10268795802_#1more",
+   "name": "Broadway @ 40 St",
+   "lat": 40.75434044664832,
+   "lon": -73.9868695535221,
+   "streets": [
+    "40 St",
+    "Broadway"
+   ],
+   "incoming": [
+    "569345546#1",
+    "803047267#1"
+   ],
+   "feis_name": "Broadway @ 40 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 73,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173490593_10173490594_10173490596_10268795725_#2more",
+   "name": "Broadway @ 39 St",
+   "lat": 40.75362078911935,
+   "lon": -73.98710839788832,
+   "streets": [
+    "39 St"
+   ],
+   "incoming": [
+    "36806906#4"
+   ],
+   "feis_name": "Broadway @ 39 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 80,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10173490602_10173490603_10173490604_42428268_#1more",
+   "name": "Broadway @ 38 St",
+   "lat": 40.752891523704726,
+   "lon": -73.98733032451736,
+   "streets": [
+    "38 St",
+    "Broadway"
+   ],
+   "incoming": [
+    "1049920717#1",
+    "958919324#1"
+   ],
+   "feis_name": "Broadway @ 38 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 87,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10261412966_42428244_42430298_4707482477_#2more",
+   "name": "6 Ave @ 33 St",
+   "lat": 40.749095856074895,
+   "lon": -73.98817586322426,
+   "streets": [
+    "6 Ave",
+    "33 St"
+   ],
+   "incoming": [
+    "460606347#1",
+    "5671442#1"
+   ],
+   "feis_name": "6 Ave @ 33 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 38,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10691086244_8262309024",
+   "name": "8 Ave",
+   "lat": 40.7508369664972,
+   "lon": -73.99444837584562,
+   "streets": [
+    "8 Ave"
+   ],
+   "incoming": [
+    "767683114#1"
+   ],
+   "feis_name": "8 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": true,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10691086262_10691086263_9421121461",
+   "name": "34 St",
+   "lat": 40.75157615618529,
+   "lon": -73.99195508056658,
+   "streets": [
+    "34 St"
+   ],
+   "incoming": [
+    "-195743208#1",
+    "1536703973#1"
+   ],
+   "feis_name": "34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": true,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10691086265_10691086268_2649092010",
+   "name": "34 St",
+   "lat": 40.75266701053708,
+   "lon": -73.99460157234036,
+   "streets": [
+    "34 St"
+   ],
+   "incoming": [
+    "-420509471#3",
+    "1536703392#1"
+   ],
+   "feis_name": "34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": true,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_10995379664_11510245636",
+   "name": "9 Ave",
+   "lat": 40.7521704786043,
+   "lon": -73.99724321556103,
+   "streets": [
+    "9 Ave"
+   ],
+   "incoming": [
+    "350726030#1"
+   ],
+   "feis_name": "9 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 70,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_11147382151_11147382152_11147382153_11147382154_#1more",
+   "name": "8 Ave @ 25 St",
+   "lat": 40.74658243825411,
+   "lon": -73.99755150454287,
+   "streets": [
+    "25 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "1018454468#1",
+    "420598332#0"
+   ],
+   "feis_name": "8 Ave @ 25 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 62,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_11147382157_11147382158_42439840",
+   "name": "7 Ave",
+   "lat": 40.74542527354649,
+   "lon": -73.99474120572698,
+   "streets": [
+    "7 Ave"
+   ],
+   "incoming": [
+    "986615541#1"
+   ],
+   "feis_name": "7 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 45,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_11147382159_11147382160_11147382161_11147382162_#1more",
+   "name": "7 Ave @ 26 St",
+   "lat": 40.74601226293079,
+   "lon": -73.9942552592538,
+   "streets": [
+    "26 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "1312939985#0",
+    "986615539#0"
+   ],
+   "feis_name": "7 Ave @ 26 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 66,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_11147382163_11147382164_11147382165_11147382166_#1more",
+   "name": "7 Ave @ 27 St",
+   "lat": 40.74662114605539,
+   "lon": -73.99381126030273,
+   "streets": [
+    "7 Ave",
+    "27 St"
+   ],
+   "incoming": [
+    "420512231#1",
+    "968394451#1"
+   ],
+   "feis_name": "7 Ave @ 27 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 59,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_12152909710_5122551881",
+   "name": "26 St",
+   "lat": 40.74848192908963,
+   "lon": -74.00010298203672,
+   "streets": [
+    "26 St"
+   ],
+   "incoming": [
+    "1312939984#0"
+   ],
+   "feis_name": "26 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_1533280147_7037071175_8261123398_8261123400_#3more",
+   "name": "Dyer Ave @ 35 St",
+   "lat": 40.754547151390405,
+   "lon": -73.99714779920197,
+   "streets": [
+    "Dyer Ave",
+    "35 St"
+   ],
+   "incoming": [
+    "-139919706#0",
+    "1088327050#1"
+   ],
+   "feis_name": "Dyer Ave @ 35 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_3788356661_427841094",
+   "name": "30 St",
+   "lat": 40.75173627634879,
+   "lon": -73.99956866944132,
+   "streets": [
+    "30 St"
+   ],
+   "incoming": [
+    "31984136#1"
+   ],
+   "feis_name": "30 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_3833309813_3833309820_42430295_6224277875_#1more",
+   "name": "6 Ave @ 32 St",
+   "lat": 40.74851059226924,
+   "lon": -73.98870154133543,
+   "streets": [
+    "32 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "1082072647#1",
+    "68668519#1"
+   ],
+   "feis_name": "6 Ave @ 32 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 31,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_3857334397_3857343072_3857343080_42430304_#3more",
+   "name": "6 Ave @ 34 St",
+   "lat": 40.749828580883204,
+   "lon": -73.98781401224461,
+   "streets": [
+    "34 St",
+    "6 Ave"
+   ],
+   "incoming": [
+    "384649121#4",
+    "439933932#1",
+    "5670600#0"
+   ],
+   "feis_name": "6 Ave @ 34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 45,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42427787_9143542453_9198484652_9198484653_#1more",
+   "name": "Broadway @ 29 St",
+   "lat": 40.74604260042077,
+   "lon": -73.98860401923379,
+   "streets": [
+    "29 St",
+    "Broadway"
+   ],
+   "incoming": [
+    "5669669#1",
+    "976050705#1"
+   ],
+   "feis_name": "Broadway @ 29 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 60,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42428232_6223969247_6223969252_6223969255_#1more",
+   "name": "Broadway @ 31 St",
+   "lat": 40.747545183495056,
+   "lon": -73.9883239787049,
+   "streets": [
+    "Broadway",
+    "31 St"
+   ],
+   "incoming": [
+    "1224490986#1",
+    "46490538#1"
+   ],
+   "feis_name": "Broadway @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 46,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42430311_9856196750_9856196752_9856196755_#1more",
+   "name": "6 Ave @ 36 St",
+   "lat": 40.75108415508569,
+   "lon": -73.98683653876107,
+   "streets": [
+    "6 Ave",
+    "36 St"
+   ],
+   "incoming": [
+    "587038081#1",
+    "963613972#1"
+   ],
+   "feis_name": "6 Ave @ 36 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 59,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42434427_8261123379_8261123380",
+   "name": "Dyer Ave @ 34 St",
+   "lat": 40.753998135959655,
+   "lon": -73.9976302520811,
+   "streets": [
+    "34 St",
+    "Dyer Ave"
+   ],
+   "incoming": [
+    "-36806903#1",
+    "1088325198",
+    "139919706#0"
+   ],
+   "feis_name": "Dyer Ave @ 34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42434946_9965135061_9965135062_9965135064",
+   "name": "5 Ave",
+   "lat": 40.74911859032883,
+   "lon": -73.9840984813511,
+   "streets": [
+    "5 Ave"
+   ],
+   "incoming": [
+    "458166892#1"
+   ],
+   "feis_name": "5 Ave",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 40,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435422_9414480628_9414480632_9414480636_#1more",
+   "name": "7 Ave @ 31 St",
+   "lat": 40.74909902307506,
+   "lon": -73.9920069434012,
+   "streets": [
+    "7 Ave",
+    "31 St"
+   ],
+   "incoming": [
+    "195743190#1",
+    "464515259#1"
+   ],
+   "feis_name": "7 Ave @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 31,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435642_8660001947_8660596989_8660596996",
+   "name": "8 Ave @ 33 St",
+   "lat": 40.75153978412115,
+   "lon": -73.99398101514825,
+   "streets": [
+    "8 Ave"
+   ],
+   "incoming": [
+    "1157664114#0"
+   ],
+   "feis_name": "8 Ave @ 33 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 28,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435644_8660596941_8660596958_8660596959_#1more",
+   "name": "8 Ave @ 34 St",
+   "lat": 40.75219918888259,
+   "lon": -73.99346312504012,
+   "streets": [
+    "34 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "-1536703972#0",
+    "1207834768#0",
+    "420509471#3"
+   ],
+   "feis_name": "8 Ave @ 34 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 35,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435645_8660596945_8660596949_8660596960_#1more",
+   "name": "8 Ave @ 35 St",
+   "lat": 40.75286101021873,
+   "lon": -73.9929746845944,
+   "streets": [
+    "8 Ave",
+    "35 St"
+   ],
+   "incoming": [
+    "1027181006#0",
+    "1051750428#0"
+   ],
+   "feis_name": "8 Ave @ 35 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 42,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435646_8660596952_8660596976_8660596978_#1more",
+   "name": "8 Ave @ 36 St",
+   "lat": 40.75347786623675,
+   "lon": -73.9925262421759,
+   "streets": [
+    "36 St",
+    "8 Ave"
+   ],
+   "incoming": [
+    "1034529064#0",
+    "1207834767#0"
+   ],
+   "feis_name": "8 Ave @ 36 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 49,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42435650_8660596973_8660596982_8660596985_#1more",
+   "name": "8 Ave @ 37 St",
+   "lat": 40.75409364879229,
+   "lon": -73.99207887372758,
+   "streets": [
+    "8 Ave",
+    "37 St"
+   ],
+   "incoming": [
+    "1124078897#1",
+    "464543614#1"
+   ],
+   "feis_name": "8 Ave @ 37 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 56,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42437644_7782217017_8133342837_8133342841_#1more",
+   "name": "5 Ave @ 34 St",
+   "lat": 40.7484499293873,
+   "lon": -73.98455273446628,
+   "streets": [
+    "34 St",
+    "5 Ave"
+   ],
+   "incoming": [
+    "-1088325196#1",
+    "420904659#0",
+    "458166892#4"
+   ],
+   "feis_name": "5 Ave @ 34 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 5,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42437654_7782217024_9413881838_9413881840_#1more",
+   "name": "7 Ave @ 34 St",
+   "lat": 40.75101072027051,
+   "lon": -73.990617836475,
+   "streets": [
+    "34 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "-384649121#1",
+    "1051750427#1",
+    "195743208#1"
+   ],
+   "feis_name": "7 Ave @ 34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": true,
+   "offset_s": 10,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42437663_5851792229_5851792230_8660596930_#1more",
+   "name": "9 Ave @ 34 St",
+   "lat": 40.753402219163966,
+   "lon": -73.99631279741364,
+   "streets": [
+    "34 St",
+    "9 Ave"
+   ],
+   "incoming": [
+    "-420509471#0",
+    "1088325197#0",
+    "420901921#1"
+   ],
+   "feis_name": "9 Ave @ 34 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 35,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42439440_9414480617_9414480621_9414480624",
+   "name": "7 Ave @ 32 St",
+   "lat": 40.74969912773745,
+   "lon": -73.99152844688003,
+   "streets": [
+    "7 Ave"
+   ],
+   "incoming": [
+    "492489884#1"
+   ],
+   "feis_name": "7 Ave @ 32 St",
+   "has_lpi": false,
+   "exclusive_ped": true,
+   "mid_block": false,
+   "offset_s": 24,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42444954_8262309049_8262309051_8262309052_#1more",
+   "name": "9 Ave @ 33 St",
+   "lat": 40.75273786810085,
+   "lon": -73.99681238212206,
+   "streets": [
+    "9 Ave",
+    "33 St"
+   ],
+   "incoming": [
+    "194926856#1",
+    "600848479#1"
+   ],
+   "feis_name": "9 Ave @ 33 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 42,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42444960_5175213297_8660596954_8660596974_#1more",
+   "name": "9 Ave @ 35 St",
+   "lat": 40.75406727733337,
+   "lon": -73.99583261974989,
+   "streets": [
+    "9 Ave",
+    "35 St"
+   ],
+   "incoming": [
+    "420901920#1",
+    "542255948#1"
+   ],
+   "feis_name": "9 Ave @ 35 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 28,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_42444964_7752042640_8288270450_8288270454",
+   "name": "36 St",
+   "lat": 40.7546669376323,
+   "lon": -73.99538409883398,
+   "streets": [
+    "36 St"
+   ],
+   "incoming": [
+    "733667933#1"
+   ],
+   "feis_name": "36 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_4443775465_7699762580_7699762581_7699762582_#1more",
+   "name": "8 Ave @ 31 St",
+   "lat": 40.750298840647815,
+   "lon": -73.99484560857958,
+   "streets": [
+    "8 Ave",
+    "31 St"
+   ],
+   "incoming": [
+    "1038780408#1",
+    "464515259#7"
+   ],
+   "feis_name": "8 Ave @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 14,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_4461990857_7590955909_9413881743_9413881749",
+   "name": "7 Ave @ 33 St",
+   "lat": 40.75032412026325,
+   "lon": -73.99107361185115,
+   "streets": [
+    "33 St",
+    "7 Ave"
+   ],
+   "incoming": [
+    "492489893#1",
+    "5670803#1"
+   ],
+   "feis_name": "7 Ave @ 33 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 17,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_4557517549_8262309042_8262309043_8262309045_#1more",
+   "name": "9 Ave @ 31 St",
+   "lat": 40.75150369293978,
+   "lon": -73.99771190073277,
+   "streets": [
+    "9 Ave",
+    "31 St"
+   ],
+   "incoming": [
+    "350726030#3",
+    "767683108#0"
+   ],
+   "feis_name": "9 Ave @ 31 St",
+   "has_lpi": true,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 56,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_6223969240_6223969249_6223969251_6223969260",
+   "name": "32 St",
+   "lat": 40.748283045116935,
+   "lon": -73.9881883028344,
+   "streets": [
+    "32 St"
+   ],
+   "incoming": [
+    "460606348#1"
+   ],
+   "feis_name": "32 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "cluster_8567060233_8567060240_9698661088",
+   "name": "34 St",
+   "lat": 40.75042451112512,
+   "lon": -73.98922478172688,
+   "streets": [
+    "34 St"
+   ],
+   "incoming": [
+    "-384649121#4",
+    "384649121#1"
+   ],
+   "feis_name": "34 St",
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "joinedS_42427477_5852207699_8239225234",
+   "name": null,
+   "lat": null,
+   "lon": null,
+   "streets": [],
+   "incoming": [],
+   "feis_name": null,
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  },
+  {
+   "id": "joinedS_cluster_3857334400_3857343079_3857366815_42430308_#1more_cluster_42428253_6224277873_6224278786",
+   "name": null,
+   "lat": null,
+   "lon": null,
+   "streets": [],
+   "incoming": [],
+   "feis_name": null,
+   "has_lpi": false,
+   "exclusive_ped": false,
+   "mid_block": false,
+   "offset_s": 0,
+   "program": "lanewatch",
+   "cycle_s": 90
+  }
+ ]
+}

@@ -1,0 +1,285 @@
+# Assumptions register. Every parameter the network uses is listed here with
+# its value, a named source, a date, and whether it is verified, measured, or
+# assumed. signal_plans.yaml and volumes.yaml keys must appear below.
+
+parameters:
+  cycle_s:
+    value: 90
+    status: verified
+    source: "15 Penn FEIS ch. 16: all 43 analysis intersections are pre-timed, 90 s cycle"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2019"
+    also: "Our footage: 9 of 10 cameras at 90.0 +/- 0.5 s (Lomb-Scargle)"
+
+  tls_type:
+    value: static
+    status: verified
+    source: "15 Penn FEIS ch. 16 (pre-timed); USDOT ITS Midtown in Motion eval (ped time is fixed, not push-button)"
+    url: "https://www.itskrs.its.dot.gov/its/benecost.nsf/ID/2013-B00867"
+    date: "2013"
+
+  yellow_s:
+    value: 3
+    status: assumed
+    source: "ITE yellow formula at 25 mph; DOT does not publish clearance intervals"
+    url: "https://www.ite.org/"
+    date: "2024"
+
+  all_red_s:
+    value: 2
+    status: assumed
+    source: "ITE all-red at 25 mph and our FEIS crosswalk widths (~33-75 ft)"
+    url: "https://www.ite.org/"
+    date: "2024"
+
+  lpi_s:
+    value: 7
+    status: verified
+    source: "NYC LPIs are typically 7 s; 48 intersections in the bbox from NYC Open Data xc4v-ntf4"
+    url: "https://data.cityofnewyork.us/d/xc4v-ntf4"
+    date: "2026-09-26"
+
+  walk_min_s:
+    value: 7
+    status: verified
+    source: "MUTCD 4E; NYSAMPO pedestrian timing fact sheet (Walk at least 7 s)"
+    url: "https://nysampo.org/"
+    date: "2023"
+
+  ped_speed_ft_s:
+    value: 3.5
+    status: verified
+    source: "MUTCD 4E clearance at 3.5 ft/s; NYC uses the same for FDW"
+    url: "https://mutcd.fhwa.dot.gov/"
+    date: "2023"
+
+  exclusive_ped_7ave_32st:
+    value: true
+    status: verified
+    source: "NYC Open Data exclusive pedestrian phase (Barnes dance), dataset 8kuj-2n3u"
+    url: "https://data.cityofnewyork.us/d/8kuj-2n3u"
+    date: "2026-09-26"
+
+  midblock_ped_signals:
+    value: "34 St between 5-9 Ave; 8 Ave between 31-33 St"
+    status: verified
+    source: "NYC Open Data 8kuj-2n3u, mid_block flag"
+    url: "https://data.cityofnewyork.us/d/8kuj-2n3u"
+    date: "2026-09-26"
+
+  avenue_green_share:
+    value: 0.62
+    status: assumed
+    source: "Default split (avenue larger); tuned against TA-T7 2019 delays. Footage splits used where confidence is high."
+    url: "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf"
+    date: "2022"
+
+  street_green_share:
+    value: 0.38
+    status: assumed
+    source: "Complement of avenue_green_share"
+    url: "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf"
+    date: "2022"
+
+  offset_step_s:
+    value: 7
+    status: assumed
+    source: "Green-wave at 25 mph over an ~80 m north-south block: 80 / 11.2 ≈ 7 s"
+    url: "https://www.nyc.gov/html/dot/html/motorist/speed-limits.shtml"
+    date: "2024"
+
+  broadway_closed_33_36:
+    value: true
+    status: verified
+    source: "Broadway closed 33-35 St (2009); 35-36 St plaza (spring 2026). 34th Street Partnership / DOT Broadway Vision"
+    url: "https://www.34thstreet.org/"
+    date: "2026-08"
+
+  turn_ban_34st_left:
+    value: true
+    status: verified
+    source: "15 Penn FEIS: 34th St left turns banned except buses; at 7 Ave and 6 Ave/Broadway all traffic continues straight"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2019"
+
+  bus_lane_34st:
+    value: true
+    status: verified
+    source: "15 Penn FEIS / DOT: 34th St curb bus lanes 7 AM-7 PM weekdays. The full busway is announced but not built (Sep 2026)"
+    url: "https://www.nyc.gov/html/dot/html/about/34th-street.shtml"
+    date: "2026-09"
+
+  oneway_grid:
+    value: "even streets EB, odd WB, 34 St two-way; 8/6 Ave NB; 7/Broadway/5/9 Ave SB"
+    status: verified
+    source: "15 Penn FEIS ch. 16"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2019"
+
+  city_speed_mph:
+    value: 25
+    status: verified
+    source: "NYC citywide default speed limit"
+    url: "https://www.nyc.gov/html/dot/html/motorist/speed-limits.shtml"
+    date: "2024"
+
+  pricing_factor:
+    value: 0.89
+    status: verified
+    source: "MTA congestion-relief-zone first evaluation: vehicle entries down 11%"
+    url: "https://www.mta.info/"
+    date: "2025"
+
+  corridor_vph_8ave:
+    value: [1400, 1600]
+    status: verified
+    source: "15 Penn FEIS ch. 16 midday 2008 counts; applied pricing_factor at demand build"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_7ave:
+    value: [1200, 1600]
+    status: verified
+    source: "15 Penn FEIS ch. 16; DOT 7th Ave deck 2017 (880-1420) as a cross-check"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_6ave:
+    value: [1400, 1600]
+    status: verified
+    source: "15 Penn FEIS ch. 16 midday"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_broadway:
+    value: [500, 700]
+    status: verified
+    source: "15 Penn FEIS ch. 16 midday (pre-plaza blocks still open)"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_5ave:
+    value: [1200, 1400]
+    status: verified
+    source: "15 Penn FEIS ch. 16 midday"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_9ave:
+    value: [1000, 1400]
+    status: assumed
+    source: "No FEIS count on 9th in the bbox; interpolated from 8th and 10th Ave FEIS bands"
+    url: "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf"
+    date: "2022"
+
+  street_vph:
+    value: [100, 900]
+    status: verified
+    source: "15 Penn FEIS ch. 16 street range; 34th St at the high end"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  corridor_vph_34st:
+    value: [700, 1100]
+    status: assumed
+    source: "34th St is two-way and the busiest cross street; top of the FEIS street band, split by direction"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  saturday_factor:
+    value: 0.85
+    status: assumed
+    source: "Saturday midday is given in 15 Penn FEIS as lower than weekday; 0.85 used when a Saturday number is missing"
+    url: "https://www.nyc.gov/assets/planning/download/pdf/applicants/env-review/15_penn/16_feis.pdf"
+    date: "2008"
+
+  lincoln_tunnel_share:
+    value: 0.22
+    status: verified
+    source: "Penn FEIS App. H portal shares: Lincoln Tunnel via Dyer Ave is the largest entry"
+    url: "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf"
+    date: "2022"
+
+  bus_vph_34st:
+    value: 12
+    status: assumed
+    source: "M34/M34A SBS published daytime headways ~5 min per direction"
+    url: "https://new.mta.info/maps"
+    date: "2026"
+
+  bus_vph_avenue:
+    value: 8
+    status: assumed
+    source: "M20 (7/8 Ave), M5/M7 (6 Ave), M1-M4 (5 Ave) daytime headways ~7-8 min"
+    url: "https://new.mta.info/maps"
+    date: "2026"
+
+  vehicle_mix_passenger:
+    value: 0.85
+    status: assumed
+    source: "Cars + for-hire. DOT does not publish a Midtown mix at this grain"
+    url: ""
+    date: "2026"
+
+  vehicle_mix_taxi:
+    value: 0.10
+    status: assumed
+    source: "FHV / taxi share typical of Midtown Manhattan"
+    url: ""
+    date: "2026"
+
+  vehicle_mix_truck:
+    value: 0.05
+    status: assumed
+    source: "Delivery / truck share; buses are generated as their own flows"
+    url: ""
+    date: "2026"
+
+  seed:
+    value: 42
+    status: assumed
+    source: "Fixed seed so the same command reproduces the same routes and run"
+    url: ""
+    date: "2026"
+
+  warmup_s:
+    value: 300
+    status: assumed
+    source: "Fill the network before the 15-minute measurement window"
+    url: ""
+    date: "2026"
+
+  duration_s:
+    value: 900
+    status: assumed
+    source: "Issue #9 / plan: 15 simulated minutes after warm-up"
+    url: "https://github.com/Alexlgvcode/ellipsis/issues/9"
+    date: "2026"
+
+  cbd_speed_mph:
+    value: [7.2, 7.7]
+    status: verified
+    source: "NBER w33584: CBD arterial speeds 7.2 mph before pricing, 7.7 after; 10th percentile under 3 mph"
+    url: "https://www.nber.org/papers/w33584"
+    date: "2025"
+
+  ta_t7_tolerance:
+    value: 0.50
+    status: assumed
+    source: "TA-T7 is 2019 HCM delay (pre-pricing). Compare SUMO delay within +/- 50% or one LOS grade"
+    url: "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf"
+    date: "2022"
+
+  driver_sigma:
+    value: 0.5
+    status: assumed
+    source: "SUMO default driver imperfection; tuned only if calibration fails"
+    url: "https://sumo.dlr.de/docs/Definition_of_Vehicles,_Vehicle_Types,_and_Routes.html"
+    date: "2026"
+
+  time_to_teleport:
+    value: 300
+    status: assumed
+    source: "SUMO default. A teleport is a model failure; validate.py requires 0 at 1.0x demand"
+    url: "https://sumo.dlr.de/docs/Simulation/Why_Vehicles_are_teleporting.html"
+    date: "2026"

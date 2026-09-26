@@ -1,0 +1,46 @@
+# Pre-timed Midtown programs. Applied as program id "lanewatch".
+# Every key used here is listed in sim/sources/sources.yaml.
+
+cycle_s: 90
+program_id: lanewatch
+yellow_s: 3
+all_red_s: 2
+lpi_s: 7
+walk_min_s: 7
+ped_speed_ft_s: 3.5
+avenue_green_share: 0.62
+street_green_share: 0.38
+offset_step_s: 7
+
+# Green-wave offsets: offset = base + (street_no - 29) * step, modulo cycle.
+# Southbound corridors invert so the wave travels with traffic.
+offsets:
+  "8 Ave":
+    base: 0
+    direction: northbound
+  "7 Ave":
+    base: 45
+    direction: southbound
+  "6 Ave":
+    base: 10
+    direction: northbound
+  "5 Ave":
+    base: 50
+    direction: southbound
+  "9 Ave":
+    base: 20
+    direction: southbound
+  Broadway:
+    base: 30
+    direction: southbound
+
+# Exclusive pedestrian (Barnes dance). Duration is walk + longest crosswalk / 3.5
+# (7 Ave @ 32 St south crosswalk 75.2 ft -> 22 s clearance + 7 s walk, capped).
+exclusive_ped:
+  - name: "7 Ave @ 32 St"
+    duration_s: 24
+    source: exclusive_ped_7ave_32st
+
+# Per-intersection split overrides (measured from footage, or calibrated).
+# share is the fraction of remaining green (after clearance + LPI + exclusive) for the avenue.
+overrides: {}
