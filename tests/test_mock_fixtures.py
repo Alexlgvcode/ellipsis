@@ -4,14 +4,44 @@ import json
 
 import pytest
 
-from common.schemas import Event, Recommendation
+from common.schemas import Event, EventType, Recommendation
 
 
-@pytest.mark.parametrize("name, model", [("events.json", Event),
-                                         ("recommendations.json", Recommendation)])
-def test_mock_fixture_matches_schema(repo_root, name, model):
-    path = repo_root / "data" / "mock" / name
-    if not path.exists():
-        pytest.skip(f"{path.name} not added yet (feat/mock-fixtures)")
-    for item in json.loads(path.read_text()):
-        model(**item)
+def _load(repo_root, name):
+    return json.loads((repo_root / "data" / "mock" / name).read_text())
+
+
+@pytest.fixture
+def events(repo_root) -> list[Event]:
+    return [Event(**e) for e in _load(repo_root, "events.json")]
+
+
+@pytest.fixture
+def recommendations(repo_root) -> list[Recommendation]:
+    return [Recommendation(**r) for r in _load(repo_root, "recommendations.json")]
+
+
+def test_one_mock_event_per_blocking_type(events):
+    assert {e.type for e in events} == {
+        EventType.DOUBLE_PARKED, EventType.STOPPED_IN_LANE, EventType.BLOCKED_BOX,
+    }
+    assert len({e.id for e in events}) == len(events)
+
+
+def test_snapshots_exist(repo_root, events):
+    for e in events:
+        assert (repo_root / e.snapshot_path).is_file(), e.snapshot_path
+
+
+def test_recommendations_point_at_mock_events(events, recommendations):
+    ids = {e.id for e in events}
+    assert all(r.event_id in ids for r in recommendations)
+    assert any(r.sim is not None for r in recommendations)
+
+
+def test_camera_ids_are_in_camera_list(repo_root, events):
+    cameras_path = repo_root / "data" / "cameras.json"
+    if not cameras_path.exists():
+        pytest.skip("data/cameras.json not added yet (feat/camera-list)")
+    known = {c["id"] for c in json.loads(cameras_path.read_text())}
+    assert {e.camera_id for e in events} <= known

@@ -1,0 +1,35 @@
+[
+  {
+    "id": "evt_mock_001",
+    "camera_id": "6a85384f-d82e-4bff-b5f1-15c22cca70e6",
+    "type": "double_parked",
+    "start_ts": "2026-09-26T15:58:40Z",
+    "duration_s": 255,
+    "bbox": [104, 92, 134, 126],
+    "lane_zone": "curb_adjacent",
+    "confidence": 0.84,
+    "snapshot_path": "data/mock/snapshots/double_parked.jpg"
+  },
+  {
+    "id": "evt_mock_002",
+    "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "type": "stopped_in_lane",
+    "start_ts": "2026-09-26T15:59:50Z",
+    "duration_s": 185,
+    "bbox": [147, 136, 185, 165],
+    "lane_zone": "travel",
+    "confidence": 0.71,
+    "snapshot_path": "data/mock/snapshots/stopped_in_lane.jpg"
+  },
+  {
+    "id": "evt_mock_003",
+    "camera_id": "f2964d50-042c-4021-8b52-992c08c6ff6f",
+    "type": "blocked_box",
+    "start_ts": "2026-09-26T16:02:41Z",
+    "duration_s": 28,
+    "bbox": [222, 48, 318, 100],
+    "lane_zone": "box",
+    "confidence": 0.77,
+    "snapshot_path": "data/mock/snapshots/blocked_box.jpg"
+  }
+]
