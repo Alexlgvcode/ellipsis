@@ -1,102 +1,217 @@
-# Lane Watch — TODO
+# Lane Watch — Hackathon TODO
 
-Owners: **V** = Vision lead, **E** = Events lead, **S** = Sim lead, **P** = Product lead.
-Details for each item are in [docs/plan.md](docs/plan.md). Check the hackathon rules on
-allowed prep: before the event, keep work to data and environment, not product code.
+**Team:** **Alex** (detection → events → API) · **Brian** (cameras → simulation → dashboard)
+Background: [docs/plan.md](docs/plan.md)
+
+## Git workflow
+
+- One branch per feature: `feat/<name>` off `main`. Keep branches small and merge back fast.
+- Open a PR when the "Done when" line is true. The other person skims it, then merge.
+- Pull `main` into your branch often (`git pull origin main`) so the two chains don't drift.
+- `common/schemas.py` is the contract between us. Change it only in its own small PR, and tell the other person first.
+
+**Priority:** **P0** = needed for the demo · **P1** = makes the demo convincing · **P2** = bonus, only once the P0 chain works end to end.
+
+## Overview
+
+| Branch | Owner | Pri | Depends on |
+|---|---|---|---|
+| `feat/camera-list` | Brian | P0 | — |
+| `feat/frame-poller` | Brian | P0 | camera-list |
+| `feat/mock-fixtures` | Alex | P0 | — |
+| `feat/detector` | Alex | P0 | a few frames |
+| `feat/tracker` | Alex | P0 | detector |
+| `feat/lane-masks` | Alex | P0 | recorded frames |
+| `feat/event-engine` | Alex | P0 | tracker, lane-masks |
+| `feat/replay` | Alex | P0 | event-engine |
+| `feat/api` | Alex | P0 | mock-fixtures |
+| `feat/sumo-network` | Brian | P0 | camera-list |
+| `feat/sim-scenario` | Brian | P0 | sumo-network |
+| `feat/signal-retiming` | Brian | P0 | sim-scenario, mock-fixtures |
+| `feat/dashboard` | Brian | P0 | api (can start on mocks) |
+| `feat/eval-metrics` | Alex | P1 | replay |
+| `feat/operator-feedback` | Brian + Alex | P1 | api, dashboard |
+| `feat/sim-side-by-side` | Brian | P1 | sim-scenario, dashboard |
+| `feat/live-mode` | Brian | P2 | frame-poller, replay |
+| `feat/llm-summary` | Alex | P2 | api |
+
+**Suggested order**
+- Brian: camera-list → frame-poller (start recording!) → sumo-network → sim-scenario → signal-retiming → dashboard
+- Alex: mock-fixtures → detector → tracker → lane-masks → event-engine → replay → api
+
+Both chains meet in `feat/dashboard`. The checkpoint that matters: **one recorded incident goes in, and the dashboard shows the alert, the recommendation and the sim result.** Nothing at P1 or P2 until that works.
+
+## Hand-off points (agree on these first, then don't change them)
+
+1. **Frames on disk** (Brian → Alex): `data/frames/<camera_id>/<YYYYMMDD>/<HHMMSS>.jpg`
+2. **Event JSON** (Alex → Brian), from `common/schemas.py`. Mock copies go in `data/mock/`.
+3. **Recommendation JSON** (Brian → API), from `common/schemas.py`.
+
+## Scope cuts (we're starting the event with no prep done)
+
+- **No fine-tuning.** Use pretrained YOLO11s on COCO classes (car, truck, bus). Vans show up as car or truck.
+- **3–5 cameras get lane masks.** The poller still records ~10.
+- **No 311 or parking-ticket matching, and no 511NY.** The test set is ~20 events we tag by hand from today's recordings.
+- **Small SUMO area** (6–10 intersections). Demand comes from `randomTrips.py`, roughly scaled.
+- **Two retiming rules:** a lane blocked mid-block, and a blocked box.
+- **Streamlit dashboard** that polls the API. No websockets and no Next.js.
+- **Replay is the demo; live cameras are a bonus.**
+
+> ⚠️ **Record in daylight today.** We have no footage yet, and night frames detect poorly. Get `feat/frame-poller` recording first, even with a quick script, so we have hours of daytime Midtown traffic to find incidents in.
 
 ---
 
-## 0. Repo setup (now)
+## Brian
 
-- [ ] Push the initial scaffold; add teammates as collaborators
-- [ ] Assign the four roles
-- [ ] Everyone: create a venv, `make install`, `cp .env.example .env`, `make api` → `/health` returns ok
-- [ ] Decide on Python 3.11 for everyone (the plan's target) or keep 3.10
-- [ ] Set up shared storage for `data/` (frames and labels are gitignored)
-- [ ] Update the camera URL in `docs/plan.md` to `webcams.nyctmc.org/api/cameras/`
+### `feat/camera-list` · P0
+Files: `ingest/camera_list.py`, `data/cameras.json`
+- [ ] Fetch `https://webcams.nyctmc.org/api/cameras/` and filter to the area box in `common/config.py`
+- [ ] Write `data/cameras.json` (id, name, lat, lon, image_url, is_online)
+- [ ] Pick ~10 cameras around Penn / Herald Sq with fixed views of lanes (no PTZ). Store them by name, not ID
+- [ ] Resolve names to current IDs at startup (by name, then nearest coordinates)
 
-## 1. Pre-hackathon prep
+**Done when:** `python -m ingest.camera_list` writes the file and prints the ~10 chosen cameras with their current IDs.
 
-### One to two weeks before
-- [ ] **V** Implement `ingest/camera_list.py`: scrape to `data/cameras.json`, filter by area, match cameras by name and coordinates
-- [ ] **V/E** Pick the area (Penn or Times Square) and 10–20 cameras with clear, fixed lane views (avoid PTZ cameras)
-- [ ] **V** Check that every chosen camera's image endpoint responds
-- [ ] **P** Register for a 511NY developer API key as a backup camera source
-- [ ] **V** Implement `ingest/poller.py` and `ingest/health.py` (drop duplicate, frozen and error frames)
-- [ ] **V** Start `scripts/record_frames.py` on an always-on machine: every 5 s, day and night, at least 5 days (~20–30 GB)
+### `feat/frame-poller` · P0
+Files: `ingest/poller.py`, `ingest/health.py`, `scripts/record_frames.py`
+- [ ] **First, start a quick recorder** (a simple loop is fine): chosen cameras, every 5 s, saved to the agreed path
+- [ ] Async poller with httpx: 2–5 s interval with jitter, a concurrency limit, a polite User-Agent
+- [ ] Drop duplicate frames (hash)
+- [ ] `health.py`: flag frozen feeds (near-identical frames for 30 s) and error images
+- [ ] `record_frames.py` reuses the poller at 5 s
 
-### One week before
-- [ ] **E** Download 311 double-parking complaints and Parking Violations Issued for the area
-- [ ] **E** Implement `scripts/match_311.py`: complaints within ~150 m of a camera → frame time windows
-- [ ] **S** Export the Midtown OSM area, run `netconvert` (keep traffic lights, ~90 s cycle), and write the steps in `sim/network/README.md`
-- [ ] **S** Generate demand in `sim/routes/` with `randomTrips.py` / `routeSampler.py`, scaled to NYC DOT volume counts
-- [ ] **S** Confirm the network runs headless in SUMO with traffic lights
-- [ ] **V** Sample ~500 frames (mixed cameras, times and weather), auto-label with pretrained YOLO, hand-correct in Roboflow or CVAT
-- [ ] **V** Split 400 train / 100 test by time; export to `vision/datasets/`
-- [ ] **V** Record pretrained baseline mAP@0.5, run a first fine-tune (`vision/train.py`), record fine-tuned mAP
-- [ ] **E** Hand-tag 50–100 stopped-vehicle events (start/end time, type) as the rule test set
+**Done when:** frames from all chosen cameras keep landing on disk, with no duplicates and no error images.
 
-### Final days
-- [ ] **E** Draw lane masks for the 10 best cameras → `events/masks/<camera-id>.json` (include bus stop zones)
-- [ ] **S** Build `signals/camera_signals.json`: for each camera, the intersection it watches plus one upstream and one downstream on each approach
-- [ ] **P** Pick 3 daytime demo incidents from the recordings: a double-parked van, a vehicle stopped in a travel lane, a blocked box
-- [ ] **All** Set up GPU access (laptop or a single A10/L4) and a shared `.env`
-- [ ] **All** Review `common/schemas.py` (Event and Recommendation) and agree on it
+### `feat/sumo-network` · P0
+Files: `sim/network/`, `sim/routes/`
+- [ ] Export OSM for the 6–10 intersections around the masked cameras
+- [ ] `netconvert` with traffic lights kept and a 90 s cycle. Write the exact commands in `sim/network/README.md`
+- [ ] Generate routes with `randomTrips.py`, scaled roughly to Midtown volumes
+- [ ] A `.sumocfg` that runs 15 simulated minutes headless in seconds
 
-## 2. Hackathon (36 h)
+**Done when:** `sumo -c sim/network/midtown.sumocfg` runs cleanly and the traffic lights cycle.
 
-### Hours 0–2 — lock interfaces
-- [ ] **All** Freeze Event and Recommendation JSON; nobody changes `common/schemas.py` without telling the team
-- [ ] **P** Write mock `Event` / `Recommendation` fixtures so every workstream can start in parallel
-- [ ] **P** Pick the dashboard stack (Next.js + Leaflet, or Streamlit)
+### `feat/sim-scenario` · P0
+Files: `sim/run_scenario.py`
+- [ ] Take an event (lane, position, start time, duration) and inject a stopped vehicle with TraCI `vehicle.setStop`
+- [ ] Run A (default plan) and B (modified plan) as parallel processes with the same seed
+- [ ] Output avg delay per vehicle, max queue on the blocked approach, throughput, queue clear time → `SimResult`
+- [ ] Support 3 seeds and average them
 
-### Hours 2–8 — each piece works alone
-- [ ] **V** `vision/detect.py`: batched YOLO over all cameras (car, truck, bus, van; conf ~0.35)
-- [ ] **V** `vision/track.py`: ByteTrack per camera at low fps, stationary test, per-track history
-- [ ] **E** `events/engine.py`: load masks and `rules.yaml`, find each track's zone, first rules working
-- [ ] **S** `sim/run_scenario.py`: inject a blockage with TraCI `vehicle.setStop`, collect delay and queue metrics
-- [ ] **P** `api/models.py` + `api/main.py`: SQLite tables, `GET /cameras`, `GET /events`, `GET /events/{id}`
-- [ ] **P** Dashboard: map with camera pins, running on mock data
+**Done when:** a CLI call prints A-vs-B metrics for a hard-coded blockage.
 
-### Hours 8–14 — connect the pieces
-- [ ] **E** Engine emits real events: double parked (60 s), stopped in lane (120 s), blocked box (20 s), frozen feed (30 s)
-- [ ] **E** Front-of-queue only; ignore buses at stops and red-light waits; close an event after 3 lost frames
-- [ ] **E** Save snapshots (boxes only, no plates or faces)
-- [ ] **S** `signals/retime.py`: rules per event type, within the bounds (ped minimums, fixed cycle, ≤20% per phase)
-- [ ] **S** Hook retiming into SUMO: runs A (default) and B (recommended) in parallel, 3 seeds, 15 simulated minutes
-- [ ] **P** `api/ws.py`: websocket pushes new alerts and recommendations
-- [ ] **P** Dashboard: alert feed with snapshot and boxes, event type, duration, confidence
+### `feat/signal-retiming` · P0
+Files: `signals/mapping.py`, `signals/camera_signals.json`, `signals/retime.py`
+- [ ] For each masked camera, map to the TLS it watches plus the upstream and downstream ones
+- [ ] Rule 1: a lane blocked mid-block cuts upstream green on the blocked approach by 10–20%
+- [ ] Rule 2: a blocked box shortens cross-street green
+- [ ] Bounds: keep ped minimums, don't change the cycle length, ≤20% change per phase
+- [ ] Event → `Recommendation` → sim-scenario → `POST /recommendations` with the sim numbers filled in
 
-### Hours 14–18 — GATE: end to end on replay
-- [ ] **V/E** `scripts/replay.py`: recorded frames → detect → track → events → API
-- [ ] **All** Demo incident in → alert on the dashboard → recommendation → sim result shown
-- [ ] If this gate slips, cut scope before adding anything new
+**Done when:** a mock event produces a Recommendation with real sim numbers.
 
-### Hours 18–24 — tune and measure
-- [ ] **E** Tune thresholds on the test set; fix false positives
-- [ ] **E** Report event precision (target ≥80%), recall (≥70%), median time to alert (<90 s)
-- [ ] **V** Final detector mAP, baseline vs fine-tuned
-- [ ] **S** Delay reduction and queue clear time per demo scenario (mean of 3 seeds)
-- [ ] Sleep in shifts
+### `feat/dashboard` · P0
+Files: `dashboard/` (Streamlit)
+- [ ] Map of camera pins; highlight cameras with active alerts
+- [ ] Alert feed: snapshot with boxes, event type, duration, confidence
+- [ ] Recommendation card: signal changes and delay/queue, default vs recommended
+- [ ] Build on `data/mock/` first, then switch to the API; poll every 2–3 s
 
-### Hours 24–30 — polish
-- [ ] **V** Live camera mode (poll every 2 s)
-- [ ] **P** Operator accept / reject / false-positive (`POST /events/{id}/feedback`)
-- [ ] **P** `api/summarize.py`: one-paragraph Claude incident note per alert (optional)
-- [ ] **S/P** Side-by-side SUMO view (sumo-gui screenshots or synced playback)
+**Done when:** replaying an incident makes an alert and its recommendation appear without reloading the page.
 
-### Hours 30–34 — feature freeze
-- [ ] **P** Record a backup demo video on replay data
-- [ ] **P** Slides, including one slide of metrics
+### `feat/sim-side-by-side` · P1
+- [ ] Default vs recommended view: sumo-gui screenshots at matching sim times, or queue-over-time charts
+- [ ] Show the "delay saved" number on the recommendation card
 
-### Hours 34–36 — ship
-- [ ] **All** Rehearse the 3-minute demo twice (hook → live → decision → payoff → proof)
+### `feat/live-mode` · P2
+- [ ] Feed live frames from the poller into the pipeline (2 s interval) for the masked cameras
+- [ ] Skip any camera that's offline or frozen, so the dashboard doesn't break
+
+---
+
+## Alex
+
+### `feat/mock-fixtures` · P0 (do this first so Brian isn't blocked)
+Files: `data/mock/events.json`, `data/mock/recommendations.json`
+- [ ] 3 Events (double parked, stopped in lane, blocked box) that pass `common/schemas.py` validation
+- [ ] 1–2 Recommendations with sim numbers filled in
+
+**Done when:** it's merged to `main` and Brian can build against it.
+
+### `feat/detector` · P0
+Files: `vision/detect.py`
+- [ ] Load pretrained YOLO11s; keep car, truck, bus; conf ~0.35; upscale input to 640
+- [ ] Batch frames across cameras; return boxes, class and confidence
+- [ ] Check it on a sample of recorded frames. Note what it misses at 352x240
+
+**Done when:** it runs on a folder of frames and saves annotated images that look right.
+
+### `feat/tracker` · P0
+Files: `vision/track.py`
+- [ ] One ByteTrack instance per camera, set for low fps (frames 2–5 s apart)
+- [ ] Stationary test: center shift < 5% of box width and IoU > 0.7 vs the previous frame
+- [ ] Per-track history: first seen, stationary since, class, last box
+
+**Done when:** a parked vehicle keeps the same ID and its stationary timer keeps climbing across a recorded sequence.
+
+### `feat/lane-masks` · P0
+Files: `events/masks/<camera-id>.json`
+- [ ] Choose the 3–5 best cameras from the recorded footage
+- [ ] Draw polygons for curb, curb-adjacent, travel, box, bus stop and ignore zones (a small labeling tool, or Roboflow)
+- [ ] Save a reference frame for each camera, so we can tell when the view shifts
+
+**Done when:** an overlay of each mask on its camera frame lines up with the lanes.
+
+### `feat/event-engine` · P0
+Files: `events/engine.py`, `events/rules.yaml`
+- [ ] Work out which zone each track is in (box center inside a polygon)
+- [ ] Rules: double parked 60 s, stopped in lane 120 s, blocked box 20 s, frozen feed 30 s
+- [ ] Alert only on the front vehicle of a queue; ignore buses at stops and short red-light waits
+- [ ] Close an event after 3 lost frames and log its duration; compute a confidence score
+
+**Done when:** it fires the right event type on at least one recorded incident of each type.
+
+### `feat/replay` · P0
+Files: `scripts/replay.py`
+- [ ] Recorded frames for a camera and time window → detect → track → event engine
+- [ ] Save a snapshot with boxes drawn (boxes only, no plates or faces)
+- [ ] Push events to the API; add a speed-up option for demos
+
+**Done when:** replaying a recorded incident pushes an event to the API at the right point in the replay.
+
+### `feat/api` · P0
+Files: `api/main.py`, `api/models.py`
+- [ ] SQLite tables for cameras, events and recommendations
+- [ ] Endpoints:
+  - `POST /events`, `GET /events`, `GET /events/{id}`
+  - `GET /cameras`
+  - `POST /recommendations`, `GET /recommendations/{event_id}`
+  - serve snapshot images
+- [ ] Mock mode that serves `data/mock/` while the pipeline isn't ready yet
+
+**Done when:** Brian's dashboard and retiming code can read and write through it.
+
+### `feat/eval-metrics` · P1
+- [ ] Hand-tag ~20 stopped-vehicle events from today's recordings (start, end, type)
+- [ ] Tune `rules.yaml` against them
+- [ ] Report precision (target ≥80%), recall (≥70%), median time to alert (<90 s)
+- [ ] Pick 3 daytime demo incidents and note each one's real duration for the pitch hook
+
+### `feat/operator-feedback` · P1 (shared)
+- [ ] **Alex:** `POST /events/{id}/feedback` (accept / reject / false positive)
+- [ ] **Brian:** buttons on the alert card
+
+### `feat/llm-summary` · P2
+Files: `api/summarize.py`
+- [ ] Generate a one-paragraph Claude incident note per alert; store it with the event and show it on the card
+
+---
+
+## Demo and submission (both of us, no branch)
+
+- [ ] Feature freeze once the demo path is solid; after that, only fix bugs on the demo path
+- [ ] **Brian:** record a backup demo video on replay
+- [ ] **Alex:** slides on the problem, how it works, and metrics
+- [ ] **Brian:** slides on the sim results and the signal-plan assumption (real NYC plans aren't public)
+- [ ] Rehearse the 3-minute script twice: hook → replay → decision → sim payoff → proof and close
 - [ ] Submit
-
-## 3. Stretch (only after the hour-18 gate)
-
-- [ ] Search-based retiming: SUMO scores 5–10 candidate splits, best one wins
-- [ ] Heatmap of lane-minutes lost per block
-- [ ] Real-time 311 matching ("caught before anyone complained")
-- [ ] Bus rider impact from MTA Bus Time
-- [ ] Turn false-positive clicks into new labeled examples
