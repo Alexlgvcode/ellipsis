@@ -1,0 +1,155 @@
+[
+  {
+    "id": "0dc7c2b4-614d-46a3-9610-3ba09f3f1284",
+    "name": "6 Ave @ 30 St",
+    "lat": 40.747287,
+    "lon": -73.989615,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/0dc7c2b4-614d-46a3-9610-3ba09f3f1284/image",
+    "is_online": true
+  },
+  {
+    "id": "f06979b2-3497-4330-9882-a06c8a442b7c",
+    "name": "6 Ave @ 34 St",
+    "lat": 40.749808,
+    "lon": -73.987746,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/f06979b2-3497-4330-9882-a06c8a442b7c/image",
+    "is_online": true
+  },
+  {
+    "id": "34674be5-4791-47f1-b0b2-2db0ff619732",
+    "name": "6 Ave @ 39 St",
+    "lat": 40.752946,
+    "lon": -73.98548,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/34674be5-4791-47f1-b0b2-2db0ff619732/image",
+    "is_online": true
+  },
+  {
+    "id": "1e60ade7-c760-48cf-acd9-d9d6cbfa9420",
+    "name": "7 Ave @ 32 St",
+    "lat": 40.749508,
+    "lon": -73.991493,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/1e60ade7-c760-48cf-acd9-d9d6cbfa9420/image",
+    "is_online": true
+  },
+  {
+    "id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "name": "7 Ave @ 34 St",
+    "lat": 40.7510195668227,
+    "lon": -73.9906285955498,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/ee1b1d85-e8ce-485f-a539-12962933eb9f/image",
+    "is_online": true
+  },
+  {
+    "id": "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae",
+    "name": "7 Ave @ 36 St",
+    "lat": 40.752128,
+    "lon": -73.989657,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/b0cbb042-de0a-449f-b5d1-49f68a9bf2ae/image",
+    "is_online": true
+  },
+  {
+    "id": "5d055599-875a-4010-991f-e7e454889052",
+    "name": "7 Ave @ 40 St",
+    "lat": 40.754746,
+    "lon": -73.987894,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/5d055599-875a-4010-991f-e7e454889052/image",
+    "is_online": true
+  },
+  {
+    "id": "f2964d50-042c-4021-8b52-992c08c6ff6f",
+    "name": "8 Ave @ 34 St",
+    "lat": 40.7521973661027,
+    "lon": -73.9934562042021,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/f2964d50-042c-4021-8b52-992c08c6ff6f/image",
+    "is_online": true
+  },
+  {
+    "id": "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c",
+    "name": "8th Ave @ 31st St",
+    "lat": 40.750297,
+    "lon": -73.99483,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c/image",
+    "is_online": true
+  },
+  {
+    "id": "6a85384f-d82e-4bff-b5f1-15c22cca70e6",
+    "name": "8th Ave @ 33rd St",
+    "lat": 40.751512,
+    "lon": -73.993913,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/6a85384f-d82e-4bff-b5f1-15c22cca70e6/image",
+    "is_online": true
+  },
+  {
+    "id": "defa5e30-d6c7-4582-9ceb-03ff0fe7b93a",
+    "name": "9 Ave @ 34 St",
+    "lat": 40.7534082474864,
+    "lon": -73.9963142012874,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/defa5e30-d6c7-4582-9ceb-03ff0fe7b93a/image",
+    "is_online": true
+  },
+  {
+    "id": "326b2bab-d277-4c5a-9778-a7af791ad151",
+    "name": "9 Ave @ 37 St",
+    "lat": 40.7552720843545,
+    "lon": -73.9948547204017,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/326b2bab-d277-4c5a-9778-a7af791ad151/image",
+    "is_online": true
+  },
+  {
+    "id": "83655dbc-7902-4fdb-926c-15fee4396b83",
+    "name": "Broadway @ 38 St",
+    "lat": 40.752453,
+    "lon": -73.987123,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/83655dbc-7902-4fdb-926c-15fee4396b83/image",
+    "is_online": true
+  },
+  {
+    "id": "9565e94d-66f2-4965-9c13-82d5500d6cfd",
+    "name": "Broadway @ 42 St",
+    "lat": 40.7558094297322,
+    "lon": -73.9864124090652,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/9565e94d-66f2-4965-9c13-82d5500d6cfd/image",
+    "is_online": true
+  },
+  {
+    "id": "8ee72946-49e0-4f49-991d-4f52b1206ed7",
+    "name": "Broadway @ 6 Ave / 33 St",
+    "lat": 40.749412,
+    "lon": -73.98806,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/8ee72946-49e0-4f49-991d-4f52b1206ed7/image",
+    "is_online": true
+  },
+  {
+    "id": "f96c7b05-c0a1-4d3c-93ae-b025bdea422a",
+    "name": "Dyer Ave @ W 34 St",
+    "lat": 40.754,
+    "lon": -73.9976,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/f96c7b05-c0a1-4d3c-93ae-b025bdea422a/image",
+    "is_online": true
+  },
+  {
+    "id": "5ed9017b-c053-4c5e-b858-752516683ada",
+    "name": "Dyer Ave @ W 36 St",
+    "lat": 40.75516,
+    "lon": -73.996557,
+    "area": "Manhattan",
+    "image_url": "https://webcams.nyctmc.org/api/cameras/5ed9017b-c053-4c5e-b858-752516683ada/image",
+    "is_online": true
+  }
+]
