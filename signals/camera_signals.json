@@ -1,1 +1,705 @@
-{}
+{
+ "meta": {
+  "net": "sim/network/midtown.net.xml",
+  "cameras": 9
+ },
+ "programs": {
+  "cluster_10173490602_10173490603_10173490604_42428268_#1more": [
+   [
+    7.0,
+    "rrrr"
+   ],
+   [
+    45.0,
+    "GGrr"
+   ],
+   [
+    3.0,
+    "yyrr"
+   ],
+   [
+    2.0,
+    "rrrr"
+   ],
+   [
+    28.0,
+    "rrGG"
+   ],
+   [
+    3.0,
+    "rryy"
+   ],
+   [
+    2.0,
+    "rrrr"
+   ]
+  ],
+  "cluster_3833309813_3833309820_42430295_6224277875_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGGrrr"
+   ],
+   [
+    3.0,
+    "yyyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrrGGG"
+   ],
+   [
+    3.0,
+    "rrrrryyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_10169505515_10169505516_10169532517_10169532518_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGrrrr"
+   ],
+   [
+    3.0,
+    "yyyyrrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrGGGG"
+   ],
+   [
+    3.0,
+    "rrrryyyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_42437654_7782217024_9413881838_9413881840_#1more": [
+   [
+    50.0,
+    "GGGGGrrrrrr"
+   ],
+   [
+    3.0,
+    "yyyyyrrrrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrrrrr"
+   ],
+   [
+    30.0,
+    "rrrrrGGrrGG"
+   ],
+   [
+    3.0,
+    "rrrrryyrryy"
+   ],
+   [
+    2.0,
+    "rrrrrrrrrrr"
+   ]
+  ],
+  "cluster_10169532546_10169532547_42439952_9945692441_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGGrrr"
+   ],
+   [
+    3.0,
+    "yyyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrrGGG"
+   ],
+   [
+    3.0,
+    "rrrrryyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_10168911543_10168911545_10168911547_10168911548_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGGrrr"
+   ],
+   [
+    3.0,
+    "yyyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrrGGG"
+   ],
+   [
+    3.0,
+    "rrrrryyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_10691086244_8262309024": [
+   [
+    73.0,
+    "GGGG"
+   ],
+   [
+    3.0,
+    "yyyy"
+   ],
+   [
+    14.0,
+    "rrrr"
+   ]
+  ],
+  "cluster_42435642_8660001947_8660596989_8660596996": [
+   [
+    73.0,
+    "GGGG"
+   ],
+   [
+    3.0,
+    "yyyy"
+   ],
+   [
+    14.0,
+    "rrrr"
+   ]
+  ],
+  "cluster_4443775465_7699762580_7699762581_7699762582_#1more": [
+   [
+    7.0,
+    "rrrrrr"
+   ],
+   [
+    45.0,
+    "rrGGGG"
+   ],
+   [
+    3.0,
+    "rryyyy"
+   ],
+   [
+    2.0,
+    "rrrrrr"
+   ],
+   [
+    28.0,
+    "GGrrrr"
+   ],
+   [
+    3.0,
+    "yyrrrr"
+   ],
+   [
+    2.0,
+    "rrrrrr"
+   ]
+  ],
+  "cluster_10170593079_10170593080_10170593081_4443775464_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGGrrr"
+   ],
+   [
+    3.0,
+    "yyyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrrGGG"
+   ],
+   [
+    3.0,
+    "rrrrryyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_10173490593_10173490594_10173490596_10268795725_#2more": [
+   [
+    73.0,
+    "GGG"
+   ],
+   [
+    3.0,
+    "yyy"
+   ],
+   [
+    14.0,
+    "rrr"
+   ]
+  ],
+  "cluster_42439440_9414480617_9414480621_9414480624": [
+   [
+    61.0,
+    "GGGGGG"
+   ],
+   [
+    3.0,
+    "yyyyyy"
+   ],
+   [
+    26.0,
+    "rrrrrr"
+   ]
+  ],
+  "cluster_10169532572_10169532573_10169532574_10169532575_#1more": [
+   [
+    7.0,
+    "rrrrrrr"
+   ],
+   [
+    45.0,
+    "GGGGrrr"
+   ],
+   [
+    3.0,
+    "yyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrr"
+   ],
+   [
+    28.0,
+    "rrrrGGG"
+   ],
+   [
+    3.0,
+    "rrrryyy"
+   ],
+   [
+    2.0,
+    "rrrrrrr"
+   ]
+  ],
+  "cluster_4461990857_7590955909_9413881743_9413881749": [
+   [
+    7.0,
+    "rrrrr"
+   ],
+   [
+    45.0,
+    "GGGrr"
+   ],
+   [
+    3.0,
+    "yyyrr"
+   ],
+   [
+    2.0,
+    "rrrrr"
+   ],
+   [
+    28.0,
+    "rrrGG"
+   ],
+   [
+    3.0,
+    "rrryy"
+   ],
+   [
+    2.0,
+    "rrrrr"
+   ]
+  ],
+  "cluster_3857334397_3857343072_3857343080_42430304_#3more": [
+   [
+    50.0,
+    "rrrGGGGrrr"
+   ],
+   [
+    3.0,
+    "rrryyyyrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrrrr"
+   ],
+   [
+    30.0,
+    "rGGrrrrGGr"
+   ],
+   [
+    3.0,
+    "ryyrrrryyr"
+   ],
+   [
+    2.0,
+    "rrrrrrrrrr"
+   ]
+  ],
+  "cluster_10168911552_10168911554_10168911556_10168911557_#1more": [
+   [
+    7.0,
+    "rrrrrrrr"
+   ],
+   [
+    45.0,
+    "rrrGGGGG"
+   ],
+   [
+    3.0,
+    "rrryyyyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    28.0,
+    "GGGrrrrr"
+   ],
+   [
+    3.0,
+    "yyyrrrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ],
+  "cluster_10261412966_42428244_42430298_4707482477_#2more": [
+   [
+    50.0,
+    "rrrGGGGG"
+   ],
+   [
+    3.0,
+    "rrryyyyy"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ],
+   [
+    30.0,
+    "GGGrrrrr"
+   ],
+   [
+    3.0,
+    "yyyrrrrr"
+   ],
+   [
+    2.0,
+    "rrrrrrrr"
+   ]
+  ]
+ },
+ "cameras": {
+  "0dc7c2b4-614d-46a3-9610-3ba09f3f1284": {
+   "name": "6 Ave @ 30 St",
+   "lat": 40.747287,
+   "lon": -73.989615,
+   "tls": "cluster_10168911543_10168911545_10168911547_10168911548_#1more",
+   "tls_name": "6 Ave @ 30 St",
+   "distance_m": 1.1,
+   "upstream": "cluster_10168911552_10168911554_10168911556_10168911557_#1more",
+   "downstream": null,
+   "lanes": {
+    "curb_adjacent": {
+     "id": "968394455#1_1",
+     "pos_m": 34.7,
+     "length_m": 63.2
+    },
+    "travel": {
+     "id": "968394455#1_2",
+     "pos_m": 34.7,
+     "length_m": 63.2
+    },
+    "box": {
+     "id": "968394455#1_2",
+     "pos_m": 55.2,
+     "length_m": 63.2
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 4
+  },
+  "1e60ade7-c760-48cf-acd9-d9d6cbfa9420": {
+   "name": "7 Ave @ 32 St",
+   "lat": 40.749508,
+   "lon": -73.991493,
+   "tls": "cluster_42439440_9414480617_9414480621_9414480624",
+   "tls_name": "7 Ave @ 32 St",
+   "distance_m": 21.5,
+   "upstream": "cluster_4461990857_7590955909_9413881743_9413881749",
+   "downstream": "cluster_42435422_9414480628_9414480632_9414480636_#1more",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "492489884#1_1",
+     "pos_m": 35.2,
+     "length_m": 64.0
+    },
+    "travel": {
+     "id": "492489884#1_2",
+     "pos_m": 35.2,
+     "length_m": 64.0
+    },
+    "box": {
+     "id": "492489884#1_2",
+     "pos_m": 56.0,
+     "length_m": 64.0
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 0
+  },
+  "6a85384f-d82e-4bff-b5f1-15c22cca70e6": {
+   "name": "8th Ave @ 33rd St",
+   "lat": 40.751512,
+   "lon": -73.993913,
+   "tls": "cluster_42435642_8660001947_8660596989_8660596996",
+   "tls_name": "8 Ave @ 33 St",
+   "distance_m": 6.5,
+   "upstream": "cluster_10691086244_8262309024",
+   "downstream": null,
+   "lanes": {
+    "curb_adjacent": {
+     "id": "1157664114#0_1",
+     "pos_m": 40.6,
+     "length_m": 73.8
+    },
+    "travel": {
+     "id": "1157664114#0_2",
+     "pos_m": 40.6,
+     "length_m": 73.8
+    },
+    "box": {
+     "id": "1157664114#0_2",
+     "pos_m": 65.8,
+     "length_m": 73.8
+    }
+   },
+   "midblock_phase": 0,
+   "cross_phase": 0
+  },
+  "83655dbc-7902-4fdb-926c-15fee4396b83": {
+   "name": "Broadway @ 38 St",
+   "lat": 40.752453,
+   "lon": -73.987123,
+   "tls": "cluster_10173490602_10173490603_10173490604_42428268_#1more",
+   "tls_name": "Broadway @ 38 St",
+   "distance_m": 51.8,
+   "upstream": "cluster_10173490593_10173490594_10173490596_10268795725_#2more",
+   "downstream": "cluster_10169532523_10169532524_10169532525_10169532526_#1more",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "958919324#1_0",
+     "pos_m": 35.2,
+     "length_m": 64.0
+    },
+    "travel": {
+     "id": "958919324#1_0",
+     "pos_m": 35.2,
+     "length_m": 64.0
+    },
+    "box": {
+     "id": "958919324#1_0",
+     "pos_m": 56.0,
+     "length_m": 64.0
+    }
+   },
+   "midblock_phase": 0,
+   "cross_phase": 4
+  },
+  "8ee72946-49e0-4f49-991d-4f52b1206ed7": {
+   "name": "Broadway @ 6 Ave / 33 St",
+   "lat": 40.749412,
+   "lon": -73.98806,
+   "tls": "cluster_10261412966_42428244_42430298_4707482477_#2more",
+   "tls_name": "6 Ave @ 33 St",
+   "distance_m": 36.5,
+   "upstream": "cluster_3833309813_3833309820_42430295_6224277875_#1more",
+   "downstream": "cluster_3857334397_3857343072_3857343080_42430304_#3more",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "460606347#1_1",
+     "pos_m": 35.3,
+     "length_m": 64.2
+    },
+    "travel": {
+     "id": "460606347#1_2",
+     "pos_m": 35.3,
+     "length_m": 64.2
+    },
+    "box": {
+     "id": "460606347#1_2",
+     "pos_m": 56.2,
+     "length_m": 64.2
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 3
+  },
+  "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae": {
+   "name": "7 Ave @ 36 St",
+   "lat": 40.752128,
+   "lon": -73.989657,
+   "tls": "cluster_10169532572_10169532573_10169532574_10169532575_#1more",
+   "tls_name": "7 Ave @ 36 St",
+   "distance_m": 17.9,
+   "upstream": "cluster_10169505515_10169505516_10169532517_10169532518_#1more",
+   "downstream": "cluster_10169532546_10169532547_42439952_9945692441_#1more",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "1135620538#1_1",
+     "pos_m": 34.5,
+     "length_m": 62.7
+    },
+    "travel": {
+     "id": "1135620538#1_2",
+     "pos_m": 34.5,
+     "length_m": 62.7
+    },
+    "box": {
+     "id": "1135620538#1_2",
+     "pos_m": 54.7,
+     "length_m": 62.7
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 4
+  },
+  "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c": {
+   "name": "8th Ave @ 31st St",
+   "lat": 40.750297,
+   "lon": -73.99483,
+   "tls": "cluster_4443775465_7699762580_7699762581_7699762582_#1more",
+   "tls_name": "8 Ave @ 31 St",
+   "distance_m": 1.3,
+   "upstream": "cluster_10170593079_10170593080_10170593081_4443775464_#1more",
+   "downstream": "cluster_10691086244_8262309024",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "1038780408#1_1",
+     "pos_m": 35.3,
+     "length_m": 64.2
+    },
+    "travel": {
+     "id": "1038780408#1_2",
+     "pos_m": 35.3,
+     "length_m": 64.2
+    },
+    "box": {
+     "id": "1038780408#1_2",
+     "pos_m": 56.2,
+     "length_m": 64.2
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 4
+  },
+  "ee1b1d85-e8ce-485f-a539-12962933eb9f": {
+   "name": "7 Ave @ 34 St",
+   "lat": 40.7510195668227,
+   "lon": -73.9906285955498,
+   "tls": "cluster_42437654_7782217024_9413881838_9413881840_#1more",
+   "tls_name": "7 Ave @ 34 St",
+   "distance_m": 1.3,
+   "upstream": "cluster_10169532546_10169532547_42439952_9945692441_#1more",
+   "downstream": "cluster_4461990857_7590955909_9413881743_9413881749",
+   "lanes": {
+    "curb_adjacent": {
+     "id": "1051750427#1_1",
+     "pos_m": 35.6,
+     "length_m": 64.7
+    },
+    "travel": {
+     "id": "1051750427#1_2",
+     "pos_m": 35.6,
+     "length_m": 64.7
+    },
+    "box": {
+     "id": "1051750427#1_2",
+     "pos_m": 56.7,
+     "length_m": 64.7
+    }
+   },
+   "midblock_phase": 1,
+   "cross_phase": 3
+  },
+  "f06979b2-3497-4330-9882-a06c8a442b7c": {
+   "name": "6 Ave @ 34 St",
+   "lat": 40.749808,
+   "lon": -73.987746,
+   "tls": "cluster_3857334397_3857343072_3857343080_42430304_#3more",
+   "tls_name": "6 Ave @ 34 St",
+   "distance_m": 6.2,
+   "upstream": "cluster_10261412966_42428244_42430298_4707482477_#2more",
+   "downstream": null,
+   "lanes": {
+    "curb_adjacent": {
+     "id": "439933932#1_1",
+     "pos_m": 37.7,
+     "length_m": 68.6
+    },
+    "travel": {
+     "id": "439933932#1_2",
+     "pos_m": 37.7,
+     "length_m": 68.6
+    },
+    "box": {
+     "id": "439933932#1_2",
+     "pos_m": 60.6,
+     "length_m": 68.6
+    }
+   },
+   "midblock_phase": 0,
+   "cross_phase": 3
+  }
+ }
+}
