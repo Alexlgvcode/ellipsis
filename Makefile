@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui
+.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui sim-scenario
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -26,3 +26,6 @@ sim-validate:       ## structure + 15 min headless run
 
 sim-gui:            ## open the Midtown net in sumo-gui
 	sumo-gui -c sim/network/midtown.sumocfg
+
+sim-scenario:       ## 8th Ave blockage: plan A vs empty, then A vs B
+	$(PY) -m sim.run_scenario --demo
