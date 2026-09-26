@@ -1,0 +1,351 @@
+{
+ "meta": {
+  "fetched": "2026-09-26",
+  "bbox": [
+   40.7455,
+   -73.9985,
+   40.7545,
+   -73.9845
+  ],
+  "dataset": "xc4v-ntf4",
+  "url": "https://data.cityofnewyork.us/d/xc4v-ntf4"
+ },
+ "rows": [
+  {
+   "main_street": "5 Ave",
+   "cross_street": "30 St",
+   "lat": 40.7459208110249,
+   "lon": -73.9863943042264,
+   "installed": "2019-06-08"
+  },
+  {
+   "main_street": "5 Ave",
+   "cross_street": "31 St",
+   "lat": 40.7465355821072,
+   "lon": -73.985950274919,
+   "installed": "2019-06-08"
+  },
+  {
+   "main_street": "5 Ave",
+   "cross_street": "34 St",
+   "lat": 40.7484375148309,
+   "lon": -73.9845603806312,
+   "installed": "2022-04-08"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "28 St",
+   "lat": 40.7460392490227,
+   "lon": -73.9905156944857,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "29 St",
+   "lat": 40.746651260186,
+   "lon": -73.9900666469613,
+   "installed": "2017-03-22"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "30 St",
+   "lat": 40.7472687876529,
+   "lon": -73.9896154282396,
+   "installed": "2017-03-22"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "31 St",
+   "lat": 40.7478863150989,
+   "lon": -73.9891642023367,
+   "installed": "2017-03-22"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "32 St",
+   "lat": 40.7485038398221,
+   "lon": -73.9887129668844,
+   "installed": "2017-03-22"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "35 St",
+   "lat": 40.7504442281559,
+   "lon": -73.9872906205137,
+   "installed": "2017-03-22"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "37 St",
+   "lat": 40.7517012515457,
+   "lon": -73.9864003421055,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "38 St",
+   "lat": 40.7523160208216,
+   "lon": -73.9859454464925,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "39 St",
+   "lat": 40.7529362763734,
+   "lon": -73.9854869319772,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "40 St",
+   "lat": 40.7535455212517,
+   "lon": -73.9850414040876,
+   "installed": "2010-11-14"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "26 St",
+   "lat": 40.746003814906,
+   "lon": -73.9942617813249,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "27 St",
+   "lat": 40.7466103511898,
+   "lon": -73.993812770147,
+   "installed": "2012-07-27"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "28 St",
+   "lat": 40.7472361580579,
+   "lon": -73.9933594235177,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "29 St",
+   "lat": 40.7478537001735,
+   "lon": -73.9929082313569,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "30 St",
+   "lat": 40.7484684950602,
+   "lon": -73.9924606402108,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "31 St",
+   "lat": 40.7490942359053,
+   "lon": -73.9920043743292,
+   "installed": "2016-06-25"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "33 St",
+   "lat": 40.7503100938323,
+   "lon": -73.991109153438,
+   "installed": "2016-06-25"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "35 St",
+   "lat": 40.7516577158417,
+   "lon": -73.9901323137848,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "36 St",
+   "lat": 40.7522807344754,
+   "lon": -73.9896918899197,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "37 St",
+   "lat": 40.7528955173727,
+   "lon": -73.9892442393437,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "38 St",
+   "lat": 40.7535157860031,
+   "lon": -73.9887857515557,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "39 St",
+   "lat": 40.7541305649037,
+   "lon": -73.9883344749417,
+   "installed": "2018-08-11"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "24 St",
+   "lat": 40.7459435256135,
+   "lon": -73.9980064180238,
+   "installed": "2015-09-26"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "25 St",
+   "lat": 40.7465720649432,
+   "lon": -73.9975516683246,
+   "installed": "2015-09-26"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "26 St",
+   "lat": 40.7472061207604,
+   "lon": -73.9970983579037,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "27 St",
+   "lat": 40.7478236775246,
+   "lon": -73.9966472006055,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "28 St",
+   "lat": 40.7484302219305,
+   "lon": -73.9961945886295,
+   "installed": "2015-05-10"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "29 St",
+   "lat": 40.7490450295368,
+   "lon": -73.9957470239386,
+   "installed": "2015-11-09"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "30 St",
+   "lat": 40.7496708457486,
+   "lon": -73.9952972892292,
+   "installed": "2017-09-12"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "31 St",
+   "lat": 40.7502856187539,
+   "lon": -73.9948410414238,
+   "installed": "2016-06-25"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "33 St",
+   "lat": 40.7515234871453,
+   "lon": -73.9939473024919,
+   "installed": "2020-05-21"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "34 St",
+   "lat": 40.7521821679649,
+   "lon": -73.9934621510894,
+   "installed": "1997-01-06"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "35 St",
+   "lat": 40.7528546344964,
+   "lon": -73.9929798850837,
+   "installed": "2018-06-13"
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "36 St",
+   "lat": 40.7534749184673,
+   "lon": -73.9925286510413,
+   "installed": "2017-09-23"
+  },
+  {
+   "main_street": "9 Ave",
+   "cross_street": "30 St",
+   "lat": 40.7508950525273,
+   "lon": -73.9981181550468,
+   "installed": null
+  },
+  {
+   "main_street": "9 Ave",
+   "cross_street": "31 St",
+   "lat": 40.751487941223,
+   "lon": -73.9976828682048,
+   "installed": "2020-05-27"
+  },
+  {
+   "main_street": "9 Ave",
+   "cross_street": "33 St",
+   "lat": 40.752714789369,
+   "lon": -73.9967862700442,
+   "installed": "2015-09-12"
+  },
+  {
+   "main_street": "9 Ave",
+   "cross_street": "34 St",
+   "lat": 40.7533872697656,
+   "lon": -73.9963040337397,
+   "installed": "2022-04-08"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "29 St",
+   "lat": 40.74603632982,
+   "lon": -73.9885921279666,
+   "installed": "2020-01-02"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "31 St",
+   "lat": 40.7475349338403,
+   "lon": -73.9883067577325,
+   "installed": "2020-01-02"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "36 St",
+   "lat": 40.7514186834503,
+   "lon": -73.987645586004,
+   "installed": "2020-01-02"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "37 St",
+   "lat": 40.7521597477933,
+   "lon": -73.9874902500132,
+   "installed": "2018-01-30"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "38 St",
+   "lat": 40.7528925757445,
+   "lon": -73.9873096469734,
+   "installed": "2020-01-02"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "39 St",
+   "lat": 40.7536061848061,
+   "lon": -73.9870893396715,
+   "installed": "2020-01-02"
+  },
+  {
+   "main_street": "Broadway",
+   "cross_street": "40 St",
+   "lat": 40.7543170491214,
+   "lon": -73.986865419989,
+   "installed": "2020-01-02"
+  }
+ ]
+}

@@ -1,0 +1,64 @@
+{
+ "meta": {
+  "fetched": "2026-09-26",
+  "bbox": [
+   40.7455,
+   -73.9985,
+   40.7545,
+   -73.9845
+  ],
+  "dataset": "8kuj-2n3u",
+  "url": "https://data.cityofnewyork.us/d/8kuj-2n3u"
+ },
+ "rows": [
+  {
+   "main_street": "34 St",
+   "cross_street": "betw. 5 Ave and 6 Ave",
+   "mid_block": true,
+   "lat": 40.749080735723226,
+   "lon": -73.98620055533524
+  },
+  {
+   "main_street": "34 St",
+   "cross_street": "betw. 6 Ave and 7 Ave",
+   "mid_block": true,
+   "lat": 40.75098273576426,
+   "lon": -73.99062155457675
+  },
+  {
+   "main_street": "34 St",
+   "cross_street": "betw. 7 Ave and 8 Ave",
+   "mid_block": true,
+   "lat": 40.751567735211204,
+   "lon": -73.99203655346903
+  },
+  {
+   "main_street": "34 St",
+   "cross_street": "betw. 8 Ave and 9 Ave",
+   "mid_block": true,
+   "lat": 40.75263573573007,
+   "lon": -73.99442455312015
+  },
+  {
+   "main_street": "6 Ave",
+   "cross_street": "West 41 Street",
+   "mid_block": false,
+   "lat": 40.75416873448526,
+   "lon": -73.98459355566892
+  },
+  {
+   "main_street": "7 Ave",
+   "cross_street": "West 32 Street",
+   "mid_block": false,
+   "lat": 40.74969773600316,
+   "lon": -73.99156055350386
+  },
+  {
+   "main_street": "8 Ave",
+   "cross_street": "betw.   W31-W33",
+   "mid_block": true,
+   "lat": 40.75085573616018,
+   "lon": -73.99441455300374
+  }
+ ]
+}
