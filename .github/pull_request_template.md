@@ -1,5 +1,7 @@
 ## Feature
 
+Closes #
+
 Branch: `feat/...` · Stage: ... · Owner: ...
 
 ## What changed
