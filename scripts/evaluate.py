@@ -102,7 +102,7 @@ def run_window(cache: dict, rules: dict) -> list[Prediction]:
     for row in cache["frames"]:
         ts = datetime.fromisoformat(row["ts"].replace("Z", "+00:00"))
         dets = [Detection(tuple(d[:4]), VehicleClass(d[4]), d[5]) for d in row["dets"]]
-        update = pipe.step(ts, None, dets, frozen=row["frozen"])
+        update = pipe.step(ts, None, dets, frozen=row["frozen"], view=row.get("view"))
         for e in update.opened:
             alert_at[e.id] = ts
         final.update({e.id: e for e in update.changed})
@@ -123,7 +123,7 @@ def still_vehicles(cache: dict, rules: dict, min_still_s: float) -> list[dict]:
     for row in cache["frames"]:
         ts = datetime.fromisoformat(row["ts"].replace("Z", "+00:00"))
         dets = [Detection(tuple(d[:4]), VehicleClass(d[4]), d[5]) for d in row["dets"]]
-        pipe.step(ts, None, dets, frozen=row["frozen"])
+        pipe.step(ts, None, dets, frozen=row["frozen"], view=row.get("view"))
         for t in pipe.tracks:
             if t.missed or t.stationary_s <= 0:
                 continue

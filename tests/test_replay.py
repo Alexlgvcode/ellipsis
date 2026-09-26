@@ -25,14 +25,17 @@ TRUCK = (191.0, 79.0, 226.0, 129.0)             # double parked by the planters 
 
 
 def write_frames(root, camera_id, times, day="20260926"):
-    """Noisy synthetic frames (identical frames would look like a frozen feed)."""
+    """The camera's reference frame with fresh noise each time: the view matches the lane mask
+    (a random image would pause the camera as "moved") and no two frames are identical (which
+    would look like a frozen feed)."""
     folder = root / camera_id / day
     folder.mkdir(parents=True, exist_ok=True)
+    base = Image.open(REPO_ROOT / "events" / "masks" / f"{camera_id}.jpg").convert("RGB")
     rng = random.Random(0)
     for t in times:
-        img = Image.new("RGB", (352, 240))
-        img.putdata([(rng.randrange(256),) * 3 for _ in range(352 * 240)])
-        img.save(folder / f"{t}.jpg")
+        noise = Image.new("RGB", base.size)
+        noise.putdata([(rng.randrange(256),) * 3 for _ in range(base.width * base.height)])
+        Image.blend(base, noise, 0.15).save(folder / f"{t}.jpg")
     return folder
 
 

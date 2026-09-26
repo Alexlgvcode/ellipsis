@@ -1,7 +1,9 @@
 # Dwell thresholds and rule knobs. Tune during the event without code changes.
 dwell_s:                 # seconds a vehicle must stay still in a zone before an event opens
   double_parked: 60      # curb_adjacent zones
-  stopped_in_lane: 120   # travel zones; longer than one signal cycle, so red lights don't fire
+  stopped_in_lane: 75    # travel zones. Was 120 (> one signal cycle); on evaluation/ 75 catches
+                         # taxis blocking a lane for 90-100 s with no extra false alerts (red-light
+                         # queues are handled by front-of-queue + min_seen_frac). Watch it.
   blocked_box: 30        # box zones; 20 fired on cabs waiting ~20 s to turn while pedestrians cross
   bus_stop: 120          # any vehicle in a bus_stop zone (buses leave within ~30-60 s);
                          # reported as double_parked. Class is never used: the detector
@@ -10,8 +12,10 @@ dwell_s:                 # seconds a vehicle must stay still in a zone before an
 
 signal_cycle_s: 90
 track_lost_frames: 3
-edge_margin_px: 2        # no events for boxes whose bottom touches the frame edge: the vehicle
-                         # is cut off, so its box bottom isn't where it touches the road
+edge_margin_px: 2        # no events for boxes touching the frame edge: the vehicle is cut off,
+                         # so its box bottom-center isn't where it touches the road
+edge_sides: true         # also the left/right edges, not just the bottom (evaluation/: removed
+                         # 2 false alerts, no real blockage lost)
 
 stationary:
   # still = at least `min_still_edges` of the 4 box edges moved < max_edge_shift_frac of the
@@ -22,6 +26,9 @@ stationary:
   min_iou: 0.5
   reset_after_frames: 2   # moved frames in a row (vs where it parked) before the timer resets;
                           # 1 would let a single glitchy box wipe out the stationary time
+  min_seen_frac: 0.7      # an event opens only if the vehicle was detected in at least this share
+                          # of its still streak's frames (different buses passing one spot leave
+                          # gaps). Tuned on evaluation/: 0.8+ starts losing real blockages
 
 tracking:
   match_iou: 0.3   # min overlap to link a box to an existing track (frames are 2-5 s apart)
@@ -31,3 +38,9 @@ tracking:
 queue:                   # only the front vehicle of a queue in a travel lane is an event;
   max_gap_frac: 0.6      # stopped vehicles closer than this x the vehicle's height behind it
   min_x_overlap: 0.3     # and overlapping sideways by this fraction are queued behind it
+
+view:                    # paused when the camera pans/zooms away from its mask's reference frame
+  min_similarity: 0.3    # edge similarity (events/view.py): unmoved cameras 0.49-0.88, the 8 Ave
+                         # @ 34 St camera after zooming out 0.11 (2026-09-26)
+  pause_after_frames: 3
+  resume_after_frames: 3

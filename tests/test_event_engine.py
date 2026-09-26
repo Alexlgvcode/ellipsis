@@ -65,7 +65,7 @@ def closed(updates):
 
 @pytest.mark.parametrize("box, kind, zone, dwell", [
     (CURBSIDE, EventType.DOUBLE_PARKED, LaneZone.CURB_ADJACENT, 60),
-    (MIDDLE, EventType.STOPPED_IN_LANE, LaneZone.TRAVEL, 120),
+    (MIDDLE, EventType.STOPPED_IN_LANE, LaneZone.TRAVEL, 75),
     (IN_BOX, EventType.BLOCKED_BOX, LaneZone.BOX, 30),
     (BUS_STOP, EventType.DOUBLE_PARKED, LaneZone.BUS_STOP, 120),
 ])
@@ -81,8 +81,8 @@ def test_each_type_fires_exactly_at_its_threshold(box, kind, zone, dwell):
     assert 0 < e.confidence <= 1
 
 
-def test_red_light_wait_shorter_than_the_cycle_does_not_fire():
-    waiting = [[MIDDLE]] * 19                               # 90 s at the light
+def test_travel_lane_stop_shorter_than_the_threshold_does_not_fire():
+    waiting = [[MIDDLE]] * 14                               # 65 s at the light (< 75 s)
     driving = [[(160, 100 - 20 * k, 200, 130 - 20 * k)] for k in range(1, 4)]
     assert opened(run(waiting + driving)) == []
 
@@ -199,7 +199,32 @@ def test_real_footage_7_ave_36_st_double_parked_trucks():
 
 @pytest.mark.parametrize("camera_id, why", [
     ("6a85384f-d82e-4bff-b5f1-15c22cca70e6", "SUV in the parking lane, red-light queue"),
-    ("ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c", "cabs at the taxi stand, cut-off vehicles"),
 ])
 def test_real_footage_without_incidents_stays_quiet(camera_id, why):
     assert replay_fixture(camera_id) == [], why
+
+
+def test_real_footage_8th_ave_31st_st_catches_only_the_blocking_taxi():
+    # session 1: the taxi Alex found blocking the lane (gt_009) fires; the taxi-stand cabs and
+    # the cab cut off at the frame edge don't
+    events = replay_fixture("ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c")
+    assert [e.type for e in events] == [EventType.STOPPED_IN_LANE]
+    x1, y1, x2, y2 = events[0].bbox
+    assert 200 < x1 < 240 and 150 < y1 < 165          # gt_009: [221, 158, 266, 182]
+
+
+def test_vehicle_cut_off_at_the_side_never_fires():
+    assert opened(run([[(0, 100, 40, 130)]] * 14)) == []    # touches the left edge
+    rules = copy.deepcopy(load_rules())
+    rules["edge_sides"] = False
+    assert opened(run([[(0, 100, 40, 130)]] * 14, rules)) == []   # parking zone anyway
+    assert len(opened(run([[(320, 190, 352, 220)]] * 8, rules))) == 1  # box zone, side allowed
+
+
+def test_vehicle_seen_in_too_few_frames_never_fires():
+    # the same spot "still" for 60 s, but empty in every other frame: different vehicles
+    gappy = [[CURBSIDE] if i % 2 == 0 else [] for i in range(30)]
+    assert opened(run(gappy)) == []
+    rules = copy.deepcopy(load_rules())
+    rules["stationary"]["min_seen_frac"] = 0.0
+    assert len(opened(run(gappy, rules))) == 1

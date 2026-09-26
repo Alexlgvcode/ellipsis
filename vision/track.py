@@ -81,6 +81,8 @@ class Track:
     stationary_since: datetime | None = None
     anchor: BBox | None = None  # box where the current still streak started
     strikes: int = 0            # consecutive frames that failed the test vs anchor
+    still_seen: int = 0         # frames the vehicle was detected during the current still streak
+    still_missed: int = 0       # frames it wasn't
     max_stationary_s: float = 0.0
     hits: int = 1
     missed: int = 0  # consecutive frames without a matching detection
@@ -89,6 +91,13 @@ class Track:
     @property
     def cls(self) -> VehicleClass:
         return self.class_votes.most_common(1)[0][0]
+
+    @property
+    def seen_frac(self) -> float:
+        """Share of the still streak's frames the vehicle was actually detected in. A parked
+        vehicle is seen almost every frame; different buses passing one spot leave gaps."""
+        total = self.still_seen + self.still_missed
+        return self.still_seen / total if total else 0.0
 
     @property
     def stationary_s(self) -> float:
@@ -153,6 +162,8 @@ class CameraTracker:
             if track.last_seen == ts:  # created this frame
                 continue
             track.missed += 1
+            if track.stationary_since is not None:
+                track.still_missed += 1
             if track.missed > self.max_missed:
                 self.ended.append(self.tracks.pop(tid))
         return list(self.tracks.values())
@@ -165,12 +176,15 @@ class CameraTracker:
             if still(track.bbox):  # start a streak at the previous observation
                 track.stationary_since, track.anchor, track.strikes = (
                     track.last_seen, track.bbox, 0)
+                track.still_seen, track.still_missed = 1, 0
         elif still(track.anchor):
             track.strikes = 0
         else:
             track.strikes += 1
             if track.strikes >= self.reset_after:  # it really moved
                 track.stationary_since, track.anchor, track.strikes = None, None, 0
+        if track.stationary_since is not None:
+            track.still_seen += 1
         track.last_seen = ts
         track.bbox = det.bbox
         track.conf = det.conf
