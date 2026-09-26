@@ -3,6 +3,7 @@
     python scripts/evaluate.py                       # current masks + events/rules.yaml
     python scripts/evaluate.py --rules my_rules.yaml # try other thresholds in seconds
     python scripts/evaluate.py --exclude bus_lane police camera_moved
+    python scripts/evaluate.py --candidates         # GIFs of possible missed blockages
 
 Runs tracker + event engine over every reviewed window in
 evaluation/ground_truth.yaml and prints precision, recall, type accuracy and time to
@@ -23,7 +24,7 @@ import json
 import sys
 from collections import defaultdict
 from collections.abc import Sequence
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -108,6 +109,109 @@ def run_window(cache: dict, rules: dict) -> list[Prediction]:
     return [Prediction(e, alert_at[i]) for i, e in final.items() if i in alert_at]
 
 
+ACTIVE_ZONES = {"travel", "curb_adjacent", "box", "bus_stop"}
+ZONE_TYPES = {"box": "blocked_box", "travel": "stopped_in_lane"}
+
+
+def still_vehicles(cache: dict, rules: dict, min_still_s: float) -> list[dict]:
+    """Every stretch where a tracked vehicle stood still >= min_still_s in an active zone."""
+    pipe = CameraPipeline.for_camera(cache["camera"], rules)
+    if pipe is None:
+        return []
+    mask = pipe.engine.mask
+    stretches: dict[tuple, dict] = {}
+    for row in cache["frames"]:
+        ts = datetime.fromisoformat(row["ts"].replace("Z", "+00:00"))
+        dets = [Detection(tuple(d[:4]), VehicleClass(d[4]), d[5]) for d in row["dets"]]
+        pipe.step(ts, None, dets, frozen=row["frozen"])
+        for t in pipe.tracks:
+            if t.missed or t.stationary_s <= 0:
+                continue
+            zone = mask.lane_zone(t.bbox).value
+            key = (t.id, t.stationary_since)
+            s = stretches.setdefault(key, {"camera": cache["camera"], "start": t.stationary_since,
+                                           "zone": zone, "bbox": list(t.bbox)})
+            s.update(end=ts, still_s=t.stationary_s, cls=t.cls.value)
+            if zone in ACTIVE_ZONES:
+                s["zone"], s["bbox"] = zone, list(t.bbox)
+    return [s for s in stretches.values()
+            if s["still_s"] >= min_still_s and s["zone"] in ACTIVE_ZONES]
+
+
+def find_candidates(stills: list[dict], gt: GroundTruth,
+                    predictions: list[Prediction]) -> list[dict]:
+    """Still vehicles nobody has judged and no alert covers, merged when they're one vehicle."""
+    from evaluation.metrics import iou
+
+    def same(a_cam, a_start, a_end, a_box, b_cam, b_start, b_end, b_box, slack=15):
+        return (a_cam == b_cam and a_start.timestamp() <= b_end.timestamp() + slack
+                and a_end.timestamp() >= b_start.timestamp() - slack and iou(a_box, b_box) >= 0.3)
+
+    alerts = [(p.event.camera_id, p.event.start_ts,
+               p.event.start_ts + timedelta(seconds=p.event.duration_s), p.event.bbox)
+              for p in predictions]
+    judged = [(t.camera, t.start, t.end, t.bbox) for t in gt.items]
+    fresh = [s for s in stills
+             if not any(same(s["camera"], s["start"], s["end"], s["bbox"], *o)
+                        for o in alerts + judged)]
+    merged: list[dict] = []
+    for s in sorted(fresh, key=lambda s: -s["still_s"]):
+        for m in merged:
+            if same(s["camera"], s["start"], s["end"], s["bbox"],
+                    m["camera"], m["start"], m["end"], m["bbox"]):
+                m["start"], m["end"] = min(m["start"], s["start"]), max(m["end"], s["end"])
+                break
+        else:
+            merged.append(dict(s))
+    return sorted(merged, key=lambda m: (m["camera"], m["start"]))
+
+
+def write_candidate_gifs(candidates: list[dict], names: dict[str, str], out: Path) -> None:
+    from PIL import Image, ImageDraw
+
+    frames_dir = get_settings().frames_dir
+    out.mkdir(parents=True, exist_ok=True)
+    for old in out.glob("cand_*.gif"):
+        old.unlink()
+    lines = ["# Possible missed blockages: fill in `verdict` (real / not) and a note,",
+             "# then copy the real ones into blockages: and the rest into not_blockages:",
+             "# in evaluation/ground_truth.yaml.", "candidates:"]
+    for n, c in enumerate(candidates, 1):
+        lo, hi = c["start"] - timedelta(seconds=30), c["end"] + timedelta(seconds=30)
+        paths = sorted((p for p in (frames_dir / c["camera"]).glob("*/*.jpg")
+                        if lo <= frame_timestamp(p) <= hi), key=frame_timestamp)
+        paths = paths[::max(1, len(paths) // 80)]
+        images = []
+        for p in paths:
+            ts = frame_timestamp(p)
+            img = Image.open(p).convert("RGB").resize((704, 480))
+            d = ImageDraw.Draw(img)
+            still = c["start"] <= ts <= c["end"]
+            if still:
+                d.rectangle([v * 2 for v in c["bbox"]], outline=(255, 210, 0), width=4)
+            d.rectangle((0, 450, 704, 480), fill=(0, 0, 0))
+            label = (f"#{n} {names.get(c['camera'], c['camera'][:8])}  {ts:%H:%M:%S} UTC  "
+                     + (f"still {int((ts - c['start']).total_seconds())}s in {c['zone']}"
+                        if still else "not still"))
+            d.text((8, 458), label, fill=(255, 210, 0) if still else (230, 230, 230))
+            images.append(img.quantize(colors=128))
+        cam = names.get(c["camera"], c["camera"][:8])
+        name = f"cand_{n:02d}_{cam.replace(' ', '').replace('@', '_').replace('/', '-')}.gif"
+        if images:
+            images[0].save(out / name, save_all=True, append_images=images[1:], duration=250,
+                           loop=0, optimize=True)
+        lines += [f"  - id: cand_{n:02d}   # {name}",
+                  f"    camera: {c['camera']}   # {names.get(c['camera'], '')}",
+                  f"    type: {ZONE_TYPES.get(c['zone'], 'double_parked')}",
+                  f"    start: {c['start']:%Y-%m-%dT%H:%M:%SZ}",
+                  f"    end: {c['end']:%Y-%m-%dT%H:%M:%SZ}",
+                  f"    bbox: {[round(v) for v in c['bbox']]}",
+                  f"    still_s: {c['still_s']:.0f}   # zone {c['zone']}, looks like a {c['cls']}",
+                  "    verdict: \"\"   # real / not",
+                  "    note: \"\""]
+    (out / "candidates.yaml").write_text("\n".join(lines) + "\n")
+
+
 def _pct(v: float | None) -> str:
     return "  -  " if v is None else f"{v:5.0%}"
 
@@ -159,6 +263,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     ap.add_argument("--refresh-cache", action="store_true",
                     help="rebuild evaluation/detections/ from data/frames/ (needs .[vision])")
     ap.add_argument("--out", type=Path, default=REPO_ROOT / "runs" / "eval")
+    ap.add_argument("--candidates", action="store_true",
+                    help="also list vehicles still >= --min-still s in an active zone that no "
+                         "alert or ground-truth entry covers, with GIFs (needs data/frames/)")
+    ap.add_argument("--min-still", type=float, default=45.0)
     args = ap.parse_args(argv)
 
     gt = load_ground_truth(args.ground_truth) if args.ground_truth else load_ground_truth()
@@ -170,6 +278,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         return Detector().detect
 
     predictions: list[Prediction] = []
+    stills: list[dict] = []
     for w in gt.windows:
         cache = load_cache(w, args.refresh_cache, detector_factory)
         if cache is None:
@@ -177,6 +286,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                   "detections and no recorded frames")
             continue
         predictions += run_window(cache, rules)
+        if args.candidates:
+            stills += still_vehicles(cache, rules, args.min_still)
 
     report = evaluate(predictions, gt, exclude=args.exclude)
     title = "all ground truth" + (f" (excluding {', '.join(args.exclude)})" if args.exclude else "")
@@ -194,6 +305,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                                 "alert_ts": m.prediction.alert_ts.isoformat(),
                                 "event": m.prediction.event.model_dump(mode="json")}) + "\n")
     print(f"\nreport -> {args.out / 'report.json'}")
+    if args.candidates:
+        cands = find_candidates(stills, gt, predictions)
+        print(f"\n{len(cands)} possible missed blockages (still >= {args.min_still:.0f} s, "
+              "no alert, not judged yet):")
+        for n, c in enumerate(cands, 1):
+            print(f"  #{n:<3}{names.get(c['camera'], c['camera'][:8]):<26}{c['zone']:<15}"
+                  f"{c['start']:%H:%M:%S}  still {c['still_s']:>4.0f}s  {c['cls']}")
+        write_candidate_gifs(cands, names, args.out / "candidates")
+        print(f"GIFs + candidates.yaml -> {args.out / 'candidates'}")
     return 0
 
 

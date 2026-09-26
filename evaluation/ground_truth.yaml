@@ -103,17 +103,18 @@ blockages:
   - id: gt_006
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: stopped_in_lane
-    start: 2026-09-26T20:25:00Z
+    start: 2026-09-26T20:22:42Z
     end: 2026-09-26T20:28:09Z
     bbox: [164, 159, 193, 185]
-    note: "cab stopped in the lane next to the bike lane, blocking the road"
+    note: "cab stopped in the lane next to the bike lane, blocking the road; there from 20:22:42 (cand_31), tracker timer reset at 20:24:36"
   - id: gt_007
     camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
     type: double_parked
     start: 2026-09-26T20:28:09Z
-    end: 2026-09-26T20:31:00Z
+    end: 2026-09-26T20:32:12Z   # clipped: still there when recording stopped
+    end_clipped: true
     bbox: [203, 92, 231, 130]
-    note: "white delivery van stopped in the right lane"
+    note: "white delivery van stopped in the right lane; a food cart pulled up in front at ~20:31 and reset the tracker timer (cand_53)"
   - id: gt_008
     camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
     type: double_parked
@@ -121,117 +122,488 @@ blockages:
     end: 2026-09-26T20:31:11Z
     bbox: [188, 108, 245, 186]
     note: "tow truck stopped in the right lane"
+  - id: gt_009
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T18:22:51Z
+    end: 2026-09-26T18:24:27Z
+    bbox: [221, 158, 266, 182]
+    note: "taxi stopped in the lane, blocking the road (found by the missed-blockage review)"
+  - id: gt_010
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:24:51Z
+    end: 2026-09-26T20:26:20Z
+    bbox: [192, 170, 241, 198]
+    note: "vehicle stopped in the lane, blocking the road (found by the missed-blockage review)"
 
 not_blockages:
-  - id: no_002
+  - id: no_001
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: double_parked
     start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
     end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
     bbox: [110, 101, 136, 125]
     note: "SUV legally parked in the floating parking lane"
-  - id: no_003
+  - id: no_002
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: stopped_in_lane
     start: 2026-09-26T18:22:09Z   # clipped: already there when recording started
     end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
     bbox: [263, 159, 302, 184]
     note: "cabs waiting at the Penn Station taxi stand"
-  - id: no_004
+  - id: no_003
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: blocked_box
     start: 2026-09-26T18:24:38Z
     end: 2026-09-26T18:25:45Z
     bbox: [297, 159, 352, 238]
     note: "cab cut off at the frame edge, near the taxi stand"
-  - id: no_005
+  - id: no_004
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: blocked_box
     start: 2026-09-26T18:25:14Z
     end: 2026-09-26T18:25:45Z
     bbox: [242, 220, 337, 240]
     note: "vehicle cut off by the bottom of the frame"
-  - id: no_006
+  - id: no_005
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: blocked_box
     start: 2026-09-26T18:28:12Z
     end: 2026-09-26T18:28:55Z
     bbox: [259, 106, 352, 206]
     note: "first car of a red-light queue, stopped on the crosswalk"
-  - id: no_007
+  - id: no_006
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: stopped_in_lane
     start: 2026-09-26T20:12:16Z   # clipped: already there when recording started
     end: 2026-09-26T20:32:12Z   # clipped: still there when recording stopped
     bbox: [275, 112, 332, 146]
     note: "illegally parked at the corner but not blocking traffic"
-  - id: no_008
+  - id: no_007
     camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
     type: double_parked
     start: 2026-09-26T20:12:17Z
     end: 2026-09-26T20:23:03Z
     bbox: [248, 160, 279, 177]
     note: "traffic jam: every lane stopped"
-  - id: no_011
+  - id: no_008
     camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
     type: double_parked
     start: 2026-09-26T20:13:15Z
     end: 2026-09-26T20:20:50Z
     bbox: [234, 151, 256, 168]
     note: "traffic jam: every lane stopped"
-  - id: no_012
+  - id: no_009
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: stopped_in_lane
     start: 2026-09-26T20:13:42Z
     end: 2026-09-26T20:16:07Z
     bbox: [126, 122, 169, 173]
     note: "waiting at the stop line to turn left"
-  - id: no_013
+  - id: no_010
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: double_parked
     start: 2026-09-26T20:14:08Z
     end: 2026-09-26T20:15:10Z
     bbox: [136, 92, 171, 120]
     note: "waiting at the red light"
-  - id: no_015
+  - id: no_011
     camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
     type: blocked_box
     start: 2026-09-26T20:14:48Z
     end: 2026-09-26T20:15:26Z
     bbox: [221, 125, 352, 173]
     note: "different buses passing the same spot, linked as one vehicle"
-  - id: no_017
+  - id: no_012
     camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
     type: double_parked
     start: 2026-09-26T20:16:26Z
     end: 2026-09-26T20:18:39Z
     bbox: [140, 120, 185, 165]
     note: "waiting at the stop line to turn left"
-  - id: no_030
+  - id: no_013
     camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
     type: double_parked
     start: 2026-09-26T20:21:01Z
     end: 2026-09-26T20:22:04Z
     bbox: [242, 175, 276, 198]
     note: "traffic jam: every lane stopped"
-  - id: no_034
+  - id: no_014
     camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
     type: double_parked
     start: 2026-09-26T20:25:21Z
     end: 2026-09-26T20:28:03Z
     bbox: [248, 161, 279, 178]
     note: "traffic jam: every lane stopped"
-  - id: no_035
+  - id: no_015
     camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
     type: blocked_box
     start: 2026-09-26T20:25:48Z
     end: 2026-09-26T20:26:26Z
     bbox: [297, 179, 352, 233]
     note: "different vehicles passing the same spot, linked as one vehicle"
-  - id: no_036
+  - id: no_016
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: stopped_in_lane
     start: 2026-09-26T20:28:03Z
     end: 2026-09-26T20:30:27Z
     bbox: [304, 177, 352, 208]
     note: "cab in the taxi-stand line, just outside the ignore zone"
+  - id: no_017
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:12:45Z
+    end: 2026-09-26T20:13:53Z
+    bbox: [170, 183, 204, 218]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_018
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:14:08Z
+    end: 2026-09-26T20:14:54Z
+    bbox: [114, 166, 144, 192]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_019
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:15:41Z
+    end: 2026-09-26T20:16:37Z
+    bbox: [112, 181, 151, 218]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_020
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:18:34Z
+    end: 2026-09-26T20:19:34Z
+    bbox: [83, 165, 113, 191]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_021
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:20:10Z
+    end: 2026-09-26T20:20:56Z
+    bbox: [117, 182, 149, 211]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_022
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:21:28Z
+    end: 2026-09-26T20:22:33Z
+    bbox: [182, 166, 209, 193]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_023
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:21:48Z
+    end: 2026-09-26T20:22:37Z
+    bbox: [165, 175, 197, 204]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_024
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:23:03Z
+    end: 2026-09-26T20:24:21Z
+    bbox: [176, 172, 209, 207]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_025
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:24:36Z
+    end: 2026-09-26T20:25:26Z
+    bbox: [85, 170, 122, 198]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_026
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:25:00Z
+    end: 2026-09-26T20:26:36Z
+    bbox: [168, 130, 177, 141]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_027
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:25:58Z
+    end: 2026-09-26T20:27:20Z
+    bbox: [165, 185, 194, 214]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_028
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:29:02Z
+    end: 2026-09-26T20:30:12Z
+    bbox: [139, 227, 182, 239]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_029
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:29:06Z
+    end: 2026-09-26T20:29:52Z
+    bbox: [161, 185, 192, 212]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_030
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:29:11Z
+    end: 2026-09-26T20:29:57Z
+    bbox: [46, 179, 92, 214]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_031
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:30:38Z
+    end: 2026-09-26T20:31:31Z
+    bbox: [153, 128, 164, 138]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_032
+    camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:15:52Z
+    end: 2026-09-26T20:16:42Z
+    bbox: [149, 111, 170, 129]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_033
+    camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:23:28Z
+    end: 2026-09-26T20:24:21Z
+    bbox: [151, 106, 174, 124]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_034
+    camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:30:54Z
+    end: 2026-09-26T20:31:41Z
+    bbox: [152, 108, 175, 130]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_035
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T18:24:06Z
+    end: 2026-09-26T18:24:53Z
+    bbox: [152, 77, 165, 89]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_036
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T20:12:17Z
+    end: 2026-09-26T20:32:12Z
+    bbox: [0, 183, 102, 239]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_037
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:12:17Z
+    end: 2026-09-26T20:13:03Z
+    bbox: [158, 97, 181, 114]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_038
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T20:12:31Z
+    end: 2026-09-26T20:13:21Z
+    bbox: [188, 80, 203, 95]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_039
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T20:14:58Z
+    end: 2026-09-26T20:15:52Z
+    bbox: [156, 73, 166, 83]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_040
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    type: double_parked
+    start: 2026-09-26T20:16:37Z
+    end: 2026-09-26T20:17:27Z
+    bbox: [188, 87, 202, 99]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_041
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:13:25Z
+    end: 2026-09-26T20:14:28Z
+    bbox: [291, 172, 340, 198]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_042
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:17:18Z
+    end: 2026-09-26T20:18:03Z
+    bbox: [222, 155, 256, 176]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_043
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:18:34Z
+    end: 2026-09-26T20:19:48Z
+    bbox: [297, 174, 352, 202]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_044
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:21:11Z
+    end: 2026-09-26T20:22:18Z
+    bbox: [297, 169, 352, 203]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_045
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:22:23Z
+    end: 2026-09-26T20:23:13Z
+    bbox: [338, 188, 352, 212]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_046
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:24:31Z
+    end: 2026-09-26T20:25:32Z
+    bbox: [300, 173, 352, 204]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_047
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:25:11Z
+    end: 2026-09-26T20:26:30Z
+    bbox: [214, 198, 297, 240]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_048
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:26:09Z
+    end: 2026-09-26T20:27:20Z
+    bbox: [295, 169, 352, 202]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_049
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:28:03Z
+    end: 2026-09-26T20:30:01Z
+    bbox: [264, 160, 322, 195]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_050
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:28:54Z
+    end: 2026-09-26T20:29:52Z
+    bbox: [200, 200, 262, 240]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_051
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    type: stopped_in_lane
+    start: 2026-09-26T20:31:06Z
+    end: 2026-09-26T20:32:12Z
+    bbox: [285, 170, 341, 198]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_052
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:13:42Z
+    end: 2026-09-26T20:14:28Z
+    bbox: [135, 110, 154, 126]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_053
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:16:12Z
+    end: 2026-09-26T20:17:27Z
+    bbox: [181, 122, 210, 142]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_054
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:18:13Z
+    end: 2026-09-26T20:19:01Z
+    bbox: [134, 113, 153, 129]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_055
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:19:34Z
+    end: 2026-09-26T20:20:43Z
+    bbox: [137, 94, 146, 102]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_056
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:23:42Z
+    end: 2026-09-26T20:24:46Z
+    bbox: [118, 120, 144, 144]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_057
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:24:21Z
+    end: 2026-09-26T20:25:11Z
+    bbox: [153, 111, 173, 125]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_058
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:25:38Z
+    end: 2026-09-26T20:26:40Z
+    bbox: [143, 96, 154, 106]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_059
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:27:10Z
+    end: 2026-09-26T20:27:57Z
+    bbox: [143, 115, 166, 133]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_060
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:28:39Z
+    end: 2026-09-26T20:29:36Z
+    bbox: [156, 117, 177, 132]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_061
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: double_parked
+    start: 2026-09-26T20:12:41Z
+    end: 2026-09-26T20:13:57Z
+    bbox: [138, 47, 160, 70]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_062
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:17:48Z
+    end: 2026-09-26T20:18:57Z
+    bbox: [137, 71, 153, 83]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_063
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:21:01Z
+    end: 2026-09-26T20:21:48Z
+    bbox: [123, 80, 142, 101]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_064
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: double_parked
+    start: 2026-09-26T20:25:32Z
+    end: 2026-09-26T20:26:30Z
+    bbox: [97, 70, 113, 89]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_065
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: double_parked
+    start: 2026-09-26T20:26:54Z
+    end: 2026-09-26T20:27:41Z
+    bbox: [95, 60, 106, 72]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_066
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: double_parked
+    start: 2026-09-26T20:31:27Z
+    end: 2026-09-26T20:32:12Z
+    bbox: [95, 59, 104, 69]
+    note: "stopped at a red light (missed-blockage review, Alex)"
+  - id: no_067
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    type: stopped_in_lane
+    start: 2026-09-26T20:31:27Z
+    end: 2026-09-26T20:32:12Z
+    bbox: [118, 66, 132, 80]
+    note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
