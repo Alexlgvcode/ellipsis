@@ -11,6 +11,13 @@ track_lost_frames: 3
 stationary:
   max_center_shift_frac: 0.05   # of box width
   min_iou: 0.7
+  reset_after_frames: 2   # moved frames in a row (vs where it parked) before the timer resets;
+                          # 1 would let a single glitchy box wipe out the stationary time
+
+tracking:
+  match_iou: 0.3   # min overlap to link a box to an existing track (frames are 2-5 s apart)
+  max_gap_s: 30    # a track unseen for longer ends, even if fewer than track_lost_frames were
+                   # missed (recording gaps, restarts): nobody saw the vehicle stay put
 
 ignore:
   bus_in_bus_stop: true
