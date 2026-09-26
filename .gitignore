@@ -32,6 +32,8 @@ sim/results/*
 !sim/results/.gitkeep
 sim/network/*.osm
 sim/network/*.osm.xml
+sim/network/*.raw.net.xml
+sim/sources/measurements.json
 
 # Dashboard
 node_modules/

@@ -1,0 +1,5327 @@
+{
+ "meta": {
+  "source": "https://esd.ny.gov/sites/default/files/PSACLUIP-FEIS-Appendix-H.pdf",
+  "document": "Penn Station Area FEIS (ESD 2022), Appendix H",
+  "table": "TA-T7 2019 Existing Condition Level of Service Analysis"
+ },
+ "intersections": [
+  {
+   "name": "Broadway @ 23 St",
+   "feis_name": "Broadway/E 23rd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.5,
+      "delay_s": 1.1,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "midday": {
+      "v_c": 0.44,
+      "delay_s": 1.0,
+      "los": "A",
+      "queue95_ft": 1
+     },
+     "pm": {
+      "v_c": 0.32,
+      "delay_s": 2.0,
+      "los": "A",
+      "queue95_ft": 8
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.22,
+      "delay_s": 1.5,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "midday": {
+      "v_c": 0.18,
+      "delay_s": 1.6,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "pm": {
+      "v_c": 0.29,
+      "delay_s": 5.4,
+      "los": "A",
+      "queue95_ft": 3
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.9,
+      "delay_s": 54.9,
+      "los": "D",
+      "queue95_ft": 290
+     },
+     "midday": {
+      "v_c": 1.04,
+      "delay_s": 88.7,
+      "los": "F",
+      "queue95_ft": 405
+     },
+     "pm": {
+      "v_c": 1.01,
+      "delay_s": 76.2,
+      "los": "E",
+      "queue95_ft": 402
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.54,
+      "delay_s": 30.2,
+      "los": "C",
+      "queue95_ft": 117
+     },
+     "midday": {
+      "v_c": 0.49,
+      "delay_s": 29.1,
+      "los": "C",
+      "queue95_ft": 128
+     },
+     "pm": {
+      "v_c": 0.56,
+      "delay_s": 31.7,
+      "los": "C",
+      "queue95_ft": 124
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.37,
+      "delay_s": 18.1,
+      "los": "B",
+      "queue95_ft": 139
+     },
+     "midday": {
+      "v_c": 0.37,
+      "delay_s": 17.5,
+      "los": "B",
+      "queue95_ft": 139
+     },
+     "pm": {
+      "v_c": 0.29,
+      "delay_s": 16.9,
+      "los": "B",
+      "queue95_ft": 113
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 19.6,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 31.4,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 33.3,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 23 St",
+   "feis_name": "Fifth Ave/E 23rd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.71,
+      "delay_s": 31.0,
+      "los": "C",
+      "queue95_ft": 162
+     },
+     "midday": {
+      "v_c": 0.64,
+      "delay_s": 30.6,
+      "los": "C",
+      "queue95_ft": 174
+     },
+     "pm": {
+      "v_c": 0.43,
+      "delay_s": 31.7,
+      "los": "C",
+      "queue95_ft": 124
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.37,
+      "delay_s": 28.1,
+      "los": "C",
+      "queue95_ft": 34
+     },
+     "midday": {
+      "v_c": 0.36,
+      "delay_s": 29.4,
+      "los": "C",
+      "queue95_ft": 38
+     },
+     "pm": {
+      "v_c": 0.32,
+      "delay_s": 33.9,
+      "los": "C",
+      "queue95_ft": 37
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.38,
+      "delay_s": 0.7,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "midday": {
+      "v_c": 0.48,
+      "delay_s": 2.3,
+      "los": "A",
+      "queue95_ft": 10
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 0.9,
+      "los": "A",
+      "queue95_ft": 2
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.66,
+      "delay_s": 21.7,
+      "los": "C",
+      "queue95_ft": 220
+     },
+     "midday": {
+      "v_c": 0.6,
+      "delay_s": 20.0,
+      "los": "C",
+      "queue95_ft": 195
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 20.8,
+      "los": "C",
+      "queue95_ft": 207
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.5,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 20.7,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 20.1,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 30 St",
+   "feis_name": "Fifth Ave/E 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.99,
+      "delay_s": 55.3,
+      "los": "E",
+      "queue95_ft": 309
+     },
+     "midday": {
+      "v_c": 0.94,
+      "delay_s": 44.4,
+      "los": "D",
+      "queue95_ft": 283
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 65.1,
+      "los": "E",
+      "queue95_ft": 359
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.8,
+      "delay_s": 6.1,
+      "los": "A",
+      "queue95_ft": 32
+     },
+     "midday": {
+      "v_c": 0.7,
+      "delay_s": 3.6,
+      "los": "A",
+      "queue95_ft": 31
+     },
+     "pm": {
+      "v_c": 0.81,
+      "delay_s": 5.4,
+      "los": "A",
+      "queue95_ft": 39
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 15.5,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 11.9,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 18.5,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 31 St",
+   "feis_name": "Fifth Ave/E 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 1.03,
+      "delay_s": 52.4,
+      "los": "D",
+      "queue95_ft": 238
+     },
+     "midday": {
+      "v_c": 0.93,
+      "delay_s": 60.8,
+      "los": "E",
+      "queue95_ft": 255
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 75.3,
+      "los": "E",
+      "queue95_ft": 301
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 28.9,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 31.4,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 42.6,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 33 St",
+   "feis_name": "Fifth Ave/E 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.79,
+      "delay_s": 44.5,
+      "los": "D",
+      "queue95_ft": 263
+     },
+     "midday": {
+      "v_c": 0.86,
+      "delay_s": 52.6,
+      "los": "D",
+      "queue95_ft": 246
+     },
+     "pm": {
+      "v_c": 0.91,
+      "delay_s": 59.7,
+      "los": "E",
+      "queue95_ft": 274
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.66,
+      "delay_s": 4.5,
+      "los": "A",
+      "queue95_ft": 37
+     },
+     "midday": {
+      "v_c": 0.54,
+      "delay_s": 5.2,
+      "los": "A",
+      "queue95_ft": 45
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 4.1,
+      "los": "A",
+      "queue95_ft": 35
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.48,
+      "delay_s": 6.1,
+      "los": "A",
+      "queue95_ft": 10
+     },
+     "midday": {
+      "v_c": 0.71,
+      "delay_s": 22.0,
+      "los": "C",
+      "queue95_ft": 15
+     },
+     "pm": {
+      "v_c": 0.87,
+      "delay_s": 33.1,
+      "los": "C",
+      "queue95_ft": 89
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 10.6,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 15.4,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 16.2,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 34 St",
+   "feis_name": "Fifth Ave/E 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 83.7,
+      "los": "F",
+      "queue95_ft": 288
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 79.3,
+      "los": "E",
+      "queue95_ft": 241
+     },
+     "pm": {
+      "v_c": 0.97,
+      "delay_s": 67.1,
+      "los": "E",
+      "queue95_ft": 279
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.59,
+      "delay_s": 33.4,
+      "los": "C",
+      "queue95_ft": 122
+     },
+     "midday": {
+      "v_c": 0.69,
+      "delay_s": 35.1,
+      "los": "D",
+      "queue95_ft": 123
+     },
+     "pm": {
+      "v_c": 0.55,
+      "delay_s": 34.6,
+      "los": "C",
+      "queue95_ft": 121
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.7,
+      "delay_s": 35.1,
+      "los": "D",
+      "queue95_ft": 284
+     },
+     "midday": {
+      "v_c": 0.91,
+      "delay_s": 29.4,
+      "los": "C",
+      "queue95_ft": 370
+     },
+     "pm": {
+      "v_c": 0.74,
+      "delay_s": 27.3,
+      "los": "C",
+      "queue95_ft": 349
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.12,
+      "delay_s": 7.4,
+      "los": "A",
+      "queue95_ft": 17
+     },
+     "midday": {
+      "v_c": 0.11,
+      "delay_s": 4.5,
+      "los": "A",
+      "queue95_ft": 12
+     },
+     "pm": {
+      "v_c": 0.05,
+      "delay_s": 4.5,
+      "los": "A",
+      "queue95_ft": 4
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.97,
+      "delay_s": 24.5,
+      "los": "C",
+      "queue95_ft": 506
+     },
+     "midday": {
+      "v_c": 0.78,
+      "delay_s": 10.0,
+      "los": "B",
+      "queue95_ft": 78
+     },
+     "pm": {
+      "v_c": 0.91,
+      "delay_s": 16.2,
+      "los": "B",
+      "queue95_ft": 491
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.32,
+      "delay_s": 9.6,
+      "los": "A",
+      "queue95_ft": 20
+     },
+     "midday": {
+      "v_c": 0.23,
+      "delay_s": 6.4,
+      "los": "A",
+      "queue95_ft": 8
+     },
+     "pm": {
+      "v_c": 0.1,
+      "delay_s": 5.2,
+      "los": "A",
+      "queue95_ft": 3
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 35.6,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 28.0,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 27.4,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 35 St",
+   "feis_name": "Fifth Ave/E 35th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.93,
+      "delay_s": 88.8,
+      "los": "F",
+      "queue95_ft": 112
+     },
+     "midday": {
+      "v_c": 0.97,
+      "delay_s": 89.0,
+      "los": "F",
+      "queue95_ft": 135
+     },
+     "pm": {
+      "v_c": 0.69,
+      "delay_s": 56.8,
+      "los": "E",
+      "queue95_ft": 89
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.96,
+      "delay_s": 65.2,
+      "los": "E",
+      "queue95_ft": 310
+     },
+     "midday": {
+      "v_c": 0.75,
+      "delay_s": 36.0,
+      "los": "D",
+      "queue95_ft": 199
+     },
+     "pm": {
+      "v_c": 0.64,
+      "delay_s": 31.2,
+      "los": "C",
+      "queue95_ft": 250
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.64,
+      "delay_s": 3.6,
+      "los": "A",
+      "queue95_ft": 30
+     },
+     "midday": {
+      "v_c": 0.53,
+      "delay_s": 7.1,
+      "los": "A",
+      "queue95_ft": 55
+     },
+     "pm": {
+      "v_c": 0.58,
+      "delay_s": 5.2,
+      "los": "A",
+      "queue95_ft": 41
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 24.7,
+      "los": "C",
+      "queue95_ft": 6
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 132.1,
+      "los": "F",
+      "queue95_ft": 94
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 128.8,
+      "los": "F",
+      "queue95_ft": 91
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 23.5,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 24.7,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 17.8,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 36 St",
+   "feis_name": "Fifth Ave/E 36th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.76,
+      "delay_s": 32.9,
+      "los": "C",
+      "queue95_ft": 228
+     },
+     "midday": {
+      "v_c": 0.97,
+      "delay_s": 53.8,
+      "los": "D",
+      "queue95_ft": 295
+     },
+     "pm": {
+      "v_c": 0.72,
+      "delay_s": 30.2,
+      "los": "C",
+      "queue95_ft": 238
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.8,
+      "delay_s": 9.3,
+      "los": "A",
+      "queue95_ft": 45
+     },
+     "midday": {
+      "v_c": 0.53,
+      "delay_s": 7.2,
+      "los": "A",
+      "queue95_ft": 43
+     },
+     "pm": {
+      "v_c": 0.59,
+      "delay_s": 7.9,
+      "los": "A",
+      "queue95_ft": 56
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 16.1,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 26.3,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 15.2,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "5 Ave @ 37 St",
+   "feis_name": "Fifth Ave/E 37th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.71,
+      "delay_s": 25.5,
+      "los": "C",
+      "queue95_ft": 216
+     },
+     "midday": {
+      "v_c": 0.61,
+      "delay_s": 12.2,
+      "los": "B",
+      "queue95_ft": 125
+     },
+     "pm": {
+      "v_c": 0.89,
+      "delay_s": 23.3,
+      "los": "C",
+      "queue95_ft": 308
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.63,
+      "delay_s": 17.9,
+      "los": "B",
+      "queue95_ft": 246
+     },
+     "midday": {
+      "v_c": 0.41,
+      "delay_s": 14.7,
+      "los": "B",
+      "queue95_ft": 142
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 15.6,
+      "los": "B",
+      "queue95_ft": 173
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.42,
+      "delay_s": 18.7,
+      "los": "B",
+      "queue95_ft": 91
+     },
+     "midday": {
+      "v_c": 0.49,
+      "delay_s": 21.1,
+      "los": "C",
+      "queue95_ft": 106
+     },
+     "pm": {
+      "v_c": 0.52,
+      "delay_s": 21.9,
+      "los": "C",
+      "queue95_ft": 119
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 20.2,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 14.4,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 19.1,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "Broadway @ 30 St",
+   "feis_name": "Broadway/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.68,
+      "delay_s": 22.3,
+      "los": "C",
+      "queue95_ft": 140
+     },
+     "midday": {
+      "v_c": 0.65,
+      "delay_s": 25.0,
+      "los": "C",
+      "queue95_ft": 184
+     },
+     "pm": {
+      "v_c": 0.75,
+      "delay_s": 31.7,
+      "los": "C",
+      "queue95_ft": 316
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.18,
+      "delay_s": 38.0,
+      "los": "D",
+      "queue95_ft": 34
+     },
+     "midday": {
+      "v_c": 0.23,
+      "delay_s": 32.8,
+      "los": "C",
+      "queue95_ft": 48
+     },
+     "pm": {
+      "v_c": 0.21,
+      "delay_s": 35.3,
+      "los": "D",
+      "queue95_ft": 42
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.07,
+      "delay_s": 9.9,
+      "los": "A",
+      "queue95_ft": 24
+     },
+     "midday": {
+      "v_c": 0.13,
+      "delay_s": 6.8,
+      "los": "A",
+      "queue95_ft": 23
+     },
+     "pm": {
+      "v_c": 0.09,
+      "delay_s": 8.2,
+      "los": "A",
+      "queue95_ft": 20
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.2,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 23.1,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 29.6,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "Broadway @ 31 St",
+   "feis_name": "Broadway/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.97,
+      "delay_s": 67.5,
+      "los": "E",
+      "queue95_ft": 215
+     },
+     "midday": {
+      "v_c": 0.94,
+      "delay_s": 61.5,
+      "los": "E",
+      "queue95_ft": 235
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 71.3,
+      "los": "E",
+      "queue95_ft": 221
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.08,
+      "delay_s": 19.0,
+      "los": "B",
+      "queue95_ft": 48
+     },
+     "midday": {
+      "v_c": 0.14,
+      "delay_s": 19.4,
+      "los": "B",
+      "queue95_ft": 84
+     },
+     "pm": {
+      "v_c": 0.13,
+      "delay_s": 20.0,
+      "los": "B",
+      "queue95_ft": 72
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 62.2,
+     "los": "E"
+    },
+    "midday": {
+     "delay_s": 53.5,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 64.6,
+     "los": "E"
+    }
+   }
+  },
+  {
+   "name": "Broadway @ 32 St",
+   "feis_name": "Broadway/W 32nd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.48,
+      "delay_s": 18.4,
+      "los": "B",
+      "queue95_ft": 124
+     },
+     "midday": {
+      "v_c": 0.56,
+      "delay_s": 21.4,
+      "los": "C",
+      "queue95_ft": 152
+     },
+     "pm": {
+      "v_c": 0.54,
+      "delay_s": 23.4,
+      "los": "C",
+      "queue95_ft": 190
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 18.4,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 21.4,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 23.4,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 23 St",
+   "feis_name": "Sixth Ave/W 23rd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.01,
+      "delay_s": 64.6,
+      "los": "E",
+      "queue95_ft": 312
+     },
+     "midday": {
+      "v_c": 0.79,
+      "delay_s": 38.2,
+      "los": "D",
+      "queue95_ft": 270
+     },
+     "pm": {
+      "v_c": 0.81,
+      "delay_s": 43.0,
+      "los": "D",
+      "queue95_ft": 366
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 45.2,
+      "los": "D",
+      "queue95_ft": 272
+     },
+     "midday": {
+      "v_c": 0.78,
+      "delay_s": 49.5,
+      "los": "D",
+      "queue95_ft": 308
+     },
+     "pm": {
+      "v_c": 0.74,
+      "delay_s": 48.2,
+      "los": "D",
+      "queue95_ft": 324
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.69,
+      "delay_s": 48.1,
+      "los": "D",
+      "queue95_ft": 115
+     },
+     "midday": {
+      "v_c": 0.45,
+      "delay_s": 28.9,
+      "los": "C",
+      "queue95_ft": 84
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 123.8,
+      "los": "F",
+      "queue95_ft": 165
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.83,
+      "delay_s": 27.9,
+      "los": "C",
+      "queue95_ft": 254
+     },
+     "midday": {
+      "v_c": 0.75,
+      "delay_s": 25.1,
+      "los": "C",
+      "queue95_ft": 221
+     },
+     "pm": {
+      "v_c": 0.79,
+      "delay_s": 25.8,
+      "los": "C",
+      "queue95_ft": 264
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "R",
+     "am": {
+      "v_c": 1.04,
+      "delay_s": 100.7,
+      "los": "F",
+      "queue95_ft": 260
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 99.1,
+      "los": "F",
+      "queue95_ft": 281
+     },
+     "pm": {
+      "v_c": 0.29,
+      "delay_s": 21.8,
+      "los": "C",
+      "queue95_ft": 41
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 44.1,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 38.3,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 37.0,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 30 St",
+   "feis_name": "Sixth Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.86,
+      "delay_s": 38.1,
+      "los": "D",
+      "queue95_ft": 248
+     },
+     "midday": {
+      "v_c": 0.73,
+      "delay_s": 31.0,
+      "los": "C",
+      "queue95_ft": 149
+     },
+     "pm": {
+      "v_c": 0.7,
+      "delay_s": 29.7,
+      "los": "C",
+      "queue95_ft": 131
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 19.5,
+      "los": "B",
+      "queue95_ft": 243
+     },
+     "midday": {
+      "v_c": 0.63,
+      "delay_s": 17.7,
+      "los": "B",
+      "queue95_ft": 202
+     },
+     "pm": {
+      "v_c": 0.67,
+      "delay_s": 18.5,
+      "los": "B",
+      "queue95_ft": 222
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.7,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 20.0,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 20.4,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 31 St",
+   "feis_name": "Sixth Ave/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.75,
+      "delay_s": 33.8,
+      "los": "C",
+      "queue95_ft": 105
+     },
+     "midday": {
+      "v_c": 0.78,
+      "delay_s": 35.5,
+      "los": "D",
+      "queue95_ft": 120
+     },
+     "pm": {
+      "v_c": 0.93,
+      "delay_s": 43.2,
+      "los": "D",
+      "queue95_ft": 141
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 81.6,
+      "los": "F",
+      "queue95_ft": 167
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 87.2,
+      "los": "F",
+      "queue95_ft": 210
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 79.4,
+      "los": "E",
+      "queue95_ft": 230
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.78,
+      "delay_s": 6.4,
+      "los": "A",
+      "queue95_ft": 29
+     },
+     "midday": {
+      "v_c": 0.68,
+      "delay_s": 5.6,
+      "los": "A",
+      "queue95_ft": 28
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 3.6,
+      "los": "A",
+      "queue95_ft": 22
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 16.4,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 18.0,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 19.9,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 32 St",
+   "feis_name": "Sixth Ave/W 32nd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.73,
+      "delay_s": 47.8,
+      "los": "D",
+      "queue95_ft": 211
+     },
+     "midday": {
+      "v_c": 0.78,
+      "delay_s": 50.2,
+      "los": "D",
+      "queue95_ft": 244
+     },
+     "pm": {
+      "v_c": 0.61,
+      "delay_s": 41.7,
+      "los": "D",
+      "queue95_ft": 141
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.73,
+      "delay_s": 3.4,
+      "los": "A",
+      "queue95_ft": 25
+     },
+     "midday": {
+      "v_c": 0.64,
+      "delay_s": 3.4,
+      "los": "A",
+      "queue95_ft": 27
+     },
+     "pm": {
+      "v_c": 0.6,
+      "delay_s": 3.2,
+      "los": "A",
+      "queue95_ft": 25
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 9.1,
+     "los": "A"
+    },
+    "midday": {
+     "delay_s": 10.7,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 8.5,
+     "los": "A"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 33 St",
+   "feis_name": "Sixth Ave/W 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.71,
+      "delay_s": 42.0,
+      "los": "D",
+      "queue95_ft": 179
+     },
+     "midday": {
+      "v_c": 0.68,
+      "delay_s": 38.3,
+      "los": "D",
+      "queue95_ft": 168
+     },
+     "pm": {
+      "v_c": 0.65,
+      "delay_s": 35.7,
+      "los": "D",
+      "queue95_ft": 136
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.6,
+      "delay_s": 2.5,
+      "los": "A",
+      "queue95_ft": 20
+     },
+     "midday": {
+      "v_c": 0.52,
+      "delay_s": 2.7,
+      "los": "A",
+      "queue95_ft": 24
+     },
+     "pm": {
+      "v_c": 0.45,
+      "delay_s": 2.2,
+      "los": "A",
+      "queue95_ft": 16
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 7.9,
+     "los": "A"
+    },
+    "midday": {
+     "delay_s": 8.2,
+     "los": "A"
+    },
+    "pm": {
+     "delay_s": 7.8,
+     "los": "A"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 34 St",
+   "feis_name": "Sixth Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.98,
+      "delay_s": 20.3,
+      "los": "C",
+      "queue95_ft": 355
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 42.6,
+      "los": "D",
+      "queue95_ft": 400
+     },
+     "pm": {
+      "v_c": 0.87,
+      "delay_s": 11.5,
+      "los": "B",
+      "queue95_ft": 39
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.93,
+      "delay_s": 41.4,
+      "los": "D",
+      "queue95_ft": 439
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 52.9,
+      "los": "D",
+      "queue95_ft": 428
+     },
+     "pm": {
+      "v_c": 0.91,
+      "delay_s": 25.6,
+      "los": "C",
+      "queue95_ft": 432
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 1.0,
+      "delay_s": 115.0,
+      "los": "F",
+      "queue95_ft": 105
+     },
+     "midday": {
+      "v_c": 0.46,
+      "delay_s": 29.9,
+      "los": "C",
+      "queue95_ft": 27
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 41.1,
+      "los": "D",
+      "queue95_ft": 39
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.6,
+      "delay_s": 1.5,
+      "los": "A",
+      "queue95_ft": 8
+     },
+     "midday": {
+      "v_c": 0.55,
+      "delay_s": 2.0,
+      "los": "A",
+      "queue95_ft": 14
+     },
+     "pm": {
+      "v_c": 0.45,
+      "delay_s": 1.3,
+      "los": "A",
+      "queue95_ft": 7
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 16.6,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 22.5,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 9.9,
+     "los": "A"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 35 St",
+   "feis_name": "Sixth Ave/W 35th St",
+   "lane_groups": [
+    {
+     "approach": "northbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.7,
+      "delay_s": 3.4,
+      "los": "A",
+      "queue95_ft": 31
+     },
+     "midday": {
+      "v_c": 0.57,
+      "delay_s": 2.3,
+      "los": "A",
+      "queue95_ft": 17
+     },
+     "pm": {
+      "v_c": 0.52,
+      "delay_s": 2.2,
+      "los": "A",
+      "queue95_ft": 17
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 15.0,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 14.7,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 10.2,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 36 St",
+   "feis_name": "Sixth Ave/W 36th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.54,
+      "delay_s": 42.3,
+      "los": "D",
+      "queue95_ft": 115
+     },
+     "midday": {
+      "v_c": 0.85,
+      "delay_s": 66.0,
+      "los": "E",
+      "queue95_ft": 231
+     },
+     "pm": {
+      "v_c": 0.89,
+      "delay_s": 72.6,
+      "los": "E",
+      "queue95_ft": 251
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.37,
+      "delay_s": 16.3,
+      "los": "B",
+      "queue95_ft": 119
+     },
+     "midday": {
+      "v_c": 0.4,
+      "delay_s": 16.8,
+      "los": "B",
+      "queue95_ft": 132
+     },
+     "pm": {
+      "v_c": 0.4,
+      "delay_s": 16.7,
+      "los": "B",
+      "queue95_ft": 123
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.84,
+      "delay_s": 12.1,
+      "los": "B",
+      "queue95_ft": 142
+     },
+     "midday": {
+      "v_c": 0.67,
+      "delay_s": 8.6,
+      "los": "A",
+      "queue95_ft": 45
+     },
+     "pm": {
+      "v_c": 0.53,
+      "delay_s": 7.6,
+      "los": "A",
+      "queue95_ft": 47
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.93,
+      "delay_s": 51.5,
+      "los": "D",
+      "queue95_ft": 109
+     },
+     "midday": {
+      "v_c": 0.93,
+      "delay_s": 45.5,
+      "los": "D",
+      "queue95_ft": 101
+     },
+     "pm": {
+      "v_c": 0.64,
+      "delay_s": 18.2,
+      "los": "B",
+      "queue95_ft": 69
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 17.1,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 19.5,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 17.5,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "6 Ave @ 37 St",
+   "feis_name": "Sixth Ave/W 37th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.62,
+      "delay_s": 23.9,
+      "los": "C",
+      "queue95_ft": 142
+     },
+     "midday": {
+      "v_c": 0.47,
+      "delay_s": 20.9,
+      "los": "C",
+      "queue95_ft": 141
+     },
+     "pm": {
+      "v_c": 0.71,
+      "delay_s": 23.7,
+      "los": "C",
+      "queue95_ft": 174
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 1.03,
+      "delay_s": 80.3,
+      "los": "F",
+      "queue95_ft": 274
+     },
+     "midday": {
+      "v_c": 0.85,
+      "delay_s": 47.5,
+      "los": "D",
+      "queue95_ft": 248
+     },
+     "pm": {
+      "v_c": 0.92,
+      "delay_s": 46.2,
+      "los": "D",
+      "queue95_ft": 232
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.8,
+      "delay_s": 7.6,
+      "los": "A",
+      "queue95_ft": 25
+     },
+     "midday": {
+      "v_c": 0.62,
+      "delay_s": 6.9,
+      "los": "A",
+      "queue95_ft": 40
+     },
+     "pm": {
+      "v_c": 0.6,
+      "delay_s": 9.1,
+      "los": "A",
+      "queue95_ft": 261
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 20.0,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 14.1,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 17.1,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "Broadway @ 37 St",
+   "feis_name": "Broadway/W 37th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.43,
+      "delay_s": 28.5,
+      "los": "C",
+      "queue95_ft": 149
+     },
+     "midday": {
+      "v_c": 0.45,
+      "delay_s": 26.5,
+      "los": "C",
+      "queue95_ft": 150
+     },
+     "pm": {
+      "v_c": 0.54,
+      "delay_s": 33.8,
+      "los": "C",
+      "queue95_ft": 207
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.4,
+      "delay_s": 23.2,
+      "los": "C",
+      "queue95_ft": 115
+     },
+     "midday": {
+      "v_c": 0.45,
+      "delay_s": 24.1,
+      "los": "C",
+      "queue95_ft": 133
+     },
+     "pm": {
+      "v_c": 0.44,
+      "delay_s": 23.8,
+      "los": "C",
+      "queue95_ft": 155
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 27.0,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 25.8,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 31.1,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 23 St",
+   "feis_name": "Seventh Ave/W 23rd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 80.2,
+      "los": "F",
+      "queue95_ft": 288
+     },
+     "midday": {
+      "v_c": 0.89,
+      "delay_s": 55.4,
+      "los": "E",
+      "queue95_ft": 270
+     },
+     "pm": {
+      "v_c": 0.74,
+      "delay_s": 41.6,
+      "los": "D",
+      "queue95_ft": 275
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 38.1,
+      "los": "D",
+      "queue95_ft": 101
+     },
+     "midday": {
+      "v_c": 0.74,
+      "delay_s": 45.6,
+      "los": "D",
+      "queue95_ft": 133
+     },
+     "pm": {
+      "v_c": 0.55,
+      "delay_s": 37.9,
+      "los": "D",
+      "queue95_ft": 94
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.9,
+      "delay_s": 36.4,
+      "los": "D",
+      "queue95_ft": 334
+     },
+     "midday": {
+      "v_c": 1.02,
+      "delay_s": 60.0,
+      "los": "E",
+      "queue95_ft": 403
+     },
+     "pm": {
+      "v_c": 1.01,
+      "delay_s": 51.1,
+      "los": "D",
+      "queue95_ft": 401
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.53,
+      "delay_s": 41.9,
+      "los": "D",
+      "queue95_ft": 114
+     },
+     "midday": {
+      "v_c": 0.52,
+      "delay_s": 41.5,
+      "los": "D",
+      "queue95_ft": 124
+     },
+     "pm": {
+      "v_c": 0.47,
+      "delay_s": 39.3,
+      "los": "D",
+      "queue95_ft": 102
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 33.9,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 35.3,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 29.9,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 26 St",
+   "feis_name": "Seventh Ave/W 26th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 80.9,
+      "los": "F",
+      "queue95_ft": 196
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 77.5,
+      "los": "E",
+      "queue95_ft": 203
+     },
+     "pm": {
+      "v_c": 0.9,
+      "delay_s": 55.8,
+      "los": "E",
+      "queue95_ft": 188
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.79,
+      "delay_s": 38.3,
+      "los": "D",
+      "queue95_ft": 97
+     },
+     "midday": {
+      "v_c": 0.71,
+      "delay_s": 31.1,
+      "los": "C",
+      "queue95_ft": 84
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 32.0,
+      "los": "C",
+      "queue95_ft": 93
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 92.5,
+      "los": "F",
+      "queue95_ft": 318
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 93.3,
+      "los": "F",
+      "queue95_ft": 301
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 110.4,
+      "los": "F",
+      "queue95_ft": 221
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 63.5,
+      "los": "E",
+      "queue95_ft": 415
+     },
+     "midday": {
+      "v_c": 0.9,
+      "delay_s": 31.6,
+      "los": "C",
+      "queue95_ft": 302
+     },
+     "pm": {
+      "v_c": 0.71,
+      "delay_s": 21.3,
+      "los": "C",
+      "queue95_ft": 204
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 67.6,
+     "los": "E"
+    },
+    "midday": {
+     "delay_s": 47.3,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 36.5,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 29 St",
+   "feis_name": "Seventh Ave/W 29th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.58,
+      "delay_s": 32.0,
+      "los": "C",
+      "queue95_ft": 141
+     },
+     "midday": {
+      "v_c": 0.55,
+      "delay_s": 31.5,
+      "los": "C",
+      "queue95_ft": 129
+     },
+     "pm": {
+      "v_c": 0.55,
+      "delay_s": 31.1,
+      "los": "C",
+      "queue95_ft": 121
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.98,
+      "delay_s": 84.3,
+      "los": "F",
+      "queue95_ft": 230
+     },
+     "midday": {
+      "v_c": 0.65,
+      "delay_s": 38.3,
+      "los": "D",
+      "queue95_ft": 157
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 100.8,
+      "los": "F",
+      "queue95_ft": 312
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 23.3,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 15.0,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 31.9,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 30 St",
+   "feis_name": "Seventh Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.49,
+      "delay_s": 20.8,
+      "los": "C",
+      "queue95_ft": 101
+     },
+     "midday": {
+      "v_c": 0.4,
+      "delay_s": 21.6,
+      "los": "C",
+      "queue95_ft": 85
+     },
+     "pm": {
+      "v_c": 0.4,
+      "delay_s": 20.5,
+      "los": "C",
+      "queue95_ft": 78
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.63,
+      "delay_s": 26.8,
+      "los": "C",
+      "queue95_ft": 105
+     },
+     "midday": {
+      "v_c": 0.51,
+      "delay_s": 27.2,
+      "los": "C",
+      "queue95_ft": 114
+     },
+     "pm": {
+      "v_c": 0.6,
+      "delay_s": 29.1,
+      "los": "C",
+      "queue95_ft": 135
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 93.2,
+      "los": "F",
+      "queue95_ft": 123
+     },
+     "midday": {
+      "v_c": 0.9,
+      "delay_s": 55.2,
+      "los": "E",
+      "queue95_ft": 103
+     },
+     "pm": {
+      "v_c": 0.84,
+      "delay_s": 45.2,
+      "los": "D",
+      "queue95_ft": 95
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.65,
+      "delay_s": 7.8,
+      "los": "A",
+      "queue95_ft": 32
+     },
+     "midday": {
+      "v_c": 0.49,
+      "delay_s": 7.5,
+      "los": "A",
+      "queue95_ft": 35
+     },
+     "pm": {
+      "v_c": 0.54,
+      "delay_s": 7.5,
+      "los": "A",
+      "queue95_ft": 39
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 19.5,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 17.2,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 14.8,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 31 St",
+   "feis_name": "Seventh Ave/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.3,
+      "delay_s": 17.8,
+      "los": "B",
+      "queue95_ft": 63
+     },
+     "midday": {
+      "v_c": 0.33,
+      "delay_s": 18.2,
+      "los": "B",
+      "queue95_ft": 68
+     },
+     "pm": {
+      "v_c": 0.4,
+      "delay_s": 19.4,
+      "los": "B",
+      "queue95_ft": 79
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.5,
+      "delay_s": 20.5,
+      "los": "C",
+      "queue95_ft": 142
+     },
+     "midday": {
+      "v_c": 0.48,
+      "delay_s": 20.1,
+      "los": "C",
+      "queue95_ft": 135
+     },
+     "pm": {
+      "v_c": 0.64,
+      "delay_s": 23.1,
+      "los": "C",
+      "queue95_ft": 178
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.58,
+      "delay_s": 1.9,
+      "los": "A",
+      "queue95_ft": 5
+     },
+     "midday": {
+      "v_c": 0.44,
+      "delay_s": 1.0,
+      "los": "A",
+      "queue95_ft": 1
+     },
+     "pm": {
+      "v_c": 0.53,
+      "delay_s": 1.5,
+      "los": "A",
+      "queue95_ft": 3
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.67,
+      "delay_s": 25.9,
+      "los": "C",
+      "queue95_ft": 168
+     },
+     "midday": {
+      "v_c": 0.83,
+      "delay_s": 37.7,
+      "los": "D",
+      "queue95_ft": 241
+     },
+     "pm": {
+      "v_c": 0.87,
+      "delay_s": 42.6,
+      "los": "D",
+      "queue95_ft": 262
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 8.4,
+     "los": "A"
+    },
+    "midday": {
+     "delay_s": 11.6,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 12.9,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 32 St",
+   "feis_name": "Seventh Ave/W 32nd St",
+   "lane_groups": [
+    {
+     "approach": "southbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.63,
+      "delay_s": 6.9,
+      "los": "A",
+      "queue95_ft": 93
+     },
+     "midday": {
+      "v_c": 0.59,
+      "delay_s": 6.3,
+      "los": "A",
+      "queue95_ft": 95
+     },
+     "pm": {
+      "v_c": 0.59,
+      "delay_s": 6.6,
+      "los": "A",
+      "queue95_ft": 43
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 6.9,
+     "los": "A"
+    },
+    "midday": {
+     "delay_s": 6.3,
+     "los": "A"
+    },
+    "pm": {
+     "delay_s": 6.6,
+     "los": "A"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 33 St",
+   "feis_name": "Seventh Ave/W 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.04,
+      "delay_s": 82.8,
+      "los": "F",
+      "queue95_ft": 213
+     },
+     "midday": {
+      "v_c": 0.9,
+      "delay_s": 52.7,
+      "los": "D",
+      "queue95_ft": 159
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 88.4,
+      "los": "F",
+      "queue95_ft": 241
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.49,
+      "delay_s": 1.0,
+      "los": "A",
+      "queue95_ft": 3
+     },
+     "midday": {
+      "v_c": 0.43,
+      "delay_s": 1.6,
+      "los": "A",
+      "queue95_ft": 10
+     },
+     "pm": {
+      "v_c": 0.46,
+      "delay_s": 1.3,
+      "los": "A",
+      "queue95_ft": 6
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 13.7,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 8.9,
+     "los": "A"
+    },
+    "pm": {
+     "delay_s": 14.5,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 34 St",
+   "feis_name": "Seventh Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.99,
+      "delay_s": 77.3,
+      "los": "E",
+      "queue95_ft": 537
+     },
+     "midday": {
+      "v_c": 1.02,
+      "delay_s": 84.0,
+      "los": "F",
+      "queue95_ft": 527
+     },
+     "pm": {
+      "v_c": 0.96,
+      "delay_s": 75.6,
+      "los": "E",
+      "queue95_ft": 508
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.83,
+      "delay_s": 9.4,
+      "los": "A",
+      "queue95_ft": 415
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 35.5,
+      "los": "D",
+      "queue95_ft": 426
+     },
+     "pm": {
+      "v_c": 0.75,
+      "delay_s": 5.5,
+      "los": "A",
+      "queue95_ft": 0
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.53,
+      "delay_s": 5.5,
+      "los": "A",
+      "queue95_ft": 46
+     },
+     "midday": {
+      "v_c": 0.58,
+      "delay_s": 6.1,
+      "los": "A",
+      "queue95_ft": 55
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 5.3,
+      "los": "A",
+      "queue95_ft": 45
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 23.4,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 33.3,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 22.9,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 35 St",
+   "feis_name": "Seventh Ave/W 35th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.51,
+      "delay_s": 31.4,
+      "los": "C",
+      "queue95_ft": 133
+     },
+     "midday": {
+      "v_c": 0.49,
+      "delay_s": 30.7,
+      "los": "C",
+      "queue95_ft": 133
+     },
+     "pm": {
+      "v_c": 0.52,
+      "delay_s": 32.1,
+      "los": "C",
+      "queue95_ft": 134
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.52,
+      "delay_s": 29.8,
+      "los": "C",
+      "queue95_ft": 160
+     },
+     "midday": {
+      "v_c": 0.33,
+      "delay_s": 25.7,
+      "los": "C",
+      "queue95_ft": 119
+     },
+     "pm": {
+      "v_c": 0.46,
+      "delay_s": 27.9,
+      "los": "C",
+      "queue95_ft": 170
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.53,
+      "delay_s": 3.0,
+      "los": "A",
+      "queue95_ft": 20
+     },
+     "midday": {
+      "v_c": 0.57,
+      "delay_s": 5.9,
+      "los": "A",
+      "queue95_ft": 45
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 3.8,
+      "los": "A",
+      "queue95_ft": 27
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 9.7,
+     "los": "A"
+    },
+    "midday": {
+     "delay_s": 11.2,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 10.3,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 36 St",
+   "feis_name": "Seventh Ave/W 36th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.68,
+      "delay_s": 29.0,
+      "los": "C",
+      "queue95_ft": 161
+     },
+     "midday": {
+      "v_c": 0.85,
+      "delay_s": 34.6,
+      "los": "C",
+      "queue95_ft": 248
+     },
+     "pm": {
+      "v_c": 0.78,
+      "delay_s": 29.2,
+      "los": "C",
+      "queue95_ft": 212
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.56,
+      "delay_s": 6.8,
+      "los": "A",
+      "queue95_ft": 39
+     },
+     "midday": {
+      "v_c": 0.61,
+      "delay_s": 7.8,
+      "los": "A",
+      "queue95_ft": 41
+     },
+     "pm": {
+      "v_c": 0.5,
+      "delay_s": 6.1,
+      "los": "A",
+      "queue95_ft": 36
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 12.8,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 17.5,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 13.6,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 37 St",
+   "feis_name": "Seventh Ave/W 37th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.74,
+      "delay_s": 30.9,
+      "los": "C",
+      "queue95_ft": 198
+     },
+     "midday": {
+      "v_c": 0.69,
+      "delay_s": 32.6,
+      "los": "C",
+      "queue95_ft": 195
+     },
+     "pm": {
+      "v_c": 0.75,
+      "delay_s": 28.2,
+      "los": "C",
+      "queue95_ft": 233
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.52,
+      "delay_s": 16.0,
+      "los": "B",
+      "queue95_ft": 155
+     },
+     "midday": {
+      "v_c": 0.55,
+      "delay_s": 16.7,
+      "los": "B",
+      "queue95_ft": 169
+     },
+     "pm": {
+      "v_c": 0.46,
+      "delay_s": 15.3,
+      "los": "B",
+      "queue95_ft": 139
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 20.5,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 22.0,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 19.6,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "7 Ave @ 42 St",
+   "feis_name": "Seventh Ave/W 42nd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.41,
+      "delay_s": 25.4,
+      "los": "C",
+      "queue95_ft": 111
+     },
+     "midday": {
+      "v_c": 0.67,
+      "delay_s": 30.5,
+      "los": "C",
+      "queue95_ft": 124
+     },
+     "pm": {
+      "v_c": 0.33,
+      "delay_s": 27.7,
+      "los": "C",
+      "queue95_ft": 122
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.77,
+      "delay_s": 33.5,
+      "los": "C",
+      "queue95_ft": 73
+     },
+     "midday": {
+      "v_c": 0.6,
+      "delay_s": 30.5,
+      "los": "C",
+      "queue95_ft": 37
+     },
+     "pm": {
+      "v_c": 0.33,
+      "delay_s": 29.8,
+      "los": "C",
+      "queue95_ft": 45
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.38,
+      "delay_s": 23.5,
+      "los": "C",
+      "queue95_ft": 114
+     },
+     "midday": {
+      "v_c": 0.44,
+      "delay_s": 24.5,
+      "los": "C",
+      "queue95_ft": 122
+     },
+     "pm": {
+      "v_c": 0.33,
+      "delay_s": 22.9,
+      "los": "C",
+      "queue95_ft": 91
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.6,
+      "delay_s": 41.0,
+      "los": "D",
+      "queue95_ft": 156
+     },
+     "midday": {
+      "v_c": 0.65,
+      "delay_s": 43.4,
+      "los": "D",
+      "queue95_ft": 171
+     },
+     "pm": {
+      "v_c": 0.51,
+      "delay_s": 37.5,
+      "los": "D",
+      "queue95_ft": 139
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.69,
+      "delay_s": 17.5,
+      "los": "B",
+      "queue95_ft": 291
+     },
+     "midday": {
+      "v_c": 0.55,
+      "delay_s": 14.8,
+      "los": "B",
+      "queue95_ft": 212
+     },
+     "pm": {
+      "v_c": 0.57,
+      "delay_s": 15.0,
+      "los": "B",
+      "queue95_ft": 226
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.14,
+      "delay_s": 11.2,
+      "los": "B",
+      "queue95_ft": 24
+     },
+     "midday": {
+      "v_c": 0.2,
+      "delay_s": 12.2,
+      "los": "B",
+      "queue95_ft": 31
+     },
+     "pm": {
+      "v_c": 0.3,
+      "delay_s": 14.0,
+      "los": "B",
+      "queue95_ft": 50
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.7,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 23.8,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 21.0,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 23 St",
+   "feis_name": "Eighth Ave/W 23rd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.96,
+      "delay_s": 64.7,
+      "los": "E",
+      "queue95_ft": 410
+     },
+     "midday": {
+      "v_c": 0.76,
+      "delay_s": 38.1,
+      "los": "D",
+      "queue95_ft": 300
+     },
+     "pm": {
+      "v_c": 0.77,
+      "delay_s": 35.3,
+      "los": "D",
+      "queue95_ft": 269
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 57.4,
+      "los": "E",
+      "queue95_ft": 166
+     },
+     "midday": {
+      "v_c": 0.99,
+      "delay_s": 105.2,
+      "los": "F",
+      "queue95_ft": 189
+     },
+     "pm": {
+      "v_c": 0.65,
+      "delay_s": 53.5,
+      "los": "D",
+      "queue95_ft": 111
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.86,
+      "delay_s": 28.1,
+      "los": "C",
+      "queue95_ft": 294
+     },
+     "midday": {
+      "v_c": 0.88,
+      "delay_s": 30.1,
+      "los": "C",
+      "queue95_ft": 253
+     },
+     "pm": {
+      "v_c": 0.9,
+      "delay_s": 34.0,
+      "los": "C",
+      "queue95_ft": 330
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 36.4,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 42.8,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 33.3,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 26 St",
+   "feis_name": "Eighth Ave/W 26th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.94,
+      "delay_s": 35.5,
+      "los": "D",
+      "queue95_ft": 304
+     },
+     "midday": {
+      "v_c": 0.98,
+      "delay_s": 48.5,
+      "los": "D",
+      "queue95_ft": 338
+     },
+     "pm": {
+      "v_c": 0.76,
+      "delay_s": 11.0,
+      "los": "B",
+      "queue95_ft": 39
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.64,
+      "delay_s": 18.0,
+      "los": "B",
+      "queue95_ft": 193
+     },
+     "midday": {
+      "v_c": 0.5,
+      "delay_s": 15.9,
+      "los": "B",
+      "queue95_ft": 134
+     },
+     "pm": {
+      "v_c": 0.56,
+      "delay_s": 16.7,
+      "los": "B",
+      "queue95_ft": 166
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.3,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 25.8,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 15.4,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 29 St",
+   "feis_name": "Eighth Ave/W 29th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.9,
+      "delay_s": 36.5,
+      "los": "D",
+      "queue95_ft": 220
+     },
+     "midday": {
+      "v_c": 0.67,
+      "delay_s": 27.4,
+      "los": "C",
+      "queue95_ft": 215
+     },
+     "pm": {
+      "v_c": 1.01,
+      "delay_s": 45.6,
+      "los": "D",
+      "queue95_ft": 216
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.89,
+      "delay_s": 66.4,
+      "los": "E",
+      "queue95_ft": 191
+     },
+     "midday": {
+      "v_c": 0.86,
+      "delay_s": 55.8,
+      "los": "E",
+      "queue95_ft": 222
+     },
+     "pm": {
+      "v_c": 0.82,
+      "delay_s": 55.9,
+      "los": "E",
+      "queue95_ft": 197
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.52,
+      "delay_s": 16.8,
+      "los": "B",
+      "queue95_ft": 142
+     },
+     "midday": {
+      "v_c": 0.44,
+      "delay_s": 15.7,
+      "los": "B",
+      "queue95_ft": 114
+     },
+     "pm": {
+      "v_c": 0.47,
+      "delay_s": 16.0,
+      "los": "B",
+      "queue95_ft": 130
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 26.9,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 24.3,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 27.7,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 30 St",
+   "feis_name": "Eighth Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 37.8,
+      "los": "D",
+      "queue95_ft": 232
+     },
+     "midday": {
+      "v_c": 0.51,
+      "delay_s": 28.3,
+      "los": "C",
+      "queue95_ft": 117
+     },
+     "pm": {
+      "v_c": 0.61,
+      "delay_s": 26.9,
+      "los": "C",
+      "queue95_ft": 142
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.76,
+      "delay_s": 35.7,
+      "los": "D",
+      "queue95_ft": 247
+     },
+     "midday": {
+      "v_c": 0.39,
+      "delay_s": 21.0,
+      "los": "C",
+      "queue95_ft": 107
+     },
+     "pm": {
+      "v_c": 0.43,
+      "delay_s": 17.9,
+      "los": "B",
+      "queue95_ft": 120
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.58,
+      "delay_s": 7.7,
+      "los": "A",
+      "queue95_ft": 50
+     },
+     "midday": {
+      "v_c": 0.48,
+      "delay_s": 7.4,
+      "los": "A",
+      "queue95_ft": 40
+     },
+     "pm": {
+      "v_c": 0.55,
+      "delay_s": 7.9,
+      "los": "A",
+      "queue95_ft": 56
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 16.4,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 12.1,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 11.9,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 31 St",
+   "feis_name": "Eighth Ave/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.33,
+      "delay_s": 12.7,
+      "los": "B",
+      "queue95_ft": 66
+     },
+     "midday": {
+      "v_c": 0.23,
+      "delay_s": 6.8,
+      "los": "A",
+      "queue95_ft": 28
+     },
+     "pm": {
+      "v_c": 0.44,
+      "delay_s": 11.4,
+      "los": "B",
+      "queue95_ft": 102
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.85,
+      "delay_s": 40.2,
+      "los": "D",
+      "queue95_ft": 224
+     },
+     "midday": {
+      "v_c": 0.91,
+      "delay_s": 39.1,
+      "los": "D",
+      "queue95_ft": 268
+     },
+     "pm": {
+      "v_c": 1.0,
+      "delay_s": 60.5,
+      "los": "E",
+      "queue95_ft": 282
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.54,
+      "delay_s": 33.5,
+      "los": "C",
+      "queue95_ft": 81
+     },
+     "midday": {
+      "v_c": 0.34,
+      "delay_s": 19.9,
+      "los": "B",
+      "queue95_ft": 44
+     },
+     "pm": {
+      "v_c": 0.75,
+      "delay_s": 36.0,
+      "los": "D",
+      "queue95_ft": 176
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.61,
+      "delay_s": 9.3,
+      "los": "A",
+      "queue95_ft": 96
+     },
+     "midday": {
+      "v_c": 0.43,
+      "delay_s": 9.8,
+      "los": "A",
+      "queue95_ft": 88
+     },
+     "pm": {
+      "v_c": 0.58,
+      "delay_s": 12.9,
+      "los": "B",
+      "queue95_ft": 196
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 15.6,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 16.1,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 22.1,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 33 St",
+   "feis_name": "Eighth Ave/W 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.13,
+      "delay_s": 11.6,
+      "los": "B",
+      "queue95_ft": 36
+     },
+     "midday": {
+      "v_c": 0.1,
+      "delay_s": 11.3,
+      "los": "B",
+      "queue95_ft": 29
+     },
+     "pm": {
+      "v_c": 0.22,
+      "delay_s": 12.4,
+      "los": "B",
+      "queue95_ft": 75
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 112.4,
+      "los": "F",
+      "queue95_ft": 177
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 116.5,
+      "los": "F",
+      "queue95_ft": 191
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 109.7,
+      "los": "F",
+      "queue95_ft": 220
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.96,
+      "delay_s": 45.2,
+      "los": "D",
+      "queue95_ft": 263
+     },
+     "midday": {
+      "v_c": 0.76,
+      "delay_s": 38.3,
+      "los": "D",
+      "queue95_ft": 173
+     },
+     "pm": {
+      "v_c": 0.84,
+      "delay_s": 42.6,
+      "los": "D",
+      "queue95_ft": 204
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 49.9,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 47.6,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 48.3,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 34 St",
+   "feis_name": "Eighth Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.78,
+      "delay_s": 32.9,
+      "los": "C",
+      "queue95_ft": 250
+     },
+     "midday": {
+      "v_c": 0.79,
+      "delay_s": 29.0,
+      "los": "C",
+      "queue95_ft": 226
+     },
+     "pm": {
+      "v_c": 0.65,
+      "delay_s": 35.6,
+      "los": "D",
+      "queue95_ft": 249
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.51,
+      "delay_s": 12.5,
+      "los": "B",
+      "queue95_ft": 84
+     },
+     "midday": {
+      "v_c": 0.65,
+      "delay_s": 15.0,
+      "los": "B",
+      "queue95_ft": 95
+     },
+     "pm": {
+      "v_c": 0.51,
+      "delay_s": 12.6,
+      "los": "B",
+      "queue95_ft": 93
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.41,
+      "delay_s": 13.1,
+      "los": "B",
+      "queue95_ft": 38
+     },
+     "midday": {
+      "v_c": 0.47,
+      "delay_s": 15.0,
+      "los": "B",
+      "queue95_ft": 39
+     },
+     "pm": {
+      "v_c": 0.31,
+      "delay_s": 12.6,
+      "los": "B",
+      "queue95_ft": 34
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 75.6,
+      "los": "E",
+      "queue95_ft": 74
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 104.1,
+      "los": "F",
+      "queue95_ft": 101
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 93.4,
+      "los": "F",
+      "queue95_ft": 97
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 15.8,
+      "los": "B",
+      "queue95_ft": 53
+     },
+     "midday": {
+      "v_c": 0.75,
+      "delay_s": 14.6,
+      "los": "B",
+      "queue95_ft": 53
+     },
+     "pm": {
+      "v_c": 0.81,
+      "delay_s": 15.3,
+      "los": "B",
+      "queue95_ft": 67
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.0,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 22.1,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 23.1,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 36 St",
+   "feis_name": "Eighth Ave/W 36th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.69,
+      "delay_s": 27.9,
+      "los": "C",
+      "queue95_ft": 68
+     },
+     "midday": {
+      "v_c": 0.74,
+      "delay_s": 34.5,
+      "los": "C",
+      "queue95_ft": 181
+     },
+     "pm": {
+      "v_c": 0.88,
+      "delay_s": 39.3,
+      "los": "D",
+      "queue95_ft": 169
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.67,
+      "delay_s": 18.5,
+      "los": "B",
+      "queue95_ft": 104
+     },
+     "midday": {
+      "v_c": 0.79,
+      "delay_s": 25.3,
+      "los": "C",
+      "queue95_ft": 132
+     },
+     "pm": {
+      "v_c": 0.65,
+      "delay_s": 15.5,
+      "los": "B",
+      "queue95_ft": 85
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.56,
+      "delay_s": 16.1,
+      "los": "B",
+      "queue95_ft": 169
+     },
+     "midday": {
+      "v_c": 0.58,
+      "delay_s": 16.3,
+      "los": "B",
+      "queue95_ft": 166
+     },
+     "pm": {
+      "v_c": 0.57,
+      "delay_s": 16.3,
+      "los": "B",
+      "queue95_ft": 157
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 17.6,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 19.9,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 18.9,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 37 St",
+   "feis_name": "Eighth Ave/W 37th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.48,
+      "delay_s": 14.1,
+      "los": "B",
+      "queue95_ft": 172
+     },
+     "midday": {
+      "v_c": 0.55,
+      "delay_s": 17.0,
+      "los": "B",
+      "queue95_ft": 211
+     },
+     "pm": {
+      "v_c": 0.72,
+      "delay_s": 21.3,
+      "los": "C",
+      "queue95_ft": 274
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.6,
+      "delay_s": 25.9,
+      "los": "C",
+      "queue95_ft": 107
+     },
+     "midday": {
+      "v_c": 0.81,
+      "delay_s": 43.0,
+      "los": "D",
+      "queue95_ft": 176
+     },
+     "pm": {
+      "v_c": 0.72,
+      "delay_s": 32.6,
+      "los": "C",
+      "queue95_ft": 142
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 85.7,
+      "los": "F",
+      "queue95_ft": 212
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 98.0,
+      "los": "F",
+      "queue95_ft": 160
+     },
+     "pm": {
+      "v_c": 0.95,
+      "delay_s": 64.4,
+      "los": "E",
+      "queue95_ft": 141
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.6,
+      "delay_s": 6.6,
+      "los": "A",
+      "queue95_ft": 35
+     },
+     "midday": {
+      "v_c": 0.53,
+      "delay_s": 6.0,
+      "los": "A",
+      "queue95_ft": 37
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 6.1,
+      "los": "A",
+      "queue95_ft": 41
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 19.2,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 19.8,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 17.7,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "8 Ave @ 42 St",
+   "feis_name": "Eighth Ave/W 42nd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.56,
+      "delay_s": 12.8,
+      "los": "B",
+      "queue95_ft": 266
+     },
+     "midday": {
+      "v_c": 0.81,
+      "delay_s": 23.5,
+      "los": "C",
+      "queue95_ft": 426
+     },
+     "pm": {
+      "v_c": 0.48,
+      "delay_s": 10.2,
+      "los": "B",
+      "queue95_ft": 160
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.5,
+      "delay_s": 57.3,
+      "los": "E",
+      "queue95_ft": 161
+     },
+     "midday": {
+      "v_c": 0.52,
+      "delay_s": 54.6,
+      "los": "D",
+      "queue95_ft": 151
+     },
+     "pm": {
+      "v_c": 0.43,
+      "delay_s": 48.0,
+      "los": "D",
+      "queue95_ft": 138
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.15,
+      "delay_s": 54.1,
+      "los": "D",
+      "queue95_ft": 25
+     },
+     "midday": {
+      "v_c": 0.19,
+      "delay_s": 52.8,
+      "los": "D",
+      "queue95_ft": 27
+     },
+     "pm": {
+      "v_c": 0.06,
+      "delay_s": 47.2,
+      "los": "D",
+      "queue95_ft": 10
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.9,
+      "delay_s": 37.6,
+      "los": "D",
+      "queue95_ft": 270
+     },
+     "midday": {
+      "v_c": 0.8,
+      "delay_s": 29.9,
+      "los": "C",
+      "queue95_ft": 231
+     },
+     "pm": {
+      "v_c": 0.8,
+      "delay_s": 29.8,
+      "los": "C",
+      "queue95_ft": 229
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.93,
+      "delay_s": 83.4,
+      "los": "F",
+      "queue95_ft": 172
+     },
+     "midday": {
+      "v_c": 0.8,
+      "delay_s": 57.7,
+      "los": "E",
+      "queue95_ft": 175
+     },
+     "pm": {
+      "v_c": 0.49,
+      "delay_s": 31.4,
+      "los": "C",
+      "queue95_ft": 75
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 36.9,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 32.8,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 27.6,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 26 St",
+   "feis_name": "Ninth Ave/W 26th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 104.3,
+      "los": "F",
+      "queue95_ft": 300
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 100.9,
+      "los": "F",
+      "queue95_ft": 307
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 98.5,
+      "los": "F",
+      "queue95_ft": 307
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.69,
+      "delay_s": 41.7,
+      "los": "D",
+      "queue95_ft": 144
+     },
+     "midday": {
+      "v_c": 0.59,
+      "delay_s": 35.8,
+      "los": "D",
+      "queue95_ft": 128
+     },
+     "pm": {
+      "v_c": 0.4,
+      "delay_s": 28.8,
+      "los": "C",
+      "queue95_ft": 89
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.65,
+      "delay_s": 43.8,
+      "los": "D",
+      "queue95_ft": 147
+     },
+     "midday": {
+      "v_c": 0.51,
+      "delay_s": 37.3,
+      "los": "D",
+      "queue95_ft": 142
+     },
+     "pm": {
+      "v_c": 0.21,
+      "delay_s": 30.8,
+      "los": "C",
+      "queue95_ft": 58
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.76,
+      "delay_s": 21.5,
+      "los": "C",
+      "queue95_ft": 265
+     },
+     "midday": {
+      "v_c": 0.72,
+      "delay_s": 20.1,
+      "los": "C",
+      "queue95_ft": 257
+     },
+     "pm": {
+      "v_c": 0.28,
+      "delay_s": 13.4,
+      "los": "B",
+      "queue95_ft": 91
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 36.5,
+     "los": "D"
+    },
+    "midday": {
+     "delay_s": 33.7,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 36.5,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 29 St",
+   "feis_name": "Ninth Ave/W 29th St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.77,
+      "delay_s": 36.2,
+      "los": "D",
+      "queue95_ft": 262
+     },
+     "midday": {
+      "v_c": 0.77,
+      "delay_s": 43.2,
+      "los": "D",
+      "queue95_ft": 285
+     },
+     "pm": {
+      "v_c": 0.87,
+      "delay_s": 42.1,
+      "los": "D",
+      "queue95_ft": 288
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.77,
+      "delay_s": 36.2,
+      "los": "D",
+      "queue95_ft": 262
+     },
+     "midday": {
+      "v_c": 0.77,
+      "delay_s": 43.2,
+      "los": "D",
+      "queue95_ft": 285
+     },
+     "pm": {
+      "v_c": 0.87,
+      "delay_s": 42.1,
+      "los": "D",
+      "queue95_ft": 288
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.82,
+      "delay_s": 11.8,
+      "los": "B",
+      "queue95_ft": 163
+     },
+     "midday": {
+      "v_c": 0.72,
+      "delay_s": 9.8,
+      "los": "A",
+      "queue95_ft": 127
+     },
+     "pm": {
+      "v_c": 0.63,
+      "delay_s": 7.3,
+      "los": "A",
+      "queue95_ft": 72
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 16.7,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 17.1,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 16.4,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 30 St",
+   "feis_name": "Ninth Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.53,
+      "delay_s": 31.8,
+      "los": "C",
+      "queue95_ft": 100
+     },
+     "midday": {
+      "v_c": 0.26,
+      "delay_s": 26.6,
+      "los": "C",
+      "queue95_ft": 52
+     },
+     "pm": {
+      "v_c": 0.3,
+      "delay_s": 27.0,
+      "los": "C",
+      "queue95_ft": 64
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 94.8,
+      "los": "F",
+      "queue95_ft": 373
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 94.4,
+      "los": "F",
+      "queue95_ft": 375
+     },
+     "pm": {
+      "v_c": 0.98,
+      "delay_s": 86.4,
+      "los": "F",
+      "queue95_ft": 234
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.54,
+      "delay_s": 4.9,
+      "los": "A",
+      "queue95_ft": 15
+     },
+     "midday": {
+      "v_c": 0.5,
+      "delay_s": 4.9,
+      "los": "A",
+      "queue95_ft": 11
+     },
+     "pm": {
+      "v_c": 0.57,
+      "delay_s": 8.1,
+      "los": "A",
+      "queue95_ft": 27
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.56,
+      "delay_s": 2.2,
+      "los": "A",
+      "queue95_ft": 21
+     },
+     "midday": {
+      "v_c": 0.46,
+      "delay_s": 1.9,
+      "los": "A",
+      "queue95_ft": 14
+     },
+     "pm": {
+      "v_c": 0.41,
+      "delay_s": 2.9,
+      "los": "A",
+      "queue95_ft": 26
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.1,
+      "delay_s": 2.0,
+      "los": "A",
+      "queue95_ft": 1
+     },
+     "midday": {
+      "v_c": 0.11,
+      "delay_s": 1.8,
+      "los": "A",
+      "queue95_ft": 2
+     },
+     "pm": {
+      "v_c": 0.14,
+      "delay_s": 2.8,
+      "los": "A",
+      "queue95_ft": 5
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 21.2,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 22.3,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 17.6,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 31 St",
+   "feis_name": "Ninth Ave/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.67,
+      "delay_s": 28.9,
+      "los": "C",
+      "queue95_ft": 220
+     },
+     "midday": {
+      "v_c": 0.48,
+      "delay_s": 22.0,
+      "los": "C",
+      "queue95_ft": 150
+     },
+     "pm": {
+      "v_c": 0.98,
+      "delay_s": 57.7,
+      "los": "E",
+      "queue95_ft": 428
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.8,
+      "delay_s": 9.1,
+      "los": "A",
+      "queue95_ft": 50
+     },
+     "midday": {
+      "v_c": 0.72,
+      "delay_s": 8.0,
+      "los": "A",
+      "queue95_ft": 47
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 7.1,
+      "los": "A",
+      "queue95_ft": 58
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 12.7,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 10.3,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 22.3,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 33 St",
+   "feis_name": "Ninth Ave/W 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.27,
+      "delay_s": 40.0,
+      "los": "D",
+      "queue95_ft": 48
+     },
+     "midday": {
+      "v_c": 0.32,
+      "delay_s": 42.4,
+      "los": "D",
+      "queue95_ft": 59
+     },
+     "pm": {
+      "v_c": 0.38,
+      "delay_s": 38.2,
+      "los": "D",
+      "queue95_ft": 74
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.32,
+      "delay_s": 40.4,
+      "los": "D",
+      "queue95_ft": 89
+     },
+     "midday": {
+      "v_c": 0.34,
+      "delay_s": 42.2,
+      "los": "D",
+      "queue95_ft": 92
+     },
+     "pm": {
+      "v_c": 0.57,
+      "delay_s": 41.4,
+      "los": "D",
+      "queue95_ft": 168
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.66,
+      "delay_s": 10.0,
+      "los": "A",
+      "queue95_ft": 196
+     },
+     "midday": {
+      "v_c": 0.57,
+      "delay_s": 9.7,
+      "los": "A",
+      "queue95_ft": 143
+     },
+     "pm": {
+      "v_c": 0.47,
+      "delay_s": 11.1,
+      "los": "B",
+      "queue95_ft": 118
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 13.7,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 14.6,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 18.1,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 34 St",
+   "feis_name": "Ninth Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 76.3,
+      "los": "E",
+      "queue95_ft": 387
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 78.4,
+      "los": "E",
+      "queue95_ft": 392
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 80.4,
+      "los": "F",
+      "queue95_ft": 436
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.89,
+      "delay_s": 47.2,
+      "los": "D",
+      "queue95_ft": 230
+     },
+     "midday": {
+      "v_c": 0.83,
+      "delay_s": 42.4,
+      "los": "D",
+      "queue95_ft": 223
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 83.1,
+      "los": "F",
+      "queue95_ft": 345
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.83,
+      "delay_s": 28.5,
+      "los": "C",
+      "queue95_ft": 265
+     },
+     "midday": {
+      "v_c": 0.92,
+      "delay_s": 33.4,
+      "los": "C",
+      "queue95_ft": 420
+     },
+     "pm": {
+      "v_c": 0.94,
+      "delay_s": 42.2,
+      "los": "D",
+      "queue95_ft": 382
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.68,
+      "delay_s": 56.0,
+      "los": "E",
+      "queue95_ft": 142
+     },
+     "midday": {
+      "v_c": 0.83,
+      "delay_s": 69.4,
+      "los": "E",
+      "queue95_ft": 180
+     },
+     "pm": {
+      "v_c": 0.37,
+      "delay_s": 41.2,
+      "los": "D",
+      "queue95_ft": 61
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.57,
+      "delay_s": 16.8,
+      "los": "B",
+      "queue95_ft": 176
+     },
+     "midday": {
+      "v_c": 0.49,
+      "delay_s": 15.6,
+      "los": "B",
+      "queue95_ft": 144
+     },
+     "pm": {
+      "v_c": 0.46,
+      "delay_s": 15.3,
+      "los": "B",
+      "queue95_ft": 135
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 32.7,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 35.2,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 41.9,
+     "los": "D"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 36 St",
+   "feis_name": "Ninth Ave/W 36th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.72,
+      "delay_s": 31.9,
+      "los": "C",
+      "queue95_ft": 203
+     },
+     "midday": {
+      "v_c": 0.64,
+      "delay_s": 29.0,
+      "los": "C",
+      "queue95_ft": 173
+     },
+     "pm": {
+      "v_c": 0.8,
+      "delay_s": 34.9,
+      "los": "C",
+      "queue95_ft": 258
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.28,
+      "delay_s": 12.3,
+      "los": "B",
+      "queue95_ft": 67
+     },
+     "midday": {
+      "v_c": 0.46,
+      "delay_s": 15.2,
+      "los": "B",
+      "queue95_ft": 105
+     },
+     "pm": {
+      "v_c": 0.18,
+      "delay_s": 10.8,
+      "los": "B",
+      "queue95_ft": 42
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.71,
+      "delay_s": 17.3,
+      "los": "B",
+      "queue95_ft": 222
+     },
+     "midday": {
+      "v_c": 0.67,
+      "delay_s": 16.5,
+      "los": "B",
+      "queue95_ft": 190
+     },
+     "pm": {
+      "v_c": 0.41,
+      "delay_s": 12.2,
+      "los": "B",
+      "queue95_ft": 109
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.1,
+      "delay_s": 5.5,
+      "los": "A",
+      "queue95_ft": 25
+     },
+     "midday": {
+      "v_c": 0.42,
+      "delay_s": 7.8,
+      "los": "A",
+      "queue95_ft": 125
+     },
+     "pm": {
+      "v_c": 0.76,
+      "delay_s": 13.6,
+      "los": "B",
+      "queue95_ft": 331
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 20.2,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 16.7,
+     "los": "B"
+    },
+    "pm": {
+     "delay_s": 18.5,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "9 Ave @ 42 St",
+   "feis_name": "Ninth Ave/W 42nd St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.57,
+      "delay_s": 30.1,
+      "los": "C",
+      "queue95_ft": 166
+     },
+     "midday": {
+      "v_c": 0.85,
+      "delay_s": 41.6,
+      "los": "D",
+      "queue95_ft": 275
+     },
+     "pm": {
+      "v_c": 0.49,
+      "delay_s": 28.7,
+      "los": "C",
+      "queue95_ft": 138
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.51,
+      "delay_s": 35.6,
+      "los": "D",
+      "queue95_ft": 91
+     },
+     "midday": {
+      "v_c": 0.51,
+      "delay_s": 34.9,
+      "los": "C",
+      "queue95_ft": 95
+     },
+     "pm": {
+      "v_c": 0.66,
+      "delay_s": 43.9,
+      "los": "D",
+      "queue95_ft": 138
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.04,
+      "delay_s": 105.2,
+      "los": "F",
+      "queue95_ft": 219
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 105.4,
+      "los": "F",
+      "queue95_ft": 227
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 105.1,
+      "los": "F",
+      "queue95_ft": 225
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.48,
+      "delay_s": 6.8,
+      "los": "A",
+      "queue95_ft": 52
+     },
+     "midday": {
+      "v_c": 0.47,
+      "delay_s": 7.1,
+      "los": "A",
+      "queue95_ft": 65
+     },
+     "pm": {
+      "v_c": 0.39,
+      "delay_s": 6.4,
+      "los": "A",
+      "queue95_ft": 53
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.0,
+      "delay_s": 109.3,
+      "los": "F",
+      "queue95_ft": 214
+     },
+     "midday": {
+      "v_c": 0.87,
+      "delay_s": 78.8,
+      "los": "E",
+      "queue95_ft": 164
+     },
+     "pm": {
+      "v_c": 1.02,
+      "delay_s": 110.7,
+      "los": "F",
+      "queue95_ft": 239
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.76,
+      "delay_s": 23.5,
+      "los": "C",
+      "queue95_ft": 237
+     },
+     "midday": {
+      "v_c": 0.68,
+      "delay_s": 21.3,
+      "los": "C",
+      "queue95_ft": 203
+     },
+     "pm": {
+      "v_c": 0.7,
+      "delay_s": 21.6,
+      "los": "C",
+      "queue95_ft": 233
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.4,
+      "delay_s": 20.7,
+      "los": "C",
+      "queue95_ft": 84
+     },
+     "midday": {
+      "v_c": 0.35,
+      "delay_s": 19.2,
+      "los": "B",
+      "queue95_ft": 68
+     },
+     "pm": {
+      "v_c": 0.37,
+      "delay_s": 19.4,
+      "los": "B",
+      "queue95_ft": 87
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 33.0,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 33.2,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 33.5,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "Dyer Ave @ 30 St",
+   "feis_name": "Dyer Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.08,
+      "delay_s": 3.5,
+      "los": "A",
+      "queue95_ft": 7
+     },
+     "midday": {
+      "v_c": 0.24,
+      "delay_s": 4.4,
+      "los": "A",
+      "queue95_ft": 26
+     },
+     "pm": {
+      "v_c": 0.35,
+      "delay_s": 7.5,
+      "los": "A",
+      "queue95_ft": 68
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.02,
+      "delay_s": 0.0,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "midday": {
+      "v_c": 0.04,
+      "delay_s": 0.1,
+      "los": "A",
+      "queue95_ft": 0
+     },
+     "pm": {
+      "v_c": 0.05,
+      "delay_s": 0.1,
+      "los": "A",
+      "queue95_ft": 0
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.42,
+      "delay_s": 16.6,
+      "los": "B",
+      "queue95_ft": 125
+     },
+     "midday": {
+      "v_c": 0.24,
+      "delay_s": 14.2,
+      "los": "B",
+      "queue95_ft": 75
+     },
+     "pm": {
+      "v_c": 0.14,
+      "delay_s": 30.0,
+      "los": "C",
+      "queue95_ft": 64
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 12.7,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 7.5,
+     "los": "A"
+    },
+    "pm": {
+     "delay_s": 11.0,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "Dyer Ave @ 31 St",
+   "feis_name": "Dyer Ave/W 31st St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.43,
+      "delay_s": 45.0,
+      "los": "D",
+      "queue95_ft": 143
+     },
+     "midday": {
+      "v_c": 0.27,
+      "delay_s": 41.5,
+      "los": "D",
+      "queue95_ft": 112
+     },
+     "pm": {
+      "v_c": 0.47,
+      "delay_s": 20.4,
+      "los": "C",
+      "queue95_ft": 51
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.27,
+      "delay_s": 41.9,
+      "los": "D",
+      "queue95_ft": 85
+     },
+     "midday": {
+      "v_c": 0.26,
+      "delay_s": 41.4,
+      "los": "D",
+      "queue95_ft": 93
+     },
+     "pm": {
+      "v_c": 0.52,
+      "delay_s": 21.1,
+      "los": "C",
+      "queue95_ft": 45
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.1,
+      "delay_s": 23.8,
+      "los": "C",
+      "queue95_ft": 73
+     },
+     "midday": {
+      "v_c": 0.28,
+      "delay_s": 27.2,
+      "los": "C",
+      "queue95_ft": 190
+     },
+     "pm": {
+      "v_c": 0.42,
+      "delay_s": 1.5,
+      "los": "A",
+      "queue95_ft": 2
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.26,
+      "delay_s": 8.9,
+      "los": "A",
+      "queue95_ft": 79
+     },
+     "midday": {
+      "v_c": 0.14,
+      "delay_s": 8.1,
+      "los": "A",
+      "queue95_ft": 43
+     },
+     "pm": {
+      "v_c": 0.09,
+      "delay_s": 7.7,
+      "los": "A",
+      "queue95_ft": 28
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 22.2,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 25.0,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 8.4,
+     "los": "A"
+    }
+   }
+  },
+  {
+   "name": "Dyer Ave @ 34 St",
+   "feis_name": "Dyer Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.58,
+      "delay_s": 24.3,
+      "los": "C",
+      "queue95_ft": 304
+     },
+     "midday": {
+      "v_c": 0.5,
+      "delay_s": 16.6,
+      "los": "B",
+      "queue95_ft": 192
+     },
+     "pm": {
+      "v_c": 0.67,
+      "delay_s": 21.0,
+      "los": "C",
+      "queue95_ft": 358
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.65,
+      "delay_s": 7.5,
+      "los": "A",
+      "queue95_ft": 42
+     },
+     "midday": {
+      "v_c": 0.61,
+      "delay_s": 6.9,
+      "los": "A",
+      "queue95_ft": 47
+     },
+     "pm": {
+      "v_c": 0.74,
+      "delay_s": 12.1,
+      "los": "B",
+      "queue95_ft": 124
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.14,
+      "delay_s": 14.6,
+      "los": "B",
+      "queue95_ft": 47
+     },
+     "midday": {
+      "v_c": 0.29,
+      "delay_s": 15.9,
+      "los": "B",
+      "queue95_ft": 91
+     },
+     "pm": {
+      "v_c": 0.14,
+      "delay_s": 13.5,
+      "los": "B",
+      "queue95_ft": 42
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "LR",
+     "am": {
+      "v_c": 0.8,
+      "delay_s": 53.2,
+      "los": "D",
+      "queue95_ft": 144
+     },
+     "midday": {
+      "v_c": 0.53,
+      "delay_s": 38.9,
+      "los": "D",
+      "queue95_ft": 94
+     },
+     "pm": {
+      "v_c": 0.54,
+      "delay_s": 38.9,
+      "los": "D",
+      "queue95_ft": 100
+     }
+    },
+    {
+     "approach": "southbound",
+     "group": "R",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 130.1,
+      "los": "F",
+      "queue95_ft": 185
+     },
+     "midday": {
+      "v_c": 0.76,
+      "delay_s": 70.3,
+      "los": "E",
+      "queue95_ft": 137
+     },
+     "pm": {
+      "v_c": 0.91,
+      "delay_s": 97.5,
+      "los": "F",
+      "queue95_ft": 150
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 34.5,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 20.6,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 25.2,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "10 Ave @ 30 St",
+   "feis_name": "Tenth Ave/W 30th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 0.74,
+      "delay_s": 48.7,
+      "los": "D",
+      "queue95_ft": 184
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 93.4,
+      "los": "F",
+      "queue95_ft": 263
+     },
+     "pm": {
+      "v_c": 0.94,
+      "delay_s": 67.0,
+      "los": "E",
+      "queue95_ft": 222
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.5,
+      "delay_s": 33.7,
+      "los": "C",
+      "queue95_ft": 134
+     },
+     "midday": {
+      "v_c": 1.03,
+      "delay_s": 94.7,
+      "los": "F",
+      "queue95_ft": 205
+     },
+     "pm": {
+      "v_c": 0.86,
+      "delay_s": 56.8,
+      "los": "E",
+      "queue95_ft": 161
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 21.1,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 35.4,
+     "los": "D"
+    },
+    "pm": {
+     "delay_s": 27.1,
+     "los": "C"
+    }
+   }
+  },
+  {
+   "name": "10 Ave @ 33 St",
+   "feis_name": "Tenth Ave/W 33rd St",
+   "lane_groups": [
+    {
+     "approach": "westbound",
+     "group": "TR",
+     "am": {
+      "v_c": 0.42,
+      "delay_s": 24.7,
+      "los": "C",
+      "queue95_ft": 126
+     },
+     "midday": {
+      "v_c": 0.69,
+      "delay_s": 33.6,
+      "los": "C",
+      "queue95_ft": 134
+     },
+     "pm": {
+      "v_c": 0.46,
+      "delay_s": 19.5,
+      "los": "B",
+      "queue95_ft": 94
+     }
+    },
+    {
+     "approach": "northbound",
+     "group": "LT",
+     "am": {
+      "v_c": 0.56,
+      "delay_s": 16.7,
+      "los": "B",
+      "queue95_ft": 175
+     },
+     "midday": {
+      "v_c": 0.7,
+      "delay_s": 19.2,
+      "los": "B",
+      "queue95_ft": 253
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 17.6,
+      "los": "B",
+      "queue95_ft": 216
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 17.9,
+     "los": "B"
+    },
+    "midday": {
+     "delay_s": 21.6,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 17.9,
+     "los": "B"
+    }
+   }
+  },
+  {
+   "name": "10 Ave @ 34 St",
+   "feis_name": "Tenth Ave/W 34th St",
+   "lane_groups": [
+    {
+     "approach": "eastbound",
+     "group": "L",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 141.8,
+      "los": "F",
+      "queue95_ft": 132
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 133.7,
+      "los": "F",
+      "queue95_ft": 147
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 135.5,
+      "los": "F",
+      "queue95_ft": 146
+     }
+    },
+    {
+     "approach": "eastbound",
+     "group": "T",
+     "am": {
+      "v_c": 0.64,
+      "delay_s": 33.2,
+      "los": "C",
+      "queue95_ft": 196
+     },
+     "midday": {
+      "v_c": 0.45,
+      "delay_s": 27.7,
+      "los": "C",
+      "queue95_ft": 156
+     },
+     "pm": {
+      "v_c": 0.62,
+      "delay_s": 32.3,
+      "los": "C",
+      "queue95_ft": 211
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "T",
+     "am": {
+      "v_c": 1.05,
+      "delay_s": 92.5,
+      "los": "F",
+      "queue95_ft": 389
+     },
+     "midday": {
+      "v_c": 1.05,
+      "delay_s": 95.1,
+      "los": "F",
+      "queue95_ft": 392
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 89.7,
+      "los": "F",
+      "queue95_ft": 352
+     }
+    },
+    {
+     "approach": "westbound",
+     "group": "R",
+     "am": {
+      "v_c": 0.7,
+      "delay_s": 42.0,
+      "los": "D",
+      "queue95_ft": 202
+     },
+     "midday": {
+      "v_c": 0.68,
+      "delay_s": 40.3,
+      "los": "D",
+      "queue95_ft": 182
+     },
+     "pm": {
+      "v_c": 1.05,
+      "delay_s": 88.4,
+      "los": "F",
+      "queue95_ft": 352
+     }
+    }
+   ],
+   "intersection": {
+    "am": {
+     "delay_s": 29.6,
+     "los": "C"
+    },
+    "midday": {
+     "delay_s": 28.2,
+     "los": "C"
+    },
+    "pm": {
+     "delay_s": 31.5,
+     "los": "C"
+    }
+   }
+  }
+ ]
+}

@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api lint
+.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -14,3 +14,15 @@ api:                ## run backend on :$(PORT) (default 8000)
 
 lint:
 	ruff check .
+
+sim-network:        ## OSM -> midtown.net.xml (reuses the extract if present)
+	$(PY) -m sim.network.build --skip-osm
+
+sim-routes:         ## corridor flows + randomTrips -> midtown.rou.xml
+	$(PY) -m sim.routes.build_routes
+
+sim-validate:       ## structure + 15 min headless run
+	$(PY) -m sim.network.validate
+
+sim-gui:            ## open the Midtown net in sumo-gui
+	sumo-gui -c sim/network/midtown.sumocfg

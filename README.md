@@ -44,6 +44,8 @@ If `make api` fails with `Address already in use`, find what's on the port with
 `lsof -nP -iTCP:8000 -sTCP:LISTEN`, or run on another port with `make api PORT=8001`.
 
 SUMO: install via `pip install -e ".[sim]"` (eclipse-sumo) or Homebrew, and set `SUMO_HOME`.
+Build the Midtown network with `make sim-network && make sim-routes`. Commands
+and the assumptions register: [sim/network/README.md](sim/network/README.md).
 
 ## Interfaces (lock these in hour one)
 
