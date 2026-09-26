@@ -40,6 +40,9 @@ cp .env.example .env
 make api            # http://localhost:8000/health
 ```
 
+If `make api` fails with `Address already in use`, find what's on the port with
+`lsof -nP -iTCP:8000 -sTCP:LISTEN`, or run on another port with `make api PORT=8001`.
+
 SUMO: install via `pip install -e ".[sim]"` (eclipse-sumo) or Homebrew, and set `SUMO_HOME`.
 
 ## Interfaces (lock these in hour one)
