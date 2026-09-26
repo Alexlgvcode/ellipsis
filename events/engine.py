@@ -71,6 +71,8 @@ class EventEngine:
         self.mask = mask
         self.dwell: dict[str, float] = rules["dwell_s"]
         self.edge_margin = rules["edge_margin_px"]
+        self.side_edges = rules.get("edge_sides", False)
+        self.min_seen_frac = rules["stationary"].get("min_seen_frac", 0.0)
         self.max_gap_frac = rules["queue"]["max_gap_frac"]
         self.min_x_overlap = rules["queue"]["min_x_overlap"]
         self.open: dict[int, Event] = {}  # track id -> its open event
@@ -111,13 +113,15 @@ class EventEngine:
                 self.open[t.id] = event
                 out.updated.append(event)
                 continue
-            if t.bbox[3] >= self.mask.frame_size[1] - self.edge_margin:
-                continue  # cut off at the bottom: its zone can't be read
+            if self._cut_off(t.bbox):
+                continue  # cut off by the frame edge: its zone can't be read
             zone = self.mask.lane_zone(t.bbox)
             if zone not in ZONE_EVENTS or t.stationary_s < self._dwell_for(zone):
                 continue
             if zone is LaneZone.TRAVEL and self._queued(t, still):
                 continue
+            if t.seen_frac < self.min_seen_frac:
+                continue  # gaps while "still": likely different vehicles passing one spot
             event = self._new_event(t, zone)
             self.open[t.id] = event
             out.opened.append(event)
@@ -127,7 +131,20 @@ class EventEngine:
             out.closed.append(self.open.pop(tid))  # track lost
         return out
 
+    def close_all(self) -> list[Event]:
+        """Close every open event (e.g. the camera's view moved, so they're no longer valid)."""
+        closed = list(self.open.values())
+        self.open.clear()
+        return closed
+
     # --- helpers -------------------------------------------------------------------------
+
+    def _cut_off(self, bbox) -> bool:
+        w, h = self.mask.frame_size
+        m = self.edge_margin
+        bottom = bbox[3] >= h - m
+        side = self.side_edges and (bbox[0] <= m or bbox[2] >= w - m)
+        return bottom or side
 
     def _dwell_for(self, zone: LaneZone) -> float:
         return self.dwell[ZONE_EVENTS[zone][1]]

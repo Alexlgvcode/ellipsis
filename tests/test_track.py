@@ -170,3 +170,11 @@ def test_recording_gap_ends_tracks_instead_of_bridging_them(tracker):
     assert [t.id for t in tracker.ended] == [1]
     assert [t.id for t in tracks] == [2]
     assert tracks[0].stationary_s == 0
+
+
+def test_seen_frac_counts_detected_vs_missed_frames_while_still(tracker):
+    parked = det(100, 100, 160, 140)
+    tracks = run(tracker, [[parked], [parked], [], [parked], [], [parked]])
+    t = tracks[0]
+    assert (t.still_seen, t.still_missed) == (4, 2)
+    assert t.seen_frac == pytest.approx(4 / 6)
