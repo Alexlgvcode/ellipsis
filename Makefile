@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui sim-scenario
+.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -29,3 +29,6 @@ sim-gui:            ## open the Midtown net in sumo-gui
 
 sim-scenario:       ## 8th Ave blockage: plan A vs empty, then A vs B
 	$(PY) -m sim.run_scenario --demo
+
+sim-retime:         ## mock events -> real sim numbers, POST if the API is up
+	$(PY) -m signals.retime --post
