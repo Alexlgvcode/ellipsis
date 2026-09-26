@@ -23,6 +23,9 @@ to it as `<camera-id>.jpg`. Coordinates are pixels in the 352x240 frame.
 | `bus_stop` | Bus stop | longer wait threshold |
 | `ignore` | Taxi stands, far background, anywhere detections aren't trusted | none |
 
+Optional `"traffic": "away"` (default) or `"toward"`: which way traffic drives relative to the
+camera. The event engine uses it to tell which stopped vehicle is at the front of a queue.
+
 A vehicle's zone is looked up at the **bottom-center of its box** (where it touches
 the road). Outside every polygon the zone is `none`. Where polygons overlap:
 `ignore` > `bus_stop` > `box` > `curb` > `curb_adjacent` > `travel`.

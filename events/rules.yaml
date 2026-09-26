@@ -1,12 +1,17 @@
 # Dwell thresholds and rule knobs. Tune during the event without code changes.
-dwell_s:
-  double_parked: 60
-  stopped_in_lane: 120   # longer than one signal cycle
-  blocked_box: 20
-  frozen_feed: 30
+dwell_s:                 # seconds a vehicle must stay still in a zone before an event opens
+  double_parked: 60      # curb_adjacent zones
+  stopped_in_lane: 120   # travel zones; longer than one signal cycle, so red lights don't fire
+  blocked_box: 30        # box zones; 20 fired on cabs waiting ~20 s to turn while pedestrians cross
+  bus_stop: 120          # any vehicle in a bus_stop zone (buses leave within ~30-60 s);
+                         # reported as double_parked. Class is never used: the detector
+                         # labels delivery trucks and cabs as "bus"
+  frozen_feed: 30        # identical frames for this long
 
 signal_cycle_s: 90
 track_lost_frames: 3
+edge_margin_px: 2        # no events for boxes whose bottom touches the frame edge: the vehicle
+                         # is cut off, so its box bottom isn't where it touches the road
 
 stationary:
   # still = at least `min_still_edges` of the 4 box edges moved < max_edge_shift_frac of the
@@ -23,5 +28,6 @@ tracking:
   max_gap_s: 30    # a track unseen for longer ends, even if fewer than track_lost_frames were
                    # missed (recording gaps, restarts): nobody saw the vehicle stay put
 
-ignore:
-  bus_in_bus_stop: true
+queue:                   # only the front vehicle of a queue in a travel lane is an event;
+  max_gap_frac: 0.6      # stopped vehicles closer than this x the vehicle's height behind it
+  min_x_overlap: 0.3     # and overlapping sideways by this fraction are queued behind it

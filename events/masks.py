@@ -5,6 +5,7 @@ saved next to it as <camera_id>.jpg (used later to notice when a camera's view
 has moved). Format:
 
     {"camera_id": "...", "name": "8th Ave @ 33rd St", "frame_size": [352, 240],
+     "traffic": "away",   # optional: traffic drives away from (default) or toward the camera
      "zones": [{"name": "parking_left", "type": "curb", "polygon": [[x, y], ...]}]}
 
 A vehicle's zone is looked up at the bottom-center of its box (where it touches
@@ -79,6 +80,7 @@ class CameraMask:
     name: str
     frame_size: tuple[int, int]
     zones: tuple[Zone, ...]
+    traffic: str = "away"  # "away" (up the image) or "toward" the camera: which way is "ahead"
 
     def zone_at(self, x: float, y: float) -> Zone | None:
         hits = [z for z in self.zones if z.contains(x, y)]
@@ -96,7 +98,8 @@ class CameraMask:
                            tuple((float(x), float(y)) for x, y in z["polygon"]))
                       for z in d["zones"])
         w, h = d["frame_size"]
-        return cls(d["camera_id"], d.get("name", ""), (int(w), int(h)), zones)
+        return cls(d["camera_id"], d.get("name", ""), (int(w), int(h)), zones,
+                   d.get("traffic", "away"))
 
 
 def validate_mask(d: dict) -> list[str]:
@@ -109,6 +112,8 @@ def validate_mask(d: dict) -> list[str]:
             errors.append("camera_id is missing")
     except (KeyError, TypeError, ValueError):
         return ["needs camera_id, frame_size [w, h] and zones"]
+    if d.get("traffic", "away") not in ("away", "toward"):
+        errors.append("traffic must be 'away' or 'toward'")
     known = {z.value for z in ZONE_PRIORITY}
     names = [z.get("name", "") for z in zones]
     if len(names) != len(set(names)):
@@ -134,7 +139,7 @@ def dump_mask(d: dict) -> str:
         + '     "polygon": ' + json.dumps([[round(x), round(y)] for x, y in z["polygon"]])
         + "}"
         for z in d["zones"])
-    head = {k: d[k] for k in ("camera_id", "name", "frame_size") if k in d}
+    head = {k: d[k] for k in ("camera_id", "name", "frame_size", "traffic") if k in d}
     lines = ",\n".join(f"  {json.dumps(k)}: {json.dumps(v)}" for k, v in head.items())
     return "{\n" + lines + ',\n  "zones": [\n' + zones + "\n  ]\n}\n"
 

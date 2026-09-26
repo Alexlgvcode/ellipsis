@@ -93,6 +93,9 @@ KNOWN_VEHICLES = [
     ("b0cbb042-de0a-449f-b5d1-49f68a9bf2ae", [188, 67, 208, 95], LaneZone.CURB_ADJACENT),
     # 8 Ave @ 34 St: minivan in the middle of the intersection
     ("f2964d50-042c-4021-8b52-992c08c6ff6f", [222, 48, 318, 100], LaneZone.BOX),
+    # 8 Ave @ 34 St: cab waiting at the right crosswalk to turn while pedestrians cross
+    # (18:06:34): not a blocked box, so it sits outside the intersection zone
+    ("f2964d50-042c-4021-8b52-992c08c6ff6f", [280, 34, 351, 75], LaneZone.NONE),
     # 8 Ave @ 34 St: car waiting beyond the far crosswalk: no zone
     ("f2964d50-042c-4021-8b52-992c08c6ff6f", [100, 14, 125, 36], LaneZone.NONE),
     # 8th Ave @ 31st St: cab waiting at the Penn Station taxi stand
