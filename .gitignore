@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Secrets
+.env
+
+# Data (large, kept local; share via drive/bucket)
+data/frames/*
+data/labels/*
+data/open_data/*
+!data/**/.gitkeep
+*.db
+*.sqlite
+
+# Model weights and training runs
+*.pt
+*.onnx
+runs/
+vision/datasets/*/images/
+vision/datasets/*/labels/
+
+# SUMO outputs and downloaded OSM
+sim/results/*
+!sim/results/.gitkeep
+sim/network/*.osm
+sim/network/*.osm.xml
+
+# Dashboard
+node_modules/
+.next/
+dist/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/

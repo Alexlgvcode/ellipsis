@@ -1,0 +1,16 @@
+# Dwell thresholds and rule knobs. Tune during the event without code changes.
+dwell_s:
+  double_parked: 60
+  stopped_in_lane: 120   # longer than one signal cycle
+  blocked_box: 20
+  frozen_feed: 30
+
+signal_cycle_s: 90
+track_lost_frames: 3
+
+stationary:
+  max_center_shift_frac: 0.05   # of box width
+  min_iou: 0.7
+
+ignore:
+  bus_in_bus_stop: true
