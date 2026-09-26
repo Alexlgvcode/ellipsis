@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lane Mask Editor</title>
+<style>
+  :root { --bg: #16181d; --panel: #1f2229; --line: #33363f; --text: #e6e6e6; --dim: #9aa0aa; --accent: #4da3ff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.4 -apple-system, system-ui, sans-serif; display: flex; height: 100vh; }
+  main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px; overflow: auto; }
+  aside { width: 320px; background: var(--panel); border-left: 1px solid var(--line); padding: 12px; overflow-y: auto; }
+  canvas { cursor: crosshair; border: 1px solid var(--line); max-width: 100%; height: auto; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin: 16px 0 6px; }
+  h2:first-child { margin-top: 0; }
+  select, input[type=text], button { font: inherit; color: var(--text); background: #2a2e37; border: 1px solid var(--line); border-radius: 4px; padding: 4px 6px; }
+  button { cursor: pointer; } button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: #0b1220; border-color: var(--accent); font-weight: 600; }
+  button.danger:hover { border-color: #ff5a5a; }
+  .row { display: flex; gap: 6px; align-items: center; margin: 6px 0; } .row > * { flex: 1; }
+  .zones { list-style: none; margin: 0; padding: 0; }
+  .zones li { display: flex; align-items: center; gap: 8px; padding: 4px 6px; border-radius: 4px; cursor: pointer; }
+  .zones li:hover { background: #2a2e37; } .zones li.sel { background: #2f3a4d; outline: 1px solid var(--accent); }
+  .swatch { width: 12px; height: 12px; border-radius: 2px; flex: none; }
+  .zones .type { color: var(--dim); margin-left: auto; font-size: 12px; }
+  #bar { display: flex; gap: 12px; align-items: center; width: 100%; max-width: 1056px; margin-top: 8px; color: var(--dim); }
+  #bar input[type=range] { flex: 1; }
+  #hover { font-variant-numeric: tabular-nums; width: 100%; max-width: 1056px; margin-bottom: 6px; color: var(--dim); min-height: 18px; }
+  #status { margin-top: 8px; min-height: 18px; } .ok { color: #5fd38a; } .err { color: #ff6b6b; } .dirty { color: #ffb84d; }
+  kbd { background: #2a2e37; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; font-size: 11px; }
+  .help { color: var(--dim); font-size: 12px; } .help li { margin: 3px 0; }
+  label { display: flex; gap: 6px; align-items: center; color: var(--dim); }
+</style>
+</head>
+<body>
+<main>
+  <div id="hover">Move over the image to see coordinates and the zone under the cursor.</div>
+  <canvas id="c" width="1056" height="720"></canvas>
+  <div id="bar">
+    <span id="frameLabel">reference frame</span>
+    <input id="frame" type="range" min="-1" max="-1" value="-1">
+    <label><input id="asRef" type="checkbox"> save this frame as reference</label>
+  </div>
+</main>
+<aside>
+  <h2>Camera</h2>
+  <select id="camera" style="width:100%"></select>
+
+  <h2>Zones <span class="help">(top wins where they overlap)</span></h2>
+  <ul id="zones" class="zones"></ul>
+  <div class="row">
+    <select id="newType"></select>
+    <button id="newZone">+ New zone</button>
+  </div>
+
+  <div id="selBox" hidden>
+    <h2>Selected zone</h2>
+    <div class="row"><input id="zName" type="text" placeholder="name"></div>
+    <div class="row"><select id="zType"></select></div>
+    <div class="row"><button id="zDelete" class="danger">Delete zone</button></div>
+  </div>
+
+  <h2>Save</h2>
+  <div class="row"><button id="save" class="primary">Save mask</button><button id="undo">Undo</button></div>
+  <div id="status"></div>
+
+  <h2>How to</h2>
+  <ul class="help">
+    <li><b>Select</b> a zone: click it on the image or in the list.</li>
+    <li><b>Move a point</b>: drag a square handle. <kbd>←↑→↓</kbd> nudge the last point by 1 px (<kbd>Shift</kbd> = 5 px).</li>
+    <li><b>Add a point</b>: drag a round handle in the middle of an edge.</li>
+    <li><b>Remove a point</b>: <kbd>Alt</kbd>/<kbd>⌥</kbd>-click it.</li>
+    <li><b>New zone</b>: pick a type, click <i>+ New zone</i>, click the corners, then click the first point or press <kbd>Enter</kbd>. <kbd>Esc</kbd> cancels.</li>
+    <li><b>Undo</b>: <kbd>⌘Z</kbd> / <kbd>Ctrl+Z</kbd>.</li>
+    <li>Drag the slider to check the mask on other recorded frames.</li>
+    <li>Coordinates are in 352x240 frame pixels; the image is shown 3x.</li>
+  </ul>
+</aside>
+
+<script>
+const K = 3, HANDLE = 7;
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+const $ = (id) => document.getElementById(id);
+let TYPES = [], COLORS = {};
+let cam = null, mask = null, frames = [], hasRef = false, img = new Image();
+let sel = null, lastPt = null, drag = null, drawing = null, hoverPt = null;
+let undoStack = [], dirty = false;
+
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const rgba = (t, a) => `rgba(${COLORS[t].join(",")},${a})`;
+// the canvas is drawn at 3x but may be shown smaller; convert via its on-screen size
+const shown = () => cv.getBoundingClientRect().width / mask.frame_size[0];
+const toFrame = (e) => { const r = cv.getBoundingClientRect(), s = shown();
+  return [Math.max(0, Math.min(mask.frame_size[0], Math.round((e.clientX - r.left) / s))),
+          Math.max(0, Math.min(mask.frame_size[1], Math.round((e.clientY - r.top) / s)))]; };
+const prio = (z) => TYPES.indexOf(z.type);
+
+function pointIn(x, y, poly) {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [x1, y1] = poly[i], [x2, y2] = poly[j];
+    if ((y1 > y) !== (y2 > y) && x < x1 + (y - y1) * (x2 - x1) / (y2 - y1)) inside = !inside;
+  }
+  return inside;
+}
+function zoneAt(x, y) {
+  return mask.zones.map((z, i) => [z, i]).filter(([z]) => pointIn(x, y, z.polygon))
+    .sort((a, b) => prio(a[0]) - prio(b[0]))[0];
+}
+function pushUndo() { undoStack.push(clone(mask)); if (undoStack.length > 100) undoStack.shift(); setDirty(true); }
+function setDirty(v) { dirty = v; status(v ? "Unsaved changes" : "", v ? "dirty" : ""); }
+function status(msg, cls = "") { const s = $("status"); s.textContent = msg; s.className = cls; }
+
+function draw() {
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (img.complete && img.naturalWidth) ctx.drawImage(img, 0, 0, cv.width, cv.height);
+  if (!mask) return;
+  const order = mask.zones.map((z, i) => [z, i]).sort((a, b) => prio(b[0]) - prio(a[0]));
+  for (const [z, i] of order) {
+    ctx.beginPath();
+    z.polygon.forEach(([x, y], k) => k ? ctx.lineTo(x * K, y * K) : ctx.moveTo(x * K, y * K));
+    ctx.closePath();
+    ctx.fillStyle = rgba(z.type, i === sel ? 0.28 : 0.32); ctx.fill();
+    ctx.lineWidth = i === sel ? 2.5 : 1.5; ctx.strokeStyle = i === sel ? "#fff" : rgba(z.type, 1); ctx.stroke();
+    const cx = z.polygon.reduce((s, p) => s + p[0], 0) / z.polygon.length * K;
+    const cy = z.polygon.reduce((s, p) => s + p[1], 0) / z.polygon.length * K;
+    ctx.font = "600 12px system-ui"; ctx.fillStyle = "#000a"; const w = ctx.measureText(z.name).width;
+    ctx.fillRect(cx - w / 2 - 3, cy - 9, w + 6, 16); ctx.fillStyle = "#fff"; ctx.fillText(z.name, cx - w / 2, cy + 3);
+  }
+  if (sel !== null && mask.zones[sel]) {
+    const p = mask.zones[sel].polygon;
+    p.forEach(([x, y], k) => {
+      const [nx, ny] = p[(k + 1) % p.length];
+      ctx.beginPath(); ctx.arc((x + nx) / 2 * K, (y + ny) / 2 * K, 4, 0, 7);
+      ctx.fillStyle = "#ffffffaa"; ctx.fill();
+    });
+    p.forEach(([x, y], k) => {
+      ctx.fillStyle = lastPt === k ? "#4da3ff" : "#fff"; ctx.strokeStyle = "#000";
+      ctx.fillRect(x * K - HANDLE / 2, y * K - HANDLE / 2, HANDLE, HANDLE);
+      ctx.strokeRect(x * K - HANDLE / 2, y * K - HANDLE / 2, HANDLE, HANDLE);
+    });
+  }
+  if (drawing) {
+    ctx.beginPath(); ctx.strokeStyle = rgba(drawing.type, 1); ctx.lineWidth = 2;
+    drawing.points.forEach(([x, y], k) => k ? ctx.lineTo(x * K, y * K) : ctx.moveTo(x * K, y * K));
+    if (hoverPt) ctx.lineTo(hoverPt[0] * K, hoverPt[1] * K);
+    ctx.stroke();
+    drawing.points.forEach(([x, y], k) => { ctx.fillStyle = k ? "#fff" : "#ff0";
+      ctx.fillRect(x * K - 4, y * K - 4, 8, 8); });
+  }
+}
+
+function renderList() {
+  const ul = $("zones"); ul.innerHTML = "";
+  mask.zones.map((z, i) => [z, i]).sort((a, b) => prio(a[0]) - prio(b[0])).forEach(([z, i]) => {
+    const li = document.createElement("li"); li.className = i === sel ? "sel" : "";
+    li.innerHTML = `<span class="swatch" style="background:${rgba(z.type, 1)}"></span><span></span><span class="type">${z.type}</span>`;
+    li.children[1].textContent = z.name;
+    li.onclick = () => select(i); ul.appendChild(li);
+  });
+  $("selBox").hidden = sel === null;
+  if (sel !== null) { $("zName").value = mask.zones[sel].name; $("zType").value = mask.zones[sel].type; }
+}
+function select(i) { sel = i; lastPt = null; renderList(); draw(); }
+
+function nearVertex(pt) {
+  if (sel === null) return -1;
+  const tol = HANDLE / shown() + 1.5;
+  return mask.zones[sel].polygon.findIndex(([x, y]) => Math.abs(x - pt[0]) <= tol && Math.abs(y - pt[1]) <= tol);
+}
+function nearMidpoint(pt) {
+  if (sel === null) return -1;
+  const p = mask.zones[sel].polygon, tol = 4 / shown() + 1;
+  return p.findIndex(([x, y], k) => { const [nx, ny] = p[(k + 1) % p.length];
+    return Math.abs((x + nx) / 2 - pt[0]) <= tol && Math.abs((y + ny) / 2 - pt[1]) <= tol; });
+}
+
+cv.addEventListener("mousedown", (e) => {
+  if (!mask) return;
+  const pt = toFrame(e);
+  if (drawing) {
+    const first = drawing.points[0];
+    const near = 6 / shown() + 1;
+    if (drawing.points.length >= 3 && Math.abs(first[0] - pt[0]) <= near && Math.abs(first[1] - pt[1]) <= near) return finishDrawing();
+    drawing.points.push(pt); return draw();
+  }
+  const v = nearVertex(pt);
+  if (v >= 0) {
+    const poly = mask.zones[sel].polygon;
+    if (e.altKey) { if (poly.length > 3) { pushUndo(); poly.splice(v, 1); lastPt = null; draw(); }
+                    else status("A zone needs at least 3 points", "err"); return; }
+    pushUndo(); drag = { v }; lastPt = v; return draw();
+  }
+  const m = nearMidpoint(pt);
+  if (m >= 0) { pushUndo(); mask.zones[sel].polygon.splice(m + 1, 0, pt); drag = { v: m + 1 }; lastPt = m + 1; return draw(); }
+  const hit = zoneAt(pt[0], pt[1]);
+  select(hit ? hit[1] : null);
+});
+cv.addEventListener("mousemove", (e) => {
+  if (!mask) return;
+  const pt = toFrame(e); hoverPt = pt;
+  if (drag) { mask.zones[sel].polygon[drag.v] = pt; }
+  const hit = zoneAt(pt[0], pt[1]);
+  $("hover").textContent = `x ${pt[0]}, y ${pt[1]}  ·  zone here: ` +
+    (hit ? `${hit[0].name} (${hit[0].type})` : "none (outside every zone)") +
+    "  ·  a vehicle's zone is read at the bottom-center of its box";
+  draw();
+});
+window.addEventListener("mouseup", () => { if (drag) { drag = null; renderList(); } });
+cv.addEventListener("dblclick", () => { if (drawing) finishDrawing(); });
+
+function finishDrawing() {
+  if (drawing.points.length < 3) return status("Click at least 3 points", "err");
+  pushUndo();
+  const base = drawing.type; let n = 1, name = base;
+  while (mask.zones.some((z) => z.name === name)) name = `${base}_${++n}`;
+  mask.zones.push({ name, type: drawing.type, polygon: drawing.points });
+  drawing = null; select(mask.zones.length - 1); status("Zone added; rename it on the right", "dirty");
+}
+
+window.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" && e.target.type === "text") return;
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "z") { e.preventDefault(); return undo(); }
+  if (e.key === "Escape" && drawing) { drawing = null; status(""); return draw(); }
+  if (e.key === "Enter" && drawing) return finishDrawing();
+  const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+  if (d && sel !== null && lastPt !== null) {
+    e.preventDefault(); pushUndo(); const s = e.shiftKey ? 5 : 1, p = mask.zones[sel].polygon[lastPt];
+    p[0] = Math.max(0, Math.min(mask.frame_size[0], p[0] + d[0] * s));
+    p[1] = Math.max(0, Math.min(mask.frame_size[1], p[1] + d[1] * s)); draw();
+  }
+});
+
+function undo() { if (!undoStack.length) return; mask = undoStack.pop(); if (sel >= mask.zones.length) sel = null;
+  lastPt = null; setDirty(undoStack.length > 0); renderList(); draw(); }
+
+$("newZone").onclick = () => { drawing = { type: $("newType").value, points: [] }; select(null);
+  status("Click the corners on the image; click the first point or press Enter to finish", "dirty"); };
+$("zName").oninput = (e) => { pushUndo(); mask.zones[sel].name = e.target.value.trim().replace(/\s+/g, "_"); renderList(); draw(); };
+$("zType").onchange = (e) => { pushUndo(); mask.zones[sel].type = e.target.value; renderList(); draw(); };
+$("zDelete").onclick = () => { if (!confirm(`Delete zone ${mask.zones[sel].name}?`)) return;
+  pushUndo(); mask.zones.splice(sel, 1); select(null); };
+$("undo").onclick = undo;
+
+$("frame").oninput = (e) => showFrame(+e.target.value);
+function showFrame(i) {
+  if (i < 0) { img.src = `/img/ref/${cam}?t=${Date.now()}`; $("frameLabel").textContent = hasRef ? "reference frame" : "no reference yet"; $("asRef").checked = false; $("asRef").disabled = true; }
+  else { const f = frames[i]; img.src = `/img/frame/${cam}/${f}`; $("asRef").disabled = false;
+    $("frameLabel").textContent = `${f.slice(0, 4)}-${f.slice(4, 6)}-${f.slice(6, 8)} ${f.slice(9, 11)}:${f.slice(11, 13)}:${f.slice(13, 15)} UTC  (${i + 1}/${frames.length})`; }
+}
+img.onload = draw;
+
+$("save").onclick = async () => {
+  const i = +$("frame").value, reference_frame = $("asRef").checked && i >= 0 ? frames[i] : null;
+  const r = await fetch(`/api/mask/${cam}`, { method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mask, reference_frame }) });
+  const out = await r.json();
+  if (!r.ok) return status((out.errors || [out.error]).join(" · "), "err");
+  dirty = false; undoStack = []; if (out.reference_updated) hasRef = true;
+  status(`Saved ${out.saved}${out.reference_updated ? " + new reference frame" : ""}`, "ok"); loadCameras(cam);
+};
+
+async function loadCamera(id) {
+  if (dirty && !confirm("Discard unsaved changes?")) { $("camera").value = cam; return; }
+  cam = id; sel = null; drawing = null; undoStack = []; setDirty(false);
+  mask = await (await fetch(`/api/mask/${id}`)).json();
+  const f = await (await fetch(`/api/frames/${id}`)).json();
+  frames = f.frames; hasRef = f.reference;
+  $("frame").max = frames.length - 1; $("frame").min = hasRef ? -1 : 0;
+  $("frame").value = hasRef ? -1 : frames.length - 1;
+  showFrame(+$("frame").value); renderList(); draw();
+  if (!hasRef) status("No reference frame yet: pick a clear frame and tick 'save this frame as reference'", "dirty");
+}
+async function loadCameras(keep) {
+  const cams = await (await fetch("/api/cameras")).json();
+  $("camera").innerHTML = cams.map((c) => `<option value="${c.id}">${c.has_mask ? "● " : "○ "}${c.name}</option>`).join("");
+  $("camera").value = keep || cams[0].id;
+  if (!keep) loadCamera(cams[0].id);
+}
+$("camera").onchange = (e) => loadCamera(e.target.value);
+window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+(async () => {
+  const cfg = await (await fetch("/api/config")).json(); TYPES = cfg.types; COLORS = cfg.colors;
+  const opts = TYPES.map((t) => `<option value="${t}">${t}</option>`).join("");
+  $("newType").innerHTML = opts; $("zType").innerHTML = opts; $("newType").value = "travel";
+  loadCameras();
+})();
+</script>
+</body>
+</html>

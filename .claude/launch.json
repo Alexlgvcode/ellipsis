@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mask-editor",
+      "runtimeExecutable": ".venv/bin/python",
+      "runtimeArgs": ["-m", "events.mask_editor", "--port", "8765"],
+      "port": 8765
+    }
+  ]
+}
