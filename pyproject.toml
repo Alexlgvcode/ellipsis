@@ -35,7 +35,7 @@ sim = [
 ]
 # Product lead: incident summaries
 llm = ["anthropic>=0.40"]
-dev = ["pytest>=8.0", "ruff>=0.4"]
+dev = ["pytest>=8.0", "pytest-asyncio>=1.0", "ruff>=0.4"]
 all = ["lane-watch[vision,sim,llm,dev]"]
 
 [tool.setuptools]
@@ -43,6 +43,7 @@ packages = ["common", "ingest", "vision", "events", "signals", "sim", "api"]
 
 [tool.setuptools.package-data]
 events = ["rules.yaml"]
+ingest = ["placeholders/*"]
 
 [tool.ruff]
 line-length = 100
@@ -54,3 +55,5 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
