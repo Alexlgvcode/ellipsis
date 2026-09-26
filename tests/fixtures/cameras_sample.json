@@ -1,0 +1,72 @@
+[
+  {
+    "id": "8a6bc417-4877-4ebe-8052-88c1b261baf1",
+    "name": "Central Park West @ 86 St",
+    "latitude": 40.785302,
+    "longitude": -73.969353,
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/8a6bc417-4877-4ebe-8052-88c1b261baf1/image"
+  },
+  {
+    "id": "09afb231-ef10-470f-bf54-0f44fc2dc18f",
+    "name": "Pelham Shore Rd @ City Island Rd",
+    "latitude": 40.864552,
+    "longitude": -73.813781,
+    "area": "Bronx",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/09afb231-ef10-470f-bf54-0f44fc2dc18f/image"
+  },
+  {
+    "id": "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c",
+    "name": "8th Ave @ 31st St",
+    "latitude": 40.750297,
+    "longitude": -73.99483,
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c/image"
+  },
+  {
+    "id": "8ee72946-49e0-4f49-991d-4f52b1206ed7",
+    "name": "Broadway @ 6 Ave / 33 St",
+    "latitude": 40.749412,
+    "longitude": -73.98806,
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/8ee72946-49e0-4f49-991d-4f52b1206ed7/image"
+  },
+  {
+    "id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "name": "7 Ave @ 34 St",
+    "latitude": 40.7510195668227,
+    "longitude": -73.9906285955498,
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/ee1b1d85-e8ce-485f-a539-12962933eb9f/image"
+  },
+  {
+    "id": "f2964d50-042c-4021-8b52-992c08c6ff6f",
+    "name": "8 Ave @ 34 St",
+    "latitude": 40.7521973661027,
+    "longitude": -73.9934562042021,
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/f2964d50-042c-4021-8b52-992c08c6ff6f/image"
+  },
+  {
+    "id": "d138b651-e2ed-4065-a0f9-ef56a65f61d4",
+    "name": "West Broadway @ West Houston St",
+    "latitude": 40.726958,
+    "longitude": -73.999928,
+    "area": "Manhattan",
+    "isOnline": "false",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/d138b651-e2ed-4065-a0f9-ef56a65f61d4/image"
+  },
+  {
+    "id": "broken-row-no-coords",
+    "name": "Missing Coordinates @ Nowhere",
+    "area": "Manhattan",
+    "isOnline": "true",
+    "imageUrl": "https://webcams.nyctmc.org/api/cameras/broken-row-no-coords/image"
+  }
+]
