@@ -1,4 +1,4 @@
-"""Engine setup and startup seeding (cameras always, mock data in mock mode)."""
+"""Engine setup and startup seeding (cameras always; mock data in mock mode, removed otherwise)."""
 
 from __future__ import annotations
 
@@ -53,3 +53,21 @@ def seed_mocks(session: Session, mock_dir: Path) -> int:
         for r in json.loads(recs_path.read_text()):
             session.merge(RecommendationRow.from_model(Recommendation(**r)))
     return len(events)
+
+
+def remove_mocks(session: Session, mock_dir: Path) -> int:
+    """Delete the data/mock/ events (and their recommendations), so a database used in
+    mock mode earlier only shows real events once mock mode is off."""
+    events_path = mock_dir / "events.json"
+    if not events_path.exists():
+        return 0
+    removed = 0
+    for e in json.loads(events_path.read_text()):
+        rec = session.get(RecommendationRow, e["id"])
+        if rec:
+            session.delete(rec)
+        row = session.get(EventRow, e["id"])
+        if row:
+            session.delete(row)
+            removed += 1
+    return removed

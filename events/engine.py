@@ -251,30 +251,27 @@ def main(argv: list[str] | None = None) -> int:
 
     from PIL import Image
 
-    from ingest.health import is_frozen, thumbnail
+    from events.pipeline import CameraPipeline
     from vision.detect import Detector, find_frames
-    from vision.track import CameraTracker, frame_timestamp
+    from vision.track import frame_timestamp
 
     camera_id = args.frames_dir.name
     rules = load_rules(args.rules) if args.rules else load_rules()
-    engine = EventEngine.for_camera(camera_id, rules)
-    if engine is None:
+    pipe = CameraPipeline.for_camera(camera_id, rules)
+    if pipe is None:
         print(f"no lane mask for camera {camera_id}: add one with python -m events.mask_editor")
         return 1
+    engine = pipe.engine
     frames = sorted(find_frames(args.frames_dir), key=frame_timestamp)[: args.limit]
     detections = Detector().detect(frames)
-    tracker = CameraTracker(rules)
 
     final: dict[str, Event] = {}
     gif_frames: list = []
-    prev_thumb = None
     for path, dets in zip(frames, detections, strict=True):
         ts = frame_timestamp(path)
-        thumb = thumbnail(Image.open(path))
-        still = prev_thumb is not None and is_frozen(prev_thumb, thumb)
-        prev_thumb = thumb
-        tracks = [] if still else tracker.update(ts, dets)
-        upd = engine.update(ts, tracks, [] if still else tracker.ended, feed_still=still)
+        image = Image.open(path)
+        upd = pipe.step(ts, image, dets)
+        tracks = pipe.tracks
         for e in upd.opened:
             print(f"{ts:%H:%M:%S}  OPEN   {e.type.value:<16} {e.lane_zone.value:<14} "
                   f"still {e.duration_s:>4.0f}s  box {[round(v) for v in e.bbox]}  {e.id}")
@@ -282,7 +279,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{ts:%H:%M:%S}  CLOSE  {e.type.value:<16} after {e.duration_s:.0f}s  {e.id}")
         final.update({e.id: e for e in upd.changed})
         if args.gif:
-            gif_frames.append(draw_events(Image.open(path), engine, tracks, ts))
+            gif_frames.append(draw_events(image, engine, tracks, ts))
 
     args.out.mkdir(parents=True, exist_ok=True)
     if gif_frames:

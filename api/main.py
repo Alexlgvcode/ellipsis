@@ -3,8 +3,9 @@
     make api              # http://localhost:8000/docs
 
 With LW_MOCK_MODE=true the data/mock/ events and recommendations are loaded at
-startup, so the dashboard has data before the pipeline runs. POSTs work in
-both modes.
+startup, so the dashboard has data before the pipeline runs; with it false they
+are removed again, leaving only real events (e.g. from scripts/replay.py).
+POSTs work in both modes.
 
 Operator feedback (F11) and the websocket feed come in later issues.
 """
@@ -19,7 +20,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.responses import FileResponse, RedirectResponse
 from sqlmodel import Session, select
 
-from api.db import init_db, make_engine, seed_cameras, seed_mocks
+from api.db import init_db, make_engine, remove_mocks, seed_cameras, seed_mocks
 from api.models import CameraRow, EventRow, RecommendationRow
 from common.config import REPO_ROOT, Settings, get_settings
 from common.schemas import Camera, Event, EventType, Recommendation
@@ -36,6 +37,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             seed_cameras(session, settings.cameras_path)
             if settings.mock_mode:
                 seed_mocks(session, settings.data_dir / "mock")
+            else:
+                remove_mocks(session, settings.data_dir / "mock")
             session.commit()
         yield
 
