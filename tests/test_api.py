@@ -132,3 +132,13 @@ def test_snapshot_outside_data_dir_is_refused(client, sample_event):
 def test_missing_snapshot_returns_404(client, sample_event):
     client.post("/events", json=sample_event)  # snapshot_path is None
     assert client.get("/events/evt_test/snapshot").status_code == 404
+
+
+def test_turning_mock_mode_off_removes_the_mocks(make_client, sample_event):
+    mock = make_client(mock_mode=True)
+    assert len(mock.get("/events").json()) == 3
+    mock.post("/events", json=sample_event)             # a real event, same database
+    mock.__exit__(None, None, None)
+    real = make_client(mock_mode=False)
+    assert [e["id"] for e in real.get("/events").json()] == [sample_event["id"]]
+    assert real.get("/recommendations/evt_mock_001").status_code == 404
