@@ -55,16 +55,16 @@ Don't start the next stage's features until your own gates pass.
 
 ## Stage 0 · Setup (both)
 
-- [ ] Push the scaffold to `main`
+- [x] Push the scaffold to `main`
 - [ ] Both clone, `python3 -m venv .venv && source .venv/bin/activate`, `make install`, `cp .env.example .env`
 - [ ] Agree on the Python version (3.10 or 3.11)
-- [ ] Merge the CI setup to `main`:
+- [x] Merge the CI setup to `main`:
   - `.github/workflows/ci.yml`
   - `.github/pull_request_template.md`
   - starter tests in `tests/`
   - pytest config in `pyproject.toml`
-- [ ] GitHub → Settings → Branches → protect `main`: require a PR, and require the `lint` and `test` checks to pass
-- [ ] **✅ Automated tests:** the first CI run on `main` is green (Actions tab)
+- [x] GitHub → Settings → Rules → Rulesets → protect `main`: require a PR, and require the `lint`, `test (3.10)` and `test (3.11)` checks to pass (admin bypass: pull requests only)
+- [x] **✅ Automated tests:** the first CI run on `main` is green (Actions tab)
 - [ ] **🧪 Test:**
   - `make api`, then open http://localhost:8000/health → `{"status": "ok"}` on both laptops
   - push a throwaway branch with a failing test and confirm CI goes red and the PR can't merge
