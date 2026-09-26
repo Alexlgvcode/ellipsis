@@ -6,8 +6,12 @@ that a *stopped* vehicle keeps its ID. Tracks are linked by box overlap only
 (class is ignored for matching) and survive a few missed frames, e.g. while a
 bus passes in front of a parked van.
 
-Stationary test (events/rules.yaml `stationary`): center moved < 5% of box width
-AND IoU > 0.7. A still streak starts when two consecutive boxes pass; from then
+Stationary test (events/rules.yaml `stationary`): at least 3 of the box's 4 edges
+moved less than 5% of the box diagonal, AND IoU > 0.5. Counting edges instead of
+the center matters for occlusion: when a passing car or pedestrian hides a
+parked truck's bottom, only that edge moves, but the center shifts enough to
+look like motion. Driving moves at least two edges. A still streak starts when
+two consecutive boxes pass; from then
 on each new box is compared to the streak's *anchor* box (where the vehicle
 parked), not the previous frame, and the streak only resets after
 `reset_after_frames` failures in a row. One glitchy box (partly hidden by a
@@ -24,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass, field
@@ -51,11 +56,13 @@ def center(b: BBox) -> tuple[float, float]:
     return (b[0] + b[2]) / 2, (b[1] + b[3]) / 2
 
 
-def is_still(prev: BBox, cur: BBox, max_shift_frac: float, min_iou: float) -> bool:
-    (px, py), (cx, cy) = center(prev), center(cur)
-    shift = ((cx - px) ** 2 + (cy - py) ** 2) ** 0.5
-    width = max(prev[2] - prev[0], 1e-6)
-    return shift < max_shift_frac * width and iou(prev, cur) > min_iou
+def is_still(prev: BBox, cur: BBox, max_shift_frac: float, min_iou: float,
+             min_edges: int = 3) -> bool:
+    """At least `min_edges` of the 4 edges moved < max_shift_frac of the box diagonal,
+    and IoU > min_iou."""
+    tol = max_shift_frac * math.hypot(prev[2] - prev[0], prev[3] - prev[1])
+    steady = sum(abs(a - b) < tol for a, b in zip(prev, cur, strict=True))
+    return steady >= min_edges and iou(prev, cur) > min_iou
 
 
 def frame_timestamp(path: Path) -> datetime:
@@ -102,7 +109,8 @@ class CameraTracker:
 
     def __init__(self, rules: dict | None = None):
         rules = rules or load_rules()
-        self.max_shift_frac = rules["stationary"]["max_center_shift_frac"]
+        self.max_shift_frac = rules["stationary"]["max_edge_shift_frac"]
+        self.min_edges = rules["stationary"]["min_still_edges"]
         self.min_iou = rules["stationary"]["min_iou"]
         self.reset_after = rules["stationary"]["reset_after_frames"]
         self.match_iou = rules["tracking"]["match_iou"]
@@ -151,7 +159,7 @@ class CameraTracker:
 
     def _extend(self, track: Track, ts: datetime, det: Detection) -> None:
         def still(ref: BBox) -> bool:
-            return is_still(ref, det.bbox, self.max_shift_frac, self.min_iou)
+            return is_still(ref, det.bbox, self.max_shift_frac, self.min_iou, self.min_edges)
 
         if track.stationary_since is None:
             if still(track.bbox):  # start a streak at the previous observation
