@@ -15,6 +15,7 @@ venv/
 data/frames/*
 data/labels/*
 data/open_data/*
+data/snapshots/*
 !data/**/.gitkeep
 *.db
 *.sqlite

@@ -1,0 +1,16 @@
+{
+  "camera_id": "83655dbc-7902-4fdb-926c-15fee4396b83",
+  "name": "Broadway @ 38 St",
+  "frame_size": [352, 240],
+  "traffic": "away",
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [352, 75], [0, 75]]},
+    {"name": "parking_left", "type": "curb",
+     "polygon": [[144, 81], [155, 85], [132, 145], [82, 240], [0, 240], [0, 205], [55, 160], [105, 115]]},
+    {"name": "lane_left", "type": "travel",
+     "polygon": [[159, 89], [173, 90], [176, 147], [180, 240], [82, 240], [132, 145]]},
+    {"name": "lane_right", "type": "curb_adjacent",
+     "polygon": [[178, 121], [205, 120], [220, 149], [250, 200], [276, 240], [180, 240], [179, 152]]}
+  ]
+}

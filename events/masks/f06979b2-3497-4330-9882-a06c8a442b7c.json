@@ -1,0 +1,19 @@
+{
+  "camera_id": "f06979b2-3497-4330-9882-a06c8a442b7c",
+  "name": "6 Ave @ 34 St",
+  "frame_size": [352, 240],
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [351, 64], [109, 59], [0, 56]]},
+    {"name": "lane_left", "type": "curb_adjacent",
+     "polygon": [[94, 61], [107, 60], [137, 140], [89, 144]]},
+    {"name": "lanes_middle", "type": "travel",
+     "polygon": [[108, 60], [139, 62], [217, 135], [138, 141]]},
+    {"name": "lane_right", "type": "curb_adjacent",
+     "polygon": [[140, 62], [150, 62], [198, 96], [234, 119], [254, 132], [220, 135]]},
+    {"name": "crosswalk", "type": "travel",
+     "polygon": [[51, 158], [92, 155], [257, 143], [328, 188], [20, 228]]},
+    {"name": "intersection", "type": "box",
+     "polygon": [[20, 232], [339, 194], [352, 195], [352, 240], [20, 240]]}
+  ]
+}

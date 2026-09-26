@@ -1,0 +1,16 @@
+{
+  "camera_id": "8ee72946-49e0-4f49-991d-4f52b1206ed7",
+  "name": "Broadway @ 6 Ave / 33 St",
+  "frame_size": [352, 240],
+  "traffic": "away",
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [352, 45], [0, 45]]},
+    {"name": "broadway", "type": "travel",
+     "polygon": [[145, 50], [161, 53], [245, 125], [176, 128]]},
+    {"name": "crosswalk", "type": "travel",
+     "polygon": [[156, 139], [235, 135], [281, 184], [160, 195]]},
+    {"name": "intersection", "type": "box",
+     "polygon": [[157, 210], [290, 201], [302, 201], [340, 240], [159, 240]]}
+  ]
+}

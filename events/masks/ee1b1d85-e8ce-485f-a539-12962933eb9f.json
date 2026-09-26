@@ -1,0 +1,16 @@
+{
+  "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+  "name": "7 Ave @ 34 St",
+  "frame_size": [352, 240],
+  "traffic": "toward",
+  "zones": [
+    {"name": "far_background", "type": "ignore",
+     "polygon": [[0, 0], [352, 0], [352, 85], [0, 85]]},
+    {"name": "far_lanes", "type": "travel",
+     "polygon": [[99, 97], [130, 95], [200, 135], [119, 138]]},
+    {"name": "crosswalk", "type": "travel",
+     "polygon": [[119, 145], [213, 140], [243, 158], [129, 164]]},
+    {"name": "intersection", "type": "box",
+     "polygon": [[147, 179], [301, 167], [311, 168], [348, 185], [352, 240], [139, 239]]}
+  ]
+}

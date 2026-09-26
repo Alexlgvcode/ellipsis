@@ -98,6 +98,13 @@ KNOWN_VEHICLES = [
     ("f2964d50-042c-4021-8b52-992c08c6ff6f", [280, 34, 351, 75], LaneZone.NONE),
     # 8 Ave @ 34 St: car waiting beyond the far crosswalk: no zone
     ("f2964d50-042c-4021-8b52-992c08c6ff6f", [100, 14, 125, 36], LaneZone.NONE),
+    # Broadway @ 38 St: truck stopped in the right lane (16:14), next to it parked cars on the left
+    ("83655dbc-7902-4fdb-926c-15fee4396b83", [190, 110, 245, 185], LaneZone.CURB_ADJACENT),
+    ("83655dbc-7902-4fdb-926c-15fee4396b83", [45, 165, 90, 200], LaneZone.CURB),
+    # 6 Ave @ 30 St: white police van parked at the right curb (16:14)
+    ("0dc7c2b4-614d-46a3-9610-3ba09f3f1284", [280, 165, 327, 197], LaneZone.CURB),
+    # 7 Ave @ 34 St: car crossing 34th St inside the (trimmed) intersection zone (20:13:47)
+    ("ee1b1d85-e8ce-485f-a539-12962933eb9f", [152, 179, 268, 232], LaneZone.BOX),
     # 8th Ave @ 31st St: cab waiting at the Penn Station taxi stand
     ("ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c", [263, 159, 302, 184], LaneZone.IGNORE),
     # 8th Ave @ 31st St: SUV driving past the stand
@@ -207,3 +214,13 @@ def test_editor_saves_valid_mask_and_rejects_invalid(editor):
     assert "unknown type" in r.json()["errors"][0]
     r = httpx.post(f"{base}/api/mask/{cam}", json={"mask": GOOD, "reference_frame": "../x.jpg"})
     assert r.status_code in (400, 422)
+
+
+def test_dump_mask_keeps_traffic_direction():
+    d = {**GOOD, "traffic": "toward"}
+    assert json.loads(dump_mask(d))["traffic"] == "toward"
+
+
+def test_7_ave_34_st_traffic_comes_toward_the_camera():
+    # 7th Ave runs south and this camera faces north; an old editor process dropped this once
+    assert load_mask("ee1b1d85-e8ce-485f-a539-12962933eb9f").traffic == "toward"
