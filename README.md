@@ -6,7 +6,7 @@ stopped in a travel lane, blocking the box), and recommends a signal timing chan
 that a SUMO simulation shows clears the jam faster. A human approves every change.
 
 Scope: 10–20 intersections in Midtown (Penn Station / Times Square). Crashes are
-out of scope. Full plan: [docs/plan.md](docs/plan.md).
+out of scope. Full plan: [docs/plan.md](docs/plan.md). Task list: [TODO.md](TODO.md).
 
 ## Pipeline
 
