@@ -7,7 +7,7 @@ Every file here must validate against `common/schemas.py`; `tests/test_mock_fixt
 |---|---|---|---|
 | `evt_mock_001` double parked | 8th Ave @ 33rd St | `snapshots/double_parked.jpg` | upstream cut, sim done |
 | `evt_mock_002` stopped in lane | 7 Ave @ 34 St | `snapshots/stopped_in_lane.jpg` | local extend, **sim still pending** (`sim: null`) |
-| `evt_mock_003` blocked box | 8 Ave @ 34 St | `snapshots/blocked_box.jpg` | cross-street cut, sim done |
+| `evt_mock_003` blocked box | 7 Ave @ 34 St | `snapshots/blocked_box.jpg` | cross-street cut, sim done |
 
 What's real and what's made up:
 

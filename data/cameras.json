@@ -63,15 +63,6 @@
     "is_online": true
   },
   {
-    "id": "f2964d50-042c-4021-8b52-992c08c6ff6f",
-    "name": "8 Ave @ 34 St",
-    "lat": 40.7521973661027,
-    "lon": -73.9934562042021,
-    "area": "Manhattan",
-    "image_url": "https://webcams.nyctmc.org/api/cameras/f2964d50-042c-4021-8b52-992c08c6ff6f/image",
-    "is_online": true
-  },
-  {
     "id": "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c",
     "name": "8th Ave @ 31st St",
     "lat": 40.750297,

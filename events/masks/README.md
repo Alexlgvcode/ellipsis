@@ -36,7 +36,6 @@ the road). Outside every polygon the zone is `none`. Where polygons overlap:
 |---|---|
 | 8th Ave @ 33rd St | Floating parking lane (left) + lanes next to it and the bike docks: double parking vs legal parking |
 | 7 Ave @ 36 St | Long straight avenue, parked cars on the left, deliveries/police stopping by the right planters |
-| 8 Ave @ 34 St | Looks straight down into the intersection: blocked box |
 | 8th Ave @ 31st St | Penn Station taxi stand as an `ignore` zone, so waiting cabs aren't alerts |
 | Broadway @ 38 St | Garment district: parked cars on the left, trucks stopping in the right lane |
 | 7 Ave @ 32 St | Wide avenue: far block's curb lane; crosswalk and approach lanes as travel (red-light queue) |

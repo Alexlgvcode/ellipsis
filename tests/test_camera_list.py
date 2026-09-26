@@ -183,9 +183,9 @@ def test_offline_camera_still_resolves():
     assert [c.id for c in got] == ["off"] and got[0].is_online is False
 
 
-def test_chosen_list_has_ten_unique_cameras_in_area():
-    assert len(cl.CHOSEN) == 10
-    assert len({cl.normalize_name(n) for n, _, _ in cl.CHOSEN}) == 10
+def test_chosen_list_has_nine_unique_cameras_in_area():
+    assert len(cl.CHOSEN) == 9
+    assert len({cl.normalize_name(n) for n, _, _ in cl.CHOSEN}) == 9
     min_lat, min_lon, max_lat, max_lon = PENN
     assert all(min_lat <= lat <= max_lat and min_lon <= lon <= max_lon
                for _, lat, lon in cl.CHOSEN)
@@ -270,3 +270,12 @@ def test_load_cameras_prefers_live_ids(tmp_path, raw):
     with client_for(serve(live)) as c:
         got = cl.load_cameras(refresh=True, client=c, path=path)
     assert got and all(c.id.startswith("new-") for c in got)
+
+
+def test_excluded_cameras_are_left_out_of_the_scrape(raw):
+    assert "8 Ave @ 34 St" in cl.EXCLUDED
+    assert all(cl.normalize_name(n) not in {cl.normalize_name(x) for x in cl.EXCLUDED}
+               for n, _, _ in cl.CHOSEN)
+    with client_for(lambda r: httpx.Response(200, json=raw)) as c:
+        names = {cam.name for cam in cl.scrape(c, URL, PENN)}
+    assert "8 Ave @ 34 St" not in names and "8th Ave @ 31st St" in names

@@ -39,11 +39,13 @@ class CameraPipeline:
     def camera_id(self) -> str:
         return self.engine.mask.camera_id
 
-    def step(self, ts: datetime, image: Image.Image,
-             detections: Sequence[Detection]) -> EngineUpdate:
-        thumb = thumbnail(image)
-        frozen = self._prev_thumb is not None and is_frozen(self._prev_thumb, thumb)
-        self._prev_thumb = thumb
+    def step(self, ts: datetime, image: Image.Image | None,
+             detections: Sequence[Detection], frozen: bool | None = None) -> EngineUpdate:
+        """`frozen` can be given instead of computed from `image` (e.g. from a cache)."""
+        if frozen is None:
+            thumb = thumbnail(image)
+            frozen = self._prev_thumb is not None and is_frozen(self._prev_thumb, thumb)
+            self._prev_thumb = thumb
         if frozen:  # don't let a stuck picture make every vehicle look parked
             self.tracks = []
             return self.engine.update(ts, [], [], feed_still=True)

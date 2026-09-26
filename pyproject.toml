@@ -40,7 +40,7 @@ all = ["lane-watch[vision,sim,llm,dev]"]
 [tool.setuptools]
 packages = [
     "common", "ingest", "vision", "events", "signals",
-    "sim", "sim.network", "sim.sources", "sim.routes", "api",
+    "sim", "sim.network", "sim.sources", "sim.routes", "api", "evaluation",
 ]
 
 [tool.setuptools.package-data]
