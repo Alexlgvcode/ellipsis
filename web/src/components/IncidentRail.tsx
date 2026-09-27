@@ -17,6 +17,8 @@ interface Props {
   onCollapse: (c: boolean) => void;
   seen: FirstSeen;
   now: number;
+  /** Where to watch a recording when the live feed is quiet (the public site only). */
+  replayHref?: string;
 }
 
 const GROUP_ORDER: IncidentStatus[] = ["critical", "confirmed", "needs_review", "resolved"];
@@ -79,7 +81,8 @@ export function IncidentRail(p: Props) {
       {list.length === 0 ? (
         <div className="empty">
           {p.incidents.length === 0 || p.filter === "all"
-            ? <><h2>No active incidents</h2><p>Traffic conditions are normal in this area.</p></>
+            ? <><h2>No active incidents</h2><p>Traffic conditions are normal in this area.</p>
+              {p.replayHref && <a href={p.replayHref}>Watch a recorded incident →</a>}</>
             : <><h2>Nothing in this filter</h2><p>Switch to All to see every incident.</p></>}
         </div>
       ) : (

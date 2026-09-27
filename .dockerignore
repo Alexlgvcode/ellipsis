@@ -1,0 +1,16 @@
+# deploy/Dockerfile builds from the repo root; keep local data and secrets out of the image
+.git
+.venv
+.env
+deploy/.env
+**/__pycache__
+*.pt
+*.db
+data/frames
+data/snapshots
+data/labels
+data/open_data
+data/voice
+vision/datasets
+sim/results
+web

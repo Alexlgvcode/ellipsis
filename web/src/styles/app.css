@@ -67,6 +67,8 @@ button { font: inherit; color: inherit; }
   background: var(--amber-soft); border-bottom: 1px solid var(--amber-border); color: var(--amber-text); font-size: 12.5px;
 }
 
+.banner.info { background: var(--raised); border-bottom-color: var(--border); color: var(--text-2); }
+
 /* ---------- incident rail ---------- */
 .rail {
   position: absolute; top: var(--topbar-h); bottom: 0; left: 0; z-index: 20; width: var(--rail-w);
@@ -112,6 +114,7 @@ button { font: inherit; color: inherit; }
 .empty { padding: var(--s6) var(--s4); }
 .empty h2 { margin: 0 0 4px; font-size: 14px; font-weight: 600; }
 .empty p { margin: 0; color: var(--text-2); }
+.empty a { display: inline-block; margin-top: var(--s3); color: var(--text); }
 .rail.collapsed { width: 48px; }
 .rail.collapsed .rail-hd { padding: var(--s3) 0; display: flex; flex-direction: column; align-items: center; gap: 10px; border: 0; }
 .rail-mini { display: flex; flex-direction: column; align-items: center; gap: 6px; font-family: var(--mono); font-size: 13px; }
