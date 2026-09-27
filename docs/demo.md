@@ -88,6 +88,38 @@ the replays as you begin the hook: the first alert lands about a minute in.
 | ~2:42 | Second alert: cab stopped in the lane on 8th Ave @ 31st St. It's another type, and it also goes through a human decision. | New alert in the list |
 | 2:30–3:00 | **Proof and close.** Precision 82%, recall 90%, median time to alert 63 s on hand-tagged footage. Every change goes through a human. | Metrics slide |
 
+## Live mode (daylight)
+
+Runs the same pipeline on what the cameras show right now, so the alerts come from the
+street as it is. Use it in daylight; if the streets are quiet, switch to the replay above
+(or ellipsisnyc.tech `?replay`).
+
+Four terminals from the repo root, each with `source .venv/bin/activate` (the system
+`python3` doesn't have YOLO, so `make live` fails outside the venv):
+
+```bash
+rm -f data/lanewatch.db && LW_MOCK_MODE=false make api    # 1. real events only
+make recommend-worker                                     # 2. SUMO scoring + Gemini notes
+make live                                                 # 3. polls the 10 masked cameras every 2 s
+make web                                                  # 4. http://localhost:5173
+```
+
+The top bar should say **LIVE**. `make live` prints `live: 10 cameras every 2 s (…)` and
+keeps recording frames to `data/frames/`, so a live session is also a recording.
+
+**How it scales** (measured on an M4 Pro, `yolo11s.pt`, `LW_DEVICE=mps`):
+
+| | Frames per second |
+|---|---|
+| YOLO, batches of 10 (one frame from each camera) | ~136 |
+| YOLO, one frame at a time | ~100 |
+| YOLO on CPU (`LW_DEVICE=cpu`), batches of 10 | ~39 |
+| Full pipeline (detect, track, events) on 10 recorded minutes of one camera | 112 frames in 5.6 s, model load included |
+
+10 cameras polled every 2 s need 5 frames per second, under 4% of what the GPU does. At a
+2-s poll, one laptop's detector would keep up with roughly 250 cameras; past that, the
+limit is fetching the camera stills, not YOLO.
+
 ## Mock mode (fallback)
 
 If the replay can't run (no recorded frames, YOLO or SUMO on the laptop, or no time for the
@@ -179,6 +211,7 @@ Rebuilding `data/mock/` updates it on the next deploy.
 | Alert shows but no recommendation | Is the worker terminal running? Scoring takes about 25 s per event. Is SUMO installed (`pip install -e ".[sim]"`)? |
 | Card has no incident note | Set `GEMINI_API_KEY` in `.env` and restart the worker. Without a key, the demo works without notes |
 | Notes stopped appearing | Gemini's free tier allows 20 requests a day **per model**, and each alert uses one. Set `LW_GEMINI_MODEL=gemini-3.7-flash` (a separate quota) or turn on billing in Google AI Studio before the pitch |
+| Worker logs `503 UNAVAILABLE … high demand` | Gemini is overloaded, not out of quota; that card has no note, the recommendation still comes. It happened for 3 of 9 alerts in the live test on 2026-09-27 |
 | Map is blank for the first ~10 s | Tiles are loading. Open the dashboard before presenting so it's warm |
 | Mock incidents show up | Delete `data/lanewatch.db` and restart the API with `LW_MOCK_MODE=false` |
 | Map is blank | No internet for map tiles: play the backup video |
