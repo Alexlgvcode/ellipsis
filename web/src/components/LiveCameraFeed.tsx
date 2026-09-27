@@ -1,0 +1,81 @@
+import { useEffect, useState } from "react";
+import { snapshotUrl } from "../api/client";
+import { age, clock, nyTime } from "../lib/format";
+import type { Incident } from "../lib/incidents";
+
+const REFRESH_MS = 5000;
+const FRAME_W = 352;
+const FRAME_H = 240;
+
+type View = "live" | "alert";
+
+/**
+ * Source camera. NYC DOT cameras publish periodic stills, not video, so the live view says
+ * "updated Ns ago" rather than claiming live video (§16). "At alert" is the frame the
+ * detector flagged, with a thin box on the vehicle only.
+ */
+export function LiveCameraFeed({ incident, now }: { incident: Incident; now: number }) {
+  const [view, setView] = useState<View>("live");
+  const [bucket, setBucket] = useState(() => Math.floor(Date.now() / REFRESH_MS));
+  const [loadedAt, setLoadedAt] = useState<number | null>(null);
+  const [failed, setFailed] = useState(false);
+  const cam = incident.camera;
+
+  useEffect(() => { setView("live"); setFailed(false); setLoadedAt(null); }, [incident.id]);
+  useEffect(() => {
+    const id = setInterval(() => setBucket(Math.floor(Date.now() / REFRESH_MS)), REFRESH_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  const offline = cam.state === "offline" || failed || !cam.imageUrl;
+  const liveSrc = cam.imageUrl ? `${cam.imageUrl}${cam.imageUrl.includes("?") ? "&" : "?"}t=${bucket}` : "";
+  const src = view === "live" ? liveSrc : snapshotUrl(incident.id);
+  const [x1, y1, x2, y2] = incident.bbox;
+  const tag = `${incident.typeLabel} · ${clock(incident.durationS)}`;
+
+  return (
+    <section className="sec" aria-label="Camera feed">
+      <div className="inc-hd" style={{ marginBottom: 8 }}>
+        <h3 style={{ margin: 0 }}>{view === "live" ? "Live camera" : "At alert"}</h3>
+        <div className="seg" role="group" aria-label="Camera view">
+          <button aria-pressed={view === "live"} onClick={() => setView("live")}>Live</button>
+          <button aria-pressed={view === "alert"} onClick={() => setView("alert")}>At alert</button>
+        </div>
+      </div>
+      <div className={`feed${view === "live" && offline ? " is-offline" : ""}`}>
+        {src && (
+          <img
+            key={src}
+            src={src}
+            alt={view === "live"
+              ? `Latest frame from ${cam.name}`
+              : `Frame from ${cam.name} when the ${incident.typeLabel.toLowerCase()} alert fired, vehicle outlined`}
+            onLoad={() => { if (view === "live") { setLoadedAt(Date.now()); setFailed(false); } }}
+            onError={() => { if (view === "live") setFailed(true); }}
+          />
+        )}
+        {view === "alert" && (
+          <svg viewBox={`0 0 ${FRAME_W} ${FRAME_H}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect x={x1} y={y1} width={x2 - x1} height={y2 - y1} fill="none" stroke="var(--incident)" strokeWidth="1.5" />
+            <g transform={`translate(${Math.min(x1, FRAME_W - 110)} ${y1 > 18 ? y1 - 15 : y2 + 3})`}>
+              <rect width={tag.length * 5.2 + 8} height="12" rx="2" fill="var(--incident)" />
+              <text x="4" y="9" fontSize="8.5" fontFamily="Geist Mono, monospace" fill="#fff">{tag}</text>
+            </g>
+          </svg>
+        )}
+      </div>
+      <div className="feed-foot">
+        {view === "live" ? (
+          offline ? (
+            <span><span className="offline-tag">{cam.code} OFFLINE</span>{loadedAt && <> · Last frame {nyTime(loadedAt, true)}</>}</span>
+          ) : (
+            <span>{cam.code} · Live camera · {loadedAt ? `updated ${age((now - loadedAt) / 1000)} ago` : "loading…"}</span>
+          )
+        ) : (
+          <span>{cam.code} · Alert frame</span>
+        )}
+        <span>{nyTime(view === "live" ? (loadedAt ?? now) : incident.startedAt, true)}</span>
+      </div>
+    </section>
+  );
+}

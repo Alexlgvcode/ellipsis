@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime
+.PHONY: install install-all api web-install web web-test lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -11,6 +11,15 @@ install-all:        ## everything: vision, sim, llm
 
 api:                ## run backend on :$(PORT) (default 8000)
 	uvicorn api.main:app --reload --port $(PORT)
+
+web-install:        ## dashboard deps (Node 20+)
+	cd web && npm ci
+
+web:                ## ellipsis dashboard on :5173 (proxies /api to LW_API_URL)
+	cd web && npm run dev
+
+web-test:           ## dashboard unit + app tests, typecheck
+	cd web && npm test && npm run typecheck
 
 lint:
 	ruff check .
