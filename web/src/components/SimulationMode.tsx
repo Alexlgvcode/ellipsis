@@ -158,7 +158,7 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
             {settled && (
               <ul className="support">
                 {sim.savedPerVehicle > 0.05 && <li><b className="mono">{sim.improvementPct}%</b> lower average delay</li>}
-                {sim.queueAfter < sim.queueBefore && <li><b className="mono">{sim.queueBefore - sim.queueAfter}</b> fewer queued vehicles</li>}
+                {Math.round(sim.queueBefore - sim.queueAfter) > 0 && <li><b className="mono">{Math.round(sim.queueBefore - sim.queueAfter)}</b> fewer queued vehicles</li>}
                 {sim.savedPerVehicle > 0.05 && <li className="interpret">Improved {direction}</li>}
               </ul>
             )}
@@ -228,7 +228,7 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
                 <dt>Average delay</dt>
                 <dd className={!isBase && sim && sim.recommendedDelay < sim.baselineDelay ? "good" : ""}>{sim ? `${(isBase ? sim.baselineDelay : sim.recommendedDelay).toFixed(1)}s` : dash}</dd>
                 <dt>Queue</dt>
-                <dd className={!isBase && sim && sim.queueAfter < sim.queueBefore ? "good" : ""}>{sim ? `${isBase ? sim.queueBefore : sim.queueAfter} vehicles` : dash}</dd>
+                <dd className={!isBase && sim && sim.queueAfter < sim.queueBefore ? "good" : ""}>{sim ? `${Math.round(isBase ? sim.queueBefore : sim.queueAfter)} vehicles` : dash}</dd>
                 <dt>Green phase</dt>
                 <dd>{main ? (isBase ? `${main.before}s` : <>{main.before}s → {main.after}s <span className="delta">{fmtDelta(main.delta)}</span></>) : dash}</dd>
                 <dt>Flow</dt>
