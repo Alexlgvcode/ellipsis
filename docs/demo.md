@@ -193,14 +193,13 @@ so an operator makes that call.
 
 ## Public demo site
 
-**http://ellipsisnyc.tech** (`https://` once GitHub's certificate is issued) is the dashboard
-built with `npm run build:demo`, with no API behind it:
-- by default it shows the mock-mode incidents above (`data/mock/`, SAMPLE DATA, with the heatmap)
-- **`?replay`** plays the recorded 7 Ave @ 36 St window in real time (REPLAY), with spoken
-  alerts (the speaker icon) and incident notes
+**https://ellipsisnyc.tech** is the dashboard built with `npm run build:demo`, with no API behind it:
+- by default it plays a recorded 20-minute window (Sep 26, 20:12 UTC) in real time, every
+  camera in step, with six alerts, spoken alerts (the speaker icon) and incident notes (REPLAY)
+- **`?sample`** shows the mock-mode incidents above (`data/mock/`, SAMPLE DATA, with the heatmap)
 
 Every push to `main` that touches `web/` redeploys it (`.github/workflows/pages.yml`).
-Rebuilding `data/mock/` updates it on the next deploy.
+Rebuilding `data/mock/` or `web/public/demo/` updates it on the next deploy.
 
 ## Troubleshooting
 

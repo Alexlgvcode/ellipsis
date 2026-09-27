@@ -61,7 +61,8 @@ export default function App() {
     [snap, mock],
   );
   const seenRef = useRef<FirstSeen>({});
-  for (const i of incidents) seenRef.current[i.id] ??= { durationS: i.durationS, atMs: snap!.fetchedAt };
+  // Sample data is a snapshot of stops that already ended: their clocks don't count up.
+  if (!mock) for (const i of incidents) seenRef.current[i.id] ??= { durationS: i.durationS, atMs: snap!.fetchedAt };
   const seen = seenRef.current;
   const selected = incidents.find((i) => i.id === selectedId) ?? null;
   const cameraRow = snap?.cameras.find((c) => c.id === cameraId);
@@ -95,7 +96,7 @@ export default function App() {
     }
   }, []);
 
-  if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
+  if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading traffic state…" />;
 
   const offline = Boolean(poll.error);
   // Sample data is a recording whose frames the live feed can't match; a synced replay shows
