@@ -178,3 +178,20 @@ def test_seen_frac_counts_detected_vs_missed_frames_while_still(tracker):
     t = tracks[0]
     assert (t.still_seen, t.still_missed) == (4, 2)
     assert t.seen_frac == pytest.approx(4 / 6)
+
+
+def test_weak_detections_can_only_continue_a_track_when_enabled():
+    import copy
+    rules = copy.deepcopy(load_rules())
+    rules["tracking"].update(start_conf=0.35, keep_conf=0.1, keep_iou=0.5)
+    tr = CameraTracker(rules)
+    strong, weak = det(100, 100, 160, 140, conf=0.8), det(101, 100, 161, 140, conf=0.2)
+    tracks = run(tr, [[strong], [weak], [weak], [strong]])
+    assert [t.id for t in tracks] == [1] and tracks[0].missed == 0   # weak frames kept it
+    tr = CameraTracker(rules)
+    assert run(tr, [[weak]] * 3) == []                              # weak alone starts nothing
+
+
+def test_weak_detections_are_ignored_by_default():
+    tr = CameraTracker(load_rules())
+    assert run(tr, [[det(100, 100, 160, 140, conf=0.2)]] * 3) == []

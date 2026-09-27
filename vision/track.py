@@ -123,6 +123,9 @@ class CameraTracker:
         self.min_iou = rules["stationary"]["min_iou"]
         self.reset_after = rules["stationary"]["reset_after_frames"]
         self.match_iou = rules["tracking"]["match_iou"]
+        self.start_conf = rules["tracking"].get("start_conf", 0.0)
+        self.keep_conf = rules["tracking"].get("keep_conf", 0.0)
+        self.keep_iou = rules["tracking"].get("keep_iou", self.match_iou)
         self.max_missed = rules["track_lost_frames"]
         self.max_gap_s = rules["tracking"]["max_gap_s"]
         self.tracks: dict[int, Track] = {}
@@ -134,23 +137,31 @@ class CameraTracker:
         up to `track_lost_frames` frames (`missed` > 0)."""
         self.ended = [self.tracks.pop(tid) for tid, t in list(self.tracks.items())
                       if (ts - t.last_seen).total_seconds() > self.max_gap_s]
-        pairs = sorted(
-            ((iou(t.bbox, d.bbox), tid, di)
-             for tid, t in self.tracks.items() for di, d in enumerate(detections)),
-            reverse=True,
-        )
+        # Two confidence levels (the ByteTrack idea): confident detections link first and may
+        # start tracks; weak ones (keep_conf..start_conf) may only continue an existing track
+        # at a tighter overlap. The model's confidence on a tow truck swings 0.10-0.62 frame
+        # to frame; with one cutoff it "disappears" in half the frames.
+        strong = [i for i, d in enumerate(detections) if d.conf >= self.start_conf]
+        weak = [i for i, d in enumerate(detections) if self.keep_conf <= d.conf < self.start_conf]
         matched_tracks: set[int] = set()
         matched_dets: set[int] = set()
-        for overlap, tid, di in pairs:  # greedy, best overlap first
-            if overlap < self.match_iou:
-                break
-            if tid in matched_tracks or di in matched_dets:
-                continue
-            matched_tracks.add(tid)
-            matched_dets.add(di)
-            self._extend(self.tracks[tid], ts, detections[di])
+        for dets, min_overlap in ((strong, self.match_iou), (weak, self.keep_iou)):
+            pairs = sorted(
+                ((iou(t.bbox, detections[di].bbox), tid, di)
+                 for tid, t in self.tracks.items() if tid not in matched_tracks for di in dets),
+                reverse=True,
+            )
+            for overlap, tid, di in pairs:  # greedy, best overlap first
+                if overlap < min_overlap:
+                    break
+                if tid in matched_tracks or di in matched_dets:
+                    continue
+                matched_tracks.add(tid)
+                matched_dets.add(di)
+                self._extend(self.tracks[tid], ts, detections[di])
 
-        for di, d in enumerate(detections):
+        for di in strong:
+            d = detections[di]
             if di not in matched_dets:
                 self.tracks[self._next_id] = Track(
                     id=self._next_id, first_seen=ts, last_seen=ts, bbox=d.bbox, conf=d.conf,

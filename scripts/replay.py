@@ -141,9 +141,11 @@ def replay(frames: Sequence[Path], pipe: CameraPipeline, detect: DetectFn, sink:
 
 
 def _detector(weights: str | None) -> DetectFn:
+    from events.rules import load_rules
     from vision.detect import Detector
 
-    return Detector(weights).detect
+    # down to keep_conf: the tracker uses weak detections to keep existing tracks going
+    return Detector(weights, conf=load_rules()["tracking"]["keep_conf"]).detect
 
 
 def main(argv: Iterable[str] | None = None) -> int:

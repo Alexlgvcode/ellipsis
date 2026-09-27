@@ -47,6 +47,7 @@ from vision.detect import Detection  # noqa: E402
 from vision.track import frame_timestamp  # noqa: E402
 
 CACHE_DIR = REPO_ROOT / "evaluation" / "detections"
+CACHE_CONF = 0.05  # cached detections go this low, so the tracker's keep_conf can be tuned
 
 
 def cache_path(w: Window) -> Path:
@@ -275,7 +276,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     def detector_factory():
         from vision.detect import Detector
-        return Detector().detect
+        return Detector(conf=CACHE_CONF).detect
 
     predictions: list[Prediction] = []
     stills: list[dict] = []
