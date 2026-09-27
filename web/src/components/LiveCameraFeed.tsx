@@ -15,13 +15,15 @@ type View = "live" | "alert";
  * detector flagged, with a thin box on the vehicle only.
  */
 export function LiveCameraFeed({ incident, now }: { incident: Incident; now: number }) {
-  const [view, setView] = useState<View>("live");
+  // The alert frame is the evidence to review; the live view is one click away.
+  const first: View = incident.hasSnapshot ? "alert" : "live";
+  const [view, setView] = useState<View>(first);
   const [bucket, setBucket] = useState(() => Math.floor(Date.now() / REFRESH_MS));
   const [loadedAt, setLoadedAt] = useState<number | null>(null);
   const [failed, setFailed] = useState(false);
   const cam = incident.camera;
 
-  useEffect(() => { setView("live"); setFailed(false); setLoadedAt(null); }, [incident.id]);
+  useEffect(() => { setView(first); setFailed(false); setLoadedAt(null); }, [incident.id, first]);
   useEffect(() => {
     const id = setInterval(() => setBucket(Math.floor(Date.now() / REFRESH_MS)), REFRESH_MS);
     return () => clearInterval(id);

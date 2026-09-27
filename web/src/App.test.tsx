@@ -120,6 +120,41 @@ it("shows the Claude incident note on the card only when one exists", async () =
   expect(screen.queryByRole("region", { name: "Incident note" })).toBeNull();
 });
 
+it("opens a card on the alert frame, explains low confidence, and keeps the decision in reach", async () => {
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /Stopped in lane/ }));   // needs review, has a snapshot
+  const insp = screen.getByRole("complementary", { name: /Incident at 7 Ave @ 34 St/ });
+  expect(within(insp).getByRole("heading", { name: "At alert" })).toBeInTheDocument();
+  expect(within(insp).getByRole("button", { name: "At alert" })).toHaveAttribute("aria-pressed", "true");
+  expect(within(insp).getByText(/Low confidence \(\d+%\): check the frame before acting/)).toBeInTheDocument();
+  const bar = within(insp).getByRole("region", { name: "Operator decision" });
+  expect(bar).toHaveClass("decide-bar");
+  expect(within(bar).getByRole("button", { name: "Accept" })).toBeInTheDocument();
+  fireEvent.click(within(bar).getByRole("button", { name: /Compare in simulation/ }));  // next demo step, also in reach
+  expect(screen.getByRole("complementary", { name: "Base versus sim summary" })).toBeInTheDocument();
+});
+
+it("lets keyboard users skip the map to the incident list", async () => {
+  render(<App />);
+  await loaded();
+  const skip = screen.getByRole("link", { name: "Skip to incidents" });
+  expect(skip).toHaveAttribute("href", "#incidents");
+  expect(document.getElementById("incidents")).toHaveAccessibleName("Active incidents");
+});
+
+it("says REPLAY, not LIVE, when the API serves a replay", async () => {
+  vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+    const path = url.replace(/^\/api/, "");
+    const body = path === "/health" ? { status: "ok", mock_mode: false, source: "replay" }
+      : path === "/cameras" ? CAMERAS : [];
+    return new Response(JSON.stringify(body), { status: 200 });
+  }));
+  render(<App />);
+  expect(await screen.findByText("REPLAY")).toBeInTheDocument();
+  expect(screen.queryByText("LIVE")).toBeNull();
+});
+
 it("shows decisions already saved in the API, e.g. after a reload", async () => {
   saved = [{ event_id: "evt_mock_002", action: "reject" }];
   render(<App />);

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -37,6 +38,8 @@ class Settings(BaseSettings):
     # API
     database_url: str = Field("sqlite:///data/lanewatch.db", alias="LW_DATABASE_URL")
     mock_mode: bool = Field(True, alias="LW_MOCK_MODE")
+    # where real events come from, shown on the dashboard: "live" cameras or a "replay"
+    data_source: Literal["live", "replay"] = Field("live", alias="LW_DATA_SOURCE")
 
     # Summaries
     anthropic_api_key: str | None = Field(None, alias="ANTHROPIC_API_KEY")

@@ -45,6 +45,9 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
           <span className="big" aria-label="Elapsed">{clock(t)}</span>
           <span style={{ color: "var(--text-2)" }}>{pct(i.confidence)} conf.</span>
         </div>
+        {i.status === "needs_review" && (
+          <p className="review-hint">Low confidence ({pct(i.confidence)}): check the frame before acting.</p>
+        )}
         <div className="cam-line">
           <span>{i.camera.code}</span>
           {i.camera.state === "live"
@@ -101,23 +104,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         )}
       </section>
 
-      {/* 5. Operator decision */}
-      <section className="sec">
-        <h3>Operator decision</h3>
-        {i.decision
-          ? <p className={`decision ${i.decision}`} role="status">{decisionLabel(i.decision, i.response.state !== "none")}</p>
-          : <p className="decision" role="status">No decision yet</p>}
-        <div className="decide" role="group" aria-label="Decide on this alert">
-          {DECISIONS.map(([action, label]) => (
-            <button key={action} aria-pressed={i.decision === action} disabled={saving} onClick={() => onDecide(action)}>
-              {label}
-            </button>
-          ))}
-        </div>
-        {decideError && <p className="decide-err" role="alert">{decideError}</p>}
-      </section>
-
-      {/* 6. Detection details */}
+      {/* 5. Detection details */}
       <details className="sec">
         <summary>Detection details <ChevronRight size={16} aria-hidden="true" /></summary>
         <dl className="kv">
@@ -130,7 +117,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         </dl>
       </details>
 
-      {/* 7. Timeline */}
+      {/* 6. Timeline */}
       <details className="sec">
         <summary>Timeline <ChevronRight size={16} aria-hidden="true" /></summary>
         <ol className="timeline">
@@ -141,6 +128,29 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
           <li><span className="mono">{nyTime(now, true)}</span><span>{i.status === "resolved" ? "Resolved" : "Still stopped"}</span></li>
         </ol>
       </details>
+      {/* Operator decision: pinned to the bottom of the card, always in reach */}
+      <section className="sec decide-bar" aria-label="Operator decision">
+        <div className="decide-hd">
+          <h3>Operator decision</h3>
+          {i.decision
+            ? <p className={`decision ${i.decision}`} role="status">{decisionLabel(i.decision, i.response.state !== "none")}</p>
+            : <p className="decision" role="status">No decision yet</p>}
+        </div>
+        <div className="decide" role="group" aria-label="Decide on this alert">
+          {DECISIONS.map(([action, label]) => (
+            <button key={action} aria-pressed={i.decision === action} disabled={saving} onClick={() => onDecide(action)}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {decideError && <p className="decide-err" role="alert">{decideError}</p>}
+        {i.response.state !== "none" && (
+          <button className="to-sim" onClick={onOpenSimulation}>
+            Compare in simulation <ChevronRight size={15} aria-hidden="true" />
+          </button>
+        )}
+      </section>
+
     </aside>
   );
 }

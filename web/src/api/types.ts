@@ -64,4 +64,6 @@ export interface Summary {
 export interface Health {
   status: string;
   mock_mode?: boolean;
+  /** Where real events come from: live cameras or a recorded replay (LW_DATA_SOURCE). */
+  source?: "live" | "replay";
 }

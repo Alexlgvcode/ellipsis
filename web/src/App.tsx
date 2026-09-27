@@ -68,13 +68,14 @@ export default function App() {
   if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
 
   const offline = Boolean(poll.error);
-  const feed: FeedState = offline ? "offline" : mock ? "sample" : "live";
+  const feed: FeedState = offline ? "offline" : mock ? "sample" : snap?.health.source === "replay" ? "replay" : "live";
   const cams = snap?.cameras ?? [];
   const railW = simIncident ? 0 : collapsed ? 48 : RAIL_W;
   const narrow = typeof window !== "undefined" && window.innerWidth < 1100;
 
   return (
     <div className={`app${offline ? " has-banner" : ""}${collapsed ? " rail-collapsed" : ""}${selected && !simIncident ? " has-inspector" : ""}`}>
+      <a className="skip-link" href="#incidents">Skip to incidents</a>
       <TopBar openIncidents={counts(incidents).open} camerasOnline={cams.filter((c) => c.is_online).length}
         camerasTotal={cams.length} feed={feed} now={now} />
       {offline && <StatusBanner lastOkAt={poll.lastOkAt} />}
