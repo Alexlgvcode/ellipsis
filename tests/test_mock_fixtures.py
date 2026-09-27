@@ -1,4 +1,5 @@
-"""Every file in data/mock/ must match the shared contract."""
+"""Every file in data/mock/ must match the shared contract, and every mock incident must be
+a real, hand-checked one (scripts/build_mock.py, issue #63)."""
 
 import json
 
@@ -21,11 +22,24 @@ def recommendations(repo_root) -> list[Recommendation]:
     return [Recommendation(**r) for r in _load(repo_root, "recommendations.json")]
 
 
-def test_one_mock_event_per_blocking_type(events):
+def test_every_blocking_type_is_there(events):
     assert {e.type for e in events} == {
         EventType.DOUBLE_PARKED, EventType.STOPPED_IN_LANE, EventType.BLOCKED_BOX,
     }
     assert len({e.id for e in events}) == len(events)
+
+
+def test_every_mock_event_is_a_real_tagged_blockage(events):
+    from evaluation.metrics import iou, load_ground_truth
+
+    blockages = load_ground_truth().blockages
+    for e in events:
+        end = e.start_ts.timestamp() + e.duration_s
+        match = [t for t in blockages if t.camera == e.camera_id and t.type == e.type.value
+                 and t.start.timestamp() <= end and t.end.timestamp() >= e.start_ts.timestamp()
+                 and iou(e.bbox, t.bbox) >= 0.3]
+        assert match, f"{e.id} matches no blockage in evaluation/ground_truth.yaml"
+        assert not {t.category for t in match} & {"police", "bus_lane"}  # left out (#63)
 
 
 def test_snapshots_exist(repo_root, events):
@@ -33,10 +47,15 @@ def test_snapshots_exist(repo_root, events):
         assert (repo_root / e.snapshot_path).is_file(), e.snapshot_path
 
 
-def test_recommendations_point_at_mock_events(events, recommendations):
-    ids = {e.id for e in events}
-    assert all(r.event_id in ids for r in recommendations)
-    assert any(r.sim is not None for r in recommendations)
+def test_every_mock_event_has_a_simulated_recommendation(events, recommendations):
+    assert sorted(r.event_id for r in recommendations) == sorted(e.id for e in events)
+    assert all(r.sim is not None and r.intersections for r in recommendations)
+
+
+def test_mock_data_is_what_build_mock_builds():
+    from scripts.build_mock import main
+
+    assert main(["--check"]) == 0  # events.json and congestion.json, from committed caches
 
 
 def test_camera_ids_are_in_camera_list(repo_root, events):

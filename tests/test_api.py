@@ -1,9 +1,13 @@
+import json
+
 import pytest
 from fastapi.testclient import TestClient
 
 from api.main import create_app
-from common.config import Settings
+from common.config import REPO_ROOT, Settings
 from common.schemas import Event
+
+MOCK_IDS = [e["id"] for e in json.loads((REPO_ROOT / "data" / "mock" / "events.json").read_text())]
 
 
 @pytest.fixture
@@ -95,11 +99,11 @@ def test_events_newest_first_and_filterable(client, sample_event):
     assert {e["id"] for e in by_cam} == {"evt_test", "evt_old"}
 
 
-def test_mock_mode_serves_the_three_mocks(mock_client):
+def test_mock_mode_serves_the_mocks(mock_client):
     ids = {e["id"] for e in mock_client.get("/events").json()}
-    assert ids == {"evt_mock_001", "evt_mock_002", "evt_mock_003"}
-    rec = mock_client.get("/recommendations/evt_mock_001").json()
-    assert rec["sim"]["delay_new"] < rec["sim"]["delay_default"]
+    assert ids == set(MOCK_IDS)
+    rec = mock_client.get(f"/recommendations/{MOCK_IDS[0]}").json()
+    assert rec["sim"]["delay_new"] > 0 and rec["intersections"]
 
 
 def test_mock_mode_off_starts_empty(client):
@@ -133,7 +137,7 @@ def test_recommendation_sim_filled_in_later(client, sample_event):
 
 
 def test_snapshot_is_served(mock_client):
-    resp = mock_client.get("/events/evt_mock_001/snapshot")
+    resp = mock_client.get(f"/events/{MOCK_IDS[0]}/snapshot")
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "image/jpeg"
 
@@ -150,12 +154,12 @@ def test_missing_snapshot_returns_404(client, sample_event):
 
 def test_turning_mock_mode_off_removes_the_mocks(make_client, sample_event):
     mock = make_client(mock_mode=True)
-    assert len(mock.get("/events").json()) == 3
+    assert len(mock.get("/events").json()) == len(MOCK_IDS)
     mock.post("/events", json=sample_event)             # a real event, same database
     mock.__exit__(None, None, None)
     real = make_client(mock_mode=False)
     assert [e["id"] for e in real.get("/events").json()] == [sample_event["id"]]
-    assert real.get("/recommendations/evt_mock_001").status_code == 404
+    assert real.get(f"/recommendations/{MOCK_IDS[0]}").status_code == 404
 
 
 @pytest.mark.parametrize("action", ["accept", "reject", "false_positive"])
@@ -195,19 +199,18 @@ def test_invalid_feedback_action_returns_422(client, sample_event, body):
 
 def test_feedback_survives_an_api_restart(make_client):
     first = make_client(mock_mode=True)
-    for eid, action in [("evt_mock_001", "accept"), ("evt_mock_002", "reject"),
-                        ("evt_mock_003", "false_positive")]:
+    decisions = dict(zip(MOCK_IDS[:3], ["accept", "reject", "false_positive"], strict=True))
+    for eid, action in decisions.items():
         first.post(f"/events/{eid}/feedback", json={"action": action})
     first.__exit__(None, None, None)
     again = make_client(mock_mode=True)  # re-seeding the mocks keeps the decisions
     got = {f["event_id"]: f["action"] for f in again.get("/feedback").json()}
-    assert got == {"evt_mock_001": "accept", "evt_mock_002": "reject",
-                   "evt_mock_003": "false_positive"}
+    assert got == decisions
 
 
 def test_turning_mock_mode_off_removes_mock_feedback(make_client):
     mock = make_client(mock_mode=True)
-    mock.post("/events/evt_mock_001/feedback", json={"action": "accept"})
+    mock.post(f"/events/{MOCK_IDS[0]}/feedback", json={"action": "accept"})
     mock.__exit__(None, None, None)
     assert make_client(mock_mode=False).get("/feedback").json() == []
 

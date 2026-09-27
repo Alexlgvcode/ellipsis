@@ -1,68 +1,101 @@
 [
   {
-    "camera_id": "1e60ade7-c760-48cf-acd9-d9d6cbfa9420",
-    "approach": "7_ave",
-    "direction": "southbound",
-    "ts": "2026-09-26T16:02:00Z",
-    "level": "congested",
-    "score": 0.82,
-    "occupancy": 0.31,
-    "stuck_share": 0.74,
-    "since_ts": "2026-09-26T15:52:00Z"
-  },
-  {
     "camera_id": "0dc7c2b4-614d-46a3-9610-3ba09f3f1284",
     "approach": "6_ave",
     "direction": "northbound",
-    "ts": "2026-09-26T16:02:00Z",
+    "ts": "2026-09-26T20:32:16Z",
     "level": "congested",
-    "score": 0.66,
-    "occupancy": 0.24,
-    "stuck_share": 0.81,
-    "since_ts": "2026-09-26T15:48:30Z"
+    "score": 0.75,
+    "occupancy": 0.145,
+    "stuck_share": 0.67,
+    "since_ts": "2026-09-26T20:12:16Z"
   },
   {
-    "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "camera_id": "1e60ade7-c760-48cf-acd9-d9d6cbfa9420",
     "approach": "7_ave",
     "direction": "southbound",
-    "ts": "2026-09-26T16:02:00Z",
+    "ts": "2026-09-27T01:35:19Z",
     "level": "slow",
-    "score": 0.38,
-    "occupancy": 0.19,
-    "stuck_share": 0.46,
-    "since_ts": "2026-09-26T15:57:10Z"
-  },
-  {
-    "camera_id": "f06979b2-3497-4330-9882-a06c8a442b7c",
-    "approach": "6_ave",
-    "direction": "northbound",
-    "ts": "2026-09-26T16:02:00Z",
-    "level": "slow",
-    "score": 0.31,
-    "occupancy": 0.17,
-    "stuck_share": 0.41,
-    "since_ts": "2026-09-26T15:58:20Z"
+    "score": 0.45,
+    "occupancy": 0.07,
+    "stuck_share": 0.388,
+    "since_ts": "2026-09-27T01:15:21Z"
   },
   {
     "camera_id": "6a85384f-d82e-4bff-b5f1-15c22cca70e6",
     "approach": "8_ave",
     "direction": "northbound",
-    "ts": "2026-09-26T16:02:00Z",
-    "level": "congested",
-    "score": 0.75,
-    "occupancy": 0.28,
-    "stuck_share": 0.72,
-    "since_ts": "2026-09-26T15:59:10Z"
+    "ts": "2026-09-27T01:35:19Z",
+    "level": "free",
+    "score": 0.0,
+    "occupancy": 0.061,
+    "stuck_share": 0.331,
+    "since_ts": "2026-09-27T01:32:22Z"
+  },
+  {
+    "camera_id": "83655dbc-7902-4fdb-926c-15fee4396b83",
+    "approach": "broadway",
+    "direction": "southbound",
+    "ts": "2026-09-27T01:35:19Z",
+    "level": "free",
+    "score": 0.0,
+    "occupancy": 0.031,
+    "stuck_share": 0.213,
+    "since_ts": "2026-09-27T01:32:22Z"
+  },
+  {
+    "camera_id": "8ee72946-49e0-4f49-991d-4f52b1206ed7",
+    "approach": "broadway",
+    "direction": null,
+    "ts": "2026-09-27T01:35:19Z",
+    "level": "free",
+    "score": 0.0,
+    "occupancy": 0.017,
+    "stuck_share": 0.111,
+    "since_ts": "2026-09-27T01:32:22Z"
+  },
+  {
+    "camera_id": "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae",
+    "approach": "7_ave",
+    "direction": "southbound",
+    "ts": "2026-09-27T01:22:00Z",
+    "level": "slow",
+    "score": 0.45,
+    "occupancy": 0.122,
+    "stuck_share": 0.366,
+    "since_ts": "2026-09-27T01:17:30Z"
   },
   {
     "camera_id": "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c",
     "approach": "8_ave",
     "direction": "northbound",
-    "ts": "2026-09-26T16:02:00Z",
-    "level": "free",
-    "score": 0.0,
-    "occupancy": 0.07,
-    "stuck_share": 0.1,
-    "since_ts": "2026-09-26T15:30:00Z"
+    "ts": "2026-09-27T01:31:20Z",
+    "level": "slow",
+    "score": 0.45,
+    "occupancy": 0.066,
+    "stuck_share": 0.237,
+    "since_ts": "2026-09-27T01:28:40Z"
+  },
+  {
+    "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "approach": "7_ave",
+    "direction": "southbound",
+    "ts": "2026-09-27T01:35:19Z",
+    "level": "slow",
+    "score": 0.45,
+    "occupancy": 0.058,
+    "stuck_share": 0.316,
+    "since_ts": "2026-09-27T01:15:21Z"
+  },
+  {
+    "camera_id": "f06979b2-3497-4330-9882-a06c8a442b7c",
+    "approach": "6_ave",
+    "direction": "northbound",
+    "ts": "2026-09-27T01:31:40Z",
+    "level": "slow",
+    "score": 0.45,
+    "occupancy": 0.021,
+    "stuck_share": 0.178,
+    "since_ts": "2026-09-27T01:15:21Z"
   }
 ]
