@@ -50,6 +50,7 @@ class RunMetrics:
     queue_veh: int
     throughput: int
     clear_s: float | None
+    queue_series: tuple[float, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -112,6 +113,14 @@ def _mean_optional(values: list[float | None]) -> float | None:
     return _mean(present) if present else None
 
 
+def _mean_series(runs: list[RunMetrics]) -> list[float]:
+    series = [r.queue_series for r in runs if r.queue_series]
+    if not series:
+        return []
+    n = min(len(s) for s in series)
+    return [round(_mean([s[i] for s in series]), 1) for i in range(n)]
+
+
 def aggregate(plan_a: list[RunMetrics], plan_b: list[RunMetrics],
               seeds: tuple[int, ...] = DEFAULT_SEEDS) -> ScenarioReport:
     if not plan_a or not plan_b:
@@ -124,6 +133,8 @@ def aggregate(plan_a: list[RunMetrics], plan_b: list[RunMetrics],
             delay_new=_mean([r.delay_s for r in plan_b]),
             queue_default=_mean([float(r.queue_veh) for r in plan_a]),
             queue_new=_mean([float(r.queue_veh) for r in plan_b]),
+            queue_series_default=_mean_series(plan_a),
+            queue_series_new=_mean_series(plan_b),
         ),
         throughput_default=_mean([float(r.throughput) for r in plan_a]),
         throughput_new=_mean([float(r.throughput) for r in plan_b]),
@@ -224,6 +235,7 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
         loss: dict[str, float] = {}
         finished: list[float] = []
         max_queue = 0
+        queue_series: list[float] = []
         pre_stop: int | None = None
         clear_s: float | None = None
         stop_end = (blockage.start_s + blockage.duration_s) if blockage else 0.0
@@ -252,6 +264,8 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
                 continue
             halting = _approach_halting(traci, lane)
             max_queue = max(max_queue, halting)
+            if int(now) % 15 == 0:
+                queue_series.append(float(halting))
             if blockage and now < blockage.start_s:
                 pre_stop = halting
             if (blockage and placed and held is None and clear_s is None and now >= stop_end
@@ -264,6 +278,7 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
             queue_veh=max_queue,
             throughput=len(finished),
             clear_s=clear_s,
+            queue_series=tuple(queue_series),
         )
     finally:
         traci.close()

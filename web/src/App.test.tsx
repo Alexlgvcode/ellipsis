@@ -46,15 +46,18 @@ it("selecting an incident opens the inspector with impact and the recommended re
   const insp = screen.getByRole("complementary", { name: "Incident at 8th Ave @ 33rd St" });
   expect(within(insp).getByText("Double parked vehicle")).toBeInTheDocument();
   expect(within(insp).getByText("21 vehicles")).toBeInTheDocument();
-  expect(within(insp).getByText("−19%")).toBeInTheDocument();
+  expect(within(insp).getByText("Recommended is faster by 9.2s per vehicle")).toBeInTheDocument();
+  expect(within(insp).getByRole("figure", { name: /Queue over time/ })).toBeInTheDocument();
   expect(within(insp).getByText("CAM-8AV-033")).toBeInTheDocument();
 });
 
-it("a pending scenario says so, and simulation mode lands on seconds saved", async () => {
+it("each demo incident says which side is faster, and by how much, on the card", async () => {
   render(<App />);
   await loaded();
   fireEvent.click(screen.getByRole("button", { name: /Stopped in lane/ }));
-  expect(screen.getByText("Scenario running…")).toBeInTheDocument();
+  expect(screen.getByText("Default is faster by 1.6s per vehicle")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /Blocking the box/ }));
+  expect(screen.getByText("Recommended is faster by 4.6s per vehicle")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
   fireEvent.click(screen.getByRole("button", { name: /Open simulation/ }));
@@ -67,10 +70,8 @@ it("a pending scenario says so, and simulation mode lands on seconds saved", asy
   expect(within(simView).getByText("39.1s")).toBeInTheDocument();
   expect(within(simView).getByText("Improved")).toBeInTheDocument();
   const summary = screen.getByRole("complementary", { name: "Base versus sim summary" });
-  expect(within(summary).queryByText(/saved per vehicle/)).toBeNull(); // settles last
+  expect(within(summary).getByText("Recommended is faster by 9.2s per vehicle")).toBeInTheDocument();
   await act(async () => { vi.advanceTimersByTime(10_500); });
-  expect(within(summary).getByText("9.2s")).toBeInTheDocument();
-  expect(within(summary).getByText(/saved per vehicle/)).toBeInTheDocument();
   expect(within(summary).getByText("19%")).toBeInTheDocument();
   expect(within(summary).getByText("Improved northbound flow on 8 Ave")).toBeInTheDocument();
   expect(within(summary).getByRole("button", { name: "Base" })).toBeEnabled();

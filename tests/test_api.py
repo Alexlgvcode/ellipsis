@@ -113,7 +113,8 @@ def test_recommendation_sim_filled_in_later(client, sample_event):
     rec = {"event_id": "evt_test", "intersections": [{"id": "tls_1", "phase": 0, "change_s": -6}]}
     assert client.post("/recommendations", json=rec).status_code == 201
     assert client.get("/recommendations/evt_test").json()["sim"] is None
-    sim = {"delay_default": 40, "delay_new": 30, "queue_default": 12, "queue_new": 8}
+    sim = {"delay_default": 40, "delay_new": 30, "queue_default": 12, "queue_new": 8,
+           "queue_series_default": [], "queue_series_new": []}
     client.post("/recommendations", json={**rec, "sim": sim})
     assert client.get("/recommendations/evt_test").json()["sim"] == sim
 

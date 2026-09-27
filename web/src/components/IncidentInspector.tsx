@@ -1,6 +1,7 @@
 import { ChevronRight, X } from "lucide-react";
 import { useEffect } from "react";
 import { LiveCameraFeed } from "./LiveCameraFeed";
+import { QueueChart, savedLabel } from "./QueueChart";
 import { clock, nyTime, pct } from "../lib/format";
 import { STATUS_LABEL, ZONE_LABEL, elapsed, queueMeters, type FirstSeen, type Incident } from "../lib/incidents";
 
@@ -69,10 +70,11 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         <div>Signal timing simulation</div>
         {sim ? (
           <>
+            <p className={sim.savedPerVehicle > 0.05 ? "verdict good" : "verdict"}>{savedLabel(sim.savedPerVehicle)}</p>
+            <QueueChart sim={sim} />
             <dl className="kv" style={{ marginTop: 10 }}>
               <dt>Current</dt><dd>{sim.baselineDelay.toFixed(1)}s</dd>
               <dt>Proposed</dt><dd>{sim.recommendedDelay.toFixed(1)}s</dd>
-              <dt>Projected improvement</dt><dd className="good">−{sim.improvementPct}%</dd>
             </dl>
             <button className="cta" onClick={onOpenSimulation}>Open simulation <ChevronRight size={16} /></button>
           </>

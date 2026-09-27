@@ -36,6 +36,8 @@ export interface SimResult {
   delay_new: number;
   queue_default: number;
   queue_new: number;
+  queue_series_default?: number[];
+  queue_series_new?: number[];
 }
 
 export interface Recommendation {
