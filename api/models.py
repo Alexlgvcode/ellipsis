@@ -11,7 +11,13 @@ from datetime import timezone
 
 from sqlmodel import JSON, Column, Field, SQLModel
 
-from common.schemas import Camera, Event, Feedback, Recommendation
+from common.schemas import Camera, Congestion, Event, Feedback, Recommendation
+
+
+def utc_iso(ts) -> str:
+    """UTC ISO-8601 (naive = UTC), so string order = time order."""
+    ts = ts.replace(tzinfo=timezone.utc) if ts.tzinfo is None else ts.astimezone(timezone.utc)
+    return ts.isoformat()
 
 
 class CameraRow(SQLModel, table=True):
@@ -39,10 +45,8 @@ class EventRow(SQLModel, table=True):
 
     @classmethod
     def from_model(cls, event: Event) -> EventRow:
-        ts = event.start_ts
-        ts = ts.replace(tzinfo=timezone.utc) if ts.tzinfo is None else ts.astimezone(timezone.utc)
         return cls(id=event.id, camera_id=event.camera_id, type=event.type.value,
-                   start_ts=ts.isoformat(), payload=event.model_dump(mode="json"))
+                   start_ts=utc_iso(event.start_ts), payload=event.model_dump(mode="json"))
 
     def to_model(self) -> Event:
         return Event(**self.payload)
@@ -85,3 +89,25 @@ class FeedbackRow(SQLModel, table=True):
 
     def to_model(self) -> Feedback:
         return Feedback(**self.payload)
+
+
+class CongestionRow(SQLModel, table=True):
+    """One congestion reading. The id is camera|approach|ts, so posting the same reading
+    again (e.g. replaying a recording twice) updates it instead of adding a copy."""
+
+    __tablename__ = "congestion"
+
+    id: str = Field(primary_key=True)
+    camera_id: str = Field(index=True)
+    approach: str
+    ts: str = Field(index=True)  # UTC ISO-8601, so string order = time order
+    payload: dict = Field(sa_column=Column(JSON, nullable=False))
+
+    @classmethod
+    def from_model(cls, c: Congestion) -> CongestionRow:
+        ts = utc_iso(c.ts)
+        return cls(id=f"{c.camera_id}|{c.approach}|{ts}", camera_id=c.camera_id,
+                   approach=c.approach, ts=ts, payload=c.model_dump(mode="json"))
+
+    def to_model(self) -> Congestion:
+        return Congestion(**self.payload)

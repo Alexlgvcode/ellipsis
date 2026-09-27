@@ -11,6 +11,7 @@ import { StatusBanner } from "./components/StatusBanner";
 import { TopBar, type FeedState } from "./components/TopBar";
 import { useNow } from "./hooks/useNow";
 import { usePolling } from "./hooks/usePolling";
+import { heatStretches } from "./lib/heat";
 import { counts, toIncidents, type FirstSeen, type RailFilter, type RailSort } from "./lib/incidents";
 import { DEFAULT_PALETTE, applyTheme, themeOf } from "./lib/palettes";
 
@@ -45,6 +46,10 @@ export default function App() {
     () => (snap ? toIncidents(snap.events, snap.cameras, snap.recommendations, snap.fetchedAt, mock,
       { ...snap.feedback, ...decided }, snap.notes) : []),
     [snap, mock, decided],
+  );
+  const heat = useMemo(
+    () => (snap ? heatStretches(snap.congestion, snap.cameras, snap.fetchedAt, mock) : []),
+    [snap, mock],
   );
   const seenRef = useRef<FirstSeen>({});
   for (const i of incidents) seenRef.current[i.id] ??= { durationS: i.durationS, atMs: snap!.fetchedAt };
@@ -85,7 +90,7 @@ export default function App() {
         layers={layers} onLayers={setLayers} sim={simIncident ? overlay : null}
         insetLeft={narrow ? 0 : simIncident ? 400 : railW} insetRight={selected && !simIncident && !narrow ? INSPECTOR_W + 24 : 0}
         insetBottom={narrow && selected && !simIncident ? window.innerHeight * 0.5 : 0}
-        colors={theme.map} onAnchor={setAnchor}
+        colors={theme.map} onAnchor={setAnchor} heat={heat}
       />
 
       {!simIncident && (

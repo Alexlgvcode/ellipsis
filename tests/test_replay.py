@@ -22,6 +22,11 @@ spec.loader.exec_module(replay_mod)
 
 CAM = "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae"   # 7 Ave @ 36 St (has a lane mask)
 TRUCK = (191.0, 79.0, 226.0, 129.0)             # double parked by the planters (see #16)
+# a car driving up the middle lane past the truck, a new spot every frame (rules.yaml `flow`:
+# without traffic moving past it, a stopped truck is part of a jam, not a blockage)
+PASSING = [(135.0, 200.0, 175.0, 230.0), (142.0, 170.0, 176.0, 195.0),
+           (150.0, 145.0, 178.0, 165.0), (156.0, 124.0, 180.0, 140.0),
+           (162.0, 102.0, 182.0, 115.0)]
 
 
 def write_frames(root, camera_id, times, day="20260926"):
@@ -84,14 +89,16 @@ def api(tmp_path):
 
 
 def stub_detector(truck_until):
-    """The truck is there in the first `truck_until` frames, then gone."""
+    """The truck is there in the first `truck_until` frames, then gone; traffic passes it."""
     seen = {"n": 0}
 
     def detect(frames):
         out = []
         for _ in frames:
-            out.append([Detection(TRUCK, VehicleClass.BUS, 0.8)] if seen["n"] < truck_until
-                       else [])
+            n = seen["n"]
+            car = Detection(PASSING[n % len(PASSING)], VehicleClass.CAR, 0.8)
+            out.append([Detection(TRUCK, VehicleClass.BUS, 0.8), car] if n < truck_until
+                       else [car])
             seen["n"] += 1
         return out
     return detect
@@ -164,3 +171,39 @@ def test_as_live_shifts_posted_times_but_not_ids(api, tmp_path):
     assert live.start_ts - original.start_ts == timedelta(hours=2)
     posted = client.get("/events").json()                # same event, updated in place
     assert len(posted) == 1 and posted[0]["start_ts"].startswith(f"{live.start_ts:%Y-%m-%dT%H}")
+
+
+class CongestionSink(replay_mod.EventSink):
+    def __init__(self):
+        super().__init__(None)
+        self.readings = []
+
+    def post_congestion(self, reading):
+        self.readings.append(reading)
+        return True
+
+
+def test_congestion_is_posted_on_level_changes_and_as_a_heartbeat(tmp_path):
+    from datetime import datetime, timedelta, timezone
+
+    from common.schemas import Congestion, CongestionLevel
+    from events.engine import EngineUpdate
+
+    t0 = datetime(2026, 9, 27, 1, 15, tzinfo=timezone.utc)
+    shift = timedelta(hours=2)
+    sink = CongestionSink()
+    pub = replay_mod.Publisher(sink, tmp_path, log=lambda _: None, time_shift=shift)
+    levels = ["free"] * 3 + ["congested"] * 30 + ["free"] * 3   # a frame every 5 s
+    for i, level in enumerate(levels):
+        ts = t0 + timedelta(seconds=5 * i)
+        r = Congestion(camera_id=CAM, approach="7_ave", ts=ts, level=level, score=0.5,
+                       occupancy=0.3, stuck_share=0.7, since_ts=t0)
+        pub.publish(CAM, None, ts, EngineUpdate(), [r])
+    posted = [(r.level, (r.ts - shift - t0).total_seconds()) for r in sink.readings]
+    free, congested = CongestionLevel.FREE, CongestionLevel.CONGESTED
+    # first reading, the change, a heartbeat a minute into the jam, then the change back
+    assert posted == [(free, 0), (congested, 15), (congested, 75), (congested, 135), (free, 165)]
+    assert sink.readings[0].since_ts == t0 + shift                   # --as-live shift applied
+    # a reading left over from an earlier frame isn't posted again
+    pub.publish(CAM, None, t0 + timedelta(minutes=10), EngineUpdate(), [sink.readings[-1]])
+    assert len(sink.readings) == 5

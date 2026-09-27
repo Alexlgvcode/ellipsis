@@ -45,3 +45,15 @@ def test_camera_ids_are_in_camera_list(repo_root, events):
         pytest.skip("data/cameras.json not added yet (feat/camera-list)")
     known = {c["id"] for c in json.loads(cameras_path.read_text())}
     assert {e.camera_id for e in events} <= known
+
+
+def test_mock_congestion_matches_the_contract_and_the_masks(repo_root):
+    from common.schemas import Congestion, CongestionLevel
+    from events.masks import load_mask
+
+    readings = [Congestion(**c) for c in _load(repo_root, "congestion.json")]
+    assert {r.level for r in readings} == set(CongestionLevel)
+    for r in readings:
+        mask = load_mask(r.camera_id)
+        assert mask is not None, r.camera_id
+        assert (r.approach, r.direction) in {(a.name, a.direction) for a in mask.approaches}

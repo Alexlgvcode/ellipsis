@@ -44,3 +44,17 @@ stops any of them alerting as the right type within 90 s.
 4. Judge the unreviewed alerts it lists, and look for blockages it missed.
 
 Recall is only as good as that last step: a blockage nobody tagged can't be counted as missed.
+
+**Congestion** (issue #47) is scored after the blockages, on `congestion_windows`: footage
+reviewed for congestion, where the camera is free except during its `congestion` intervals
+(`slow`, or `congested`: a jam, the queue doesn't clear on green). The report gives
+precision / recall of the monitor's runs at each level, time to detect, and how often the
+level agrees with the tags, frame by frame.
+
+To tag new footage: `python scripts/evaluate.py --congestion-review` writes, for every cached
+window not reviewed yet, a sheet with one frame a minute labelled with the monitor's level,
+and `runs/eval/congestion_review/congestion_review.yaml` with the windows and the monitor's
+intervals pre-filled. Fix the intervals, then copy both into `ground_truth.yaml`.
+
+After adding or changing a reference frame (`events/masks/<camera_id>.jpg`, or an extra one
+like `<camera_id>.night.jpg`), `--refresh-view` updates the cached view similarity without YOLO.

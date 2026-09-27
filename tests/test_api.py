@@ -210,3 +210,59 @@ def test_turning_mock_mode_off_removes_mock_feedback(make_client):
     mock.post("/events/evt_mock_001/feedback", json={"action": "accept"})
     mock.__exit__(None, None, None)
     assert make_client(mock_mode=False).get("/feedback").json() == []
+
+
+# --- congestion (issue #47) ----------------------------------------------------------------
+
+CAM_7AV_32 = "1e60ade7-c760-48cf-acd9-d9d6cbfa9420"
+
+
+def reading(level="congested", ts="2026-09-27T01:20:00Z", camera=CAM_7AV_32, approach="7_ave",
+            score=0.8):
+    return {"camera_id": camera, "approach": approach, "direction": "southbound", "ts": ts,
+            "level": level, "score": score, "occupancy": 0.3, "stuck_share": 0.7,
+            "since_ts": "2026-09-27T01:15:00Z"}
+
+
+def test_congestion_round_trips_and_only_the_latest_per_approach_is_listed(client):
+    for body in (reading("slow", "2026-09-27T01:18:00Z", score=0.4), reading(),
+                 reading("free", "2026-09-27T01:19:00Z", approach="7_ave_far", score=0)):
+        assert client.post("/congestion", json=body).status_code == 201
+    latest = {c["approach"]: c for c in client.get("/congestion").json()}
+    assert set(latest) == {"7_ave", "7_ave_far"}
+    assert latest["7_ave"]["level"] == "congested" and latest["7_ave"]["score"] == 0.8
+    assert latest["7_ave_far"]["level"] == "free"          # a cleared approach is listed too
+    fresh = client.get("/congestion", params={"since": "2026-09-27T01:19:30Z"}).json()
+    assert [c["approach"] for c in fresh] == ["7_ave"]
+
+
+def test_posting_the_same_congestion_reading_again_updates_it(client):
+    client.post("/congestion", json=reading(score=0.5))
+    client.post("/congestion", json=reading(score=0.9))
+    history = client.get(f"/cameras/{CAM_7AV_32}/congestion").json()
+    assert [c["score"] for c in history] == [0.9]
+
+
+def test_camera_congestion_history_is_newest_first_and_filterable(client):
+    for minute in (15, 16, 17):
+        client.post("/congestion", json=reading(ts=f"2026-09-27T01:{minute}:00Z"))
+    client.post("/congestion", json=reading(camera="other-camera"))
+    history = client.get(f"/cameras/{CAM_7AV_32}/congestion").json()
+    assert [c["ts"][:16] for c in history] == ["2026-09-27T01:17", "2026-09-27T01:16",
+                                                 "2026-09-27T01:15"]
+    since = client.get(f"/cameras/{CAM_7AV_32}/congestion",
+                       params={"since": "2026-09-27T01:16:00Z", "limit": 1}).json()
+    assert [c["ts"][:16] for c in since] == ["2026-09-27T01:17"]
+
+
+@pytest.mark.parametrize("bad", [{"level": "jammed"}, {"score": 1.5}, {"camera_id": None}])
+def test_invalid_congestion_returns_422(client, bad):
+    assert client.post("/congestion", json={**reading(), **bad}).status_code == 422
+
+
+def test_mock_mode_serves_mock_congestion_and_removes_it_when_off(make_client):
+    mock = make_client(mock_mode=True)
+    levels = {c["level"] for c in mock.get("/congestion").json()}
+    assert levels == {"free", "slow", "congested"}
+    real = make_client(mock_mode=False)                   # same database, mock mode off
+    assert real.get("/congestion").json() == []

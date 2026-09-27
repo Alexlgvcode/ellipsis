@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Camera } from "../api/types";
 import { METERS_PER_VEHICLE } from "../lib/rules";
 import { along, bearing, offsetPath, parseCameraName, parseSignalId, queuePath, toLngLat, type LngLat } from "../lib/grid";
+import { HEATMAP_COLOR, heatFeatures, heatPoints, hotCameras, type HeatStretch } from "../lib/heat";
 import type { Incident } from "../lib/incidents";
 import { luminance, type Theme } from "../lib/palettes";
 import { HEALTHY, STATUS_COLOR, roadColor } from "../lib/semantic";
@@ -42,6 +43,9 @@ interface Props {
   colors: MapColors;
   /** Screen position (viewport px) of the simulated incident, for the scenario connectors. */
   onAnchor?: (pt: { x: number; y: number } | null) => void;
+  /** Slow / congested street stretches (lib/heat.ts), shown as a heat glow with the Traffic
+   * layer. Their cameras' incident queue lines aren't drawn: the heat replaces them. */
+  heat?: HeatStretch[];
 }
 
 const fc = (features: GeoJSON.Feature[]): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features });
@@ -142,6 +146,21 @@ function addOverlays(map: MLMap) {
     if (!map.getSource(id)) map.addSource(id, { type: "geojson", data: fc([]) });
   }
   const add = (spec: Parameters<MLMap["addLayer"]>[0]) => { if (!map.getLayer(spec.id)) map.addLayer(spec); };
+  // Congestion heatmap: its own classic heat ramp, drawn over the buildings but under the
+  // labels and every other overlay, so it adds a glow without restyling anything.
+  if (!map.getSource("congestion-heat")) map.addSource("congestion-heat", { type: "geojson", data: fc([]) });
+  if (!map.getLayer("congestion-heat")) {
+    map.addLayer({
+      id: "congestion-heat", type: "heatmap", source: "congestion-heat",
+      paint: {
+        "heatmap-weight": ["get", "weight"],
+        "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 12, 1.2, 15, 1.1, 17, 1.4],
+        "heatmap-radius": ["interpolate", ["exponential", 2], ["zoom"], 12, 8, 14, 16, 15, 26, 17, 80],
+        "heatmap-color": HEATMAP_COLOR,
+        "heatmap-opacity": 0.75,
+      },
+    }, map.getStyle().layers.find((l) => l.type === "symbol")?.id);
+  }
   add({ id: "impact", type: "line", source: "impact", layout: { "line-cap": "round", "line-join": "round" },
     paint: { "line-color": ["get", "color"], "line-width": ["case", ["get", "selected"], 5, 3], "line-opacity": ["case", ["get", "selected"], 0.95, 0.6] } });
   // Queue trail: support only; the cars carry the state (fix brief §57).
@@ -215,6 +234,7 @@ export function MapShell(p: Props) {
     const map = mapRef.current;
     if (!map || !ready) return;
     const { incidents, cameras, selectedId, layers, sim } = p;
+    const hot = hotCameras(p.heat ?? []);
     const focusId = sim?.incident.id ?? selectedId;
     const selected = incidents.find((i) => i.id === focusId) ?? null;
 
@@ -237,6 +257,7 @@ export function MapShell(p: Props) {
       const isSel = i.id === selectedId;
       const pos = parseCameraName(i.location);
       if (!pos || !i.response.sim || i.status === "resolved" || !(layers.traffic || isSel)) return [];
+      if (layers.traffic && hot.has(i.camera.id)) return []; // the congestion heat shows it
       const q = i.response.sim.queueBefore;
       return [line(queuePath([i.lon, i.lat], pos, q * METERS_PER_VEHICLE), { color: roadColor(q), selected: isSel })];
     });
@@ -271,7 +292,16 @@ export function MapShell(p: Props) {
       }
     }
     seen.current = ids;
-  }, [p.incidents, p.cameras, p.selectedId, p.layers, p.sim, ready]);
+  }, [p.incidents, p.cameras, p.selectedId, p.layers, p.sim, p.heat, ready]);
+
+  // --- congestion heatmap (Traffic layer; hidden in simulation, which draws its own queue) ---
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !ready || !map.getLayer("congestion-heat")) return;
+    const on = p.layers.traffic && !p.sim;
+    (map.getSource("congestion-heat") as GeoJSONSource).setData(heatFeatures(heatPoints(p.heat ?? [])));
+    map.setLayoutProperty("congestion-heat", "visibility", on ? "visible" : "none");
+  }, [p.heat, p.layers.traffic, p.sim, ready]);
 
   const simId = p.sim?.incident.id ?? null;
 

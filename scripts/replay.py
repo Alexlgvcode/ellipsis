@@ -33,7 +33,7 @@ import httpx  # noqa: E402
 from PIL import Image  # noqa: E402
 
 from common.config import get_settings  # noqa: E402
-from common.schemas import Event  # noqa: E402
+from common.schemas import Congestion, CongestionLevel, Event  # noqa: E402
 from events.engine import EngineUpdate  # noqa: E402
 from events.pipeline import CameraPipeline  # noqa: E402
 from vision.detect import Detection  # noqa: E402
@@ -89,21 +89,31 @@ class EventSink:
         self.failures = 0
 
     def post(self, event: Event) -> bool:
+        return self._post("/events", event, event.id)
+
+    def post_congestion(self, reading: Congestion) -> bool:
+        return self._post("/congestion", reading, f"congestion {reading.approach}")
+
+    def _post(self, path: str, model, what: str) -> bool:
         if self.client is None:
             return True
         try:
-            resp = self.client.post("/events", json=event.model_dump(mode="json"))
+            resp = self.client.post(path, json=model.model_dump(mode="json"))
             resp.raise_for_status()
             return True
         except httpx.HTTPError as e:
             self.failures += 1
-            print(f"  ! could not post {event.id}: {e}", file=sys.stderr)
+            print(f"  ! could not post {what}: {e}", file=sys.stderr)
             return False
 
 
 class Publisher:
     """Saves a snapshot when an event opens, then posts every change to the API.
-    Shared by replay and live mode (scripts/live.py)."""
+    Congestion readings are posted when an approach's level changes, and every
+    `CONGESTION_HEARTBEAT_S` while it isn't free (so the dashboard can tell a jam that's still
+    on from one that stopped being reported). Shared by replay and live mode (scripts/live.py)."""
+
+    CONGESTION_HEARTBEAT_S = 60.0
 
     def __init__(self, sink: EventSink, snapshots_dir: Path, log: Callable[[str], None] = print,
                  time_shift: timedelta = timedelta(0)):
@@ -112,11 +122,14 @@ class Publisher:
         self.log = log
         self.time_shift = time_shift
         self.final: dict[str, Event] = {}  # each event's latest state, as posted
+        self.congestion: dict[tuple[str, str], Congestion] = {}  # last posted per approach
         self._snapshots: dict[str, str] = {}
 
     def publish(self, camera_id: str, frame: Path | None, ts: datetime,
-                update: EngineUpdate) -> None:
-        """`frame` is the frame the update came from (None for a frozen-feed tick)."""
+                update: EngineUpdate, congestion: Sequence[Congestion] = ()) -> None:
+        """`frame` is the frame the update came from (None for a frozen-feed tick);
+        `congestion` the camera's readings (pipe.congestion.readings)."""
+        self._publish_congestion(ts, congestion)
         for event in update.opened:
             if frame is None:
                 continue
@@ -135,6 +148,27 @@ class Publisher:
                 if kind != "     ":
                     self.log(f"{ts:%H:%M:%S}  {kind}  {event.type.value:<16} "
                              f"{event.duration_s:>5.0f}s  {event.id}")
+
+    def _publish_congestion(self, ts: datetime, readings: Sequence[Congestion]) -> None:
+        for r in readings:
+            if r.ts != ts:
+                continue  # left over from an earlier frame (frozen picture, paused camera)
+            key = (r.camera_id, r.approach)
+            last = self.congestion.get(key)
+            changed = last is None or last.level is not r.level
+            beat = last is not None and r.level is not CongestionLevel.FREE and \
+                (r.ts + self.time_shift - last.ts).total_seconds() >= self.CONGESTION_HEARTBEAT_S
+            if last is None and r.level is CongestionLevel.FREE:
+                changed = True  # the first reading of an approach, so the dashboard knows it
+            if not (changed or beat):
+                continue
+            r = r.model_copy(update={"ts": r.ts + self.time_shift,
+                                     "since_ts": r.since_ts + self.time_shift})
+            self.sink.post_congestion(r)
+            self.congestion[key] = r
+            if changed and last is not None:
+                self.log(f"{ts:%H:%M:%S}  TRAFFIC {r.approach:<16} {r.level.value:<9} "
+                         f"score {r.score:.2f}  {r.camera_id[:8]}")
 
 
 def replay(frames: Sequence[Path], pipe: CameraPipeline, detect: DetectFn, sink: EventSink,
@@ -155,7 +189,8 @@ def replay(frames: Sequence[Path], pipe: CameraPipeline, detect: DetectFn, sink:
                 if wait > 0:
                     time.sleep(wait)
             prev_ts, last_wall = ts, time.monotonic()
-            publisher.publish(pipe.camera_id, path, ts, pipe.step(ts, Image.open(path), dets))
+            update = pipe.step(ts, Image.open(path), dets)
+            publisher.publish(pipe.camera_id, path, ts, update, pipe.congestion.readings)
     return publisher.final
 
 
