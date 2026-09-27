@@ -82,3 +82,17 @@ def test_same_seed_repeats():
     first = run_once(7, blockage, [], 80)
     second = run_once(7, blockage, [], 80)
     assert first == second
+
+
+def test_candidates_share_plan_a_and_delay_is_local():
+    pytest.importorskip("traci")
+    from sim.run_scenario import run_candidates, run_once
+
+    blockage, changes = eighth_ave_blockage(start_s=120, duration_s=100)
+    longer = [c.model_copy(update={"change_s": -4}) for c in changes]
+    first, second = run_candidates(blockage, [changes, longer], seeds=(42,), end_s=280)
+    assert first.sim.delay_default == second.sim.delay_default   # one plan A for both
+    # delay counts only trips through the blocked edge and the retimed signal's approaches
+    run = run_once(42, blockage, [], 280, watch_tls=(changes[0].id,))
+    assert run.delay_s > 0 and run.network_delay_s is not None
+    assert run.delay_s != run.network_delay_s
