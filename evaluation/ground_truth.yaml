@@ -68,6 +68,10 @@ windows:
     start: 2026-09-26T20:12:16Z
     end: 2026-09-26T20:32:16Z
     note: "session 2: fresh footage recorded after the engine was built"
+  - camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    start: 2026-09-26T22:38:08Z
+    end: 2026-09-26T23:08:05Z
+    note: "session 3 (dusk, rain): its 4 alerts reviewed, all blocked box (#63); not yet searched for missed blockages"
 
 blockages:
   - id: gt_001
@@ -146,6 +150,34 @@ blockages:
     end: 2026-09-26T20:26:20Z
     bbox: [192, 170, 241, 198]
     note: "vehicle stopped in the lane, blocking the road (found by the missed-blockage review)"
+  - id: gt_011
+    camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    type: blocked_box
+    start: 2026-09-26T22:46:57Z
+    end: 2026-09-26T22:47:49Z
+    bbox: [193, 165, 252, 221]
+    note: "silver SUV stopped in the box behind a stopped queue (dusk, rain; Alex, #63)"
+  - id: gt_012
+    camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    type: blocked_box
+    start: 2026-09-26T22:51:26Z
+    end: 2026-09-26T22:52:01Z
+    bbox: [238, 161, 312, 220]
+    note: "yellow van stuck in the box while the queue ahead is stopped (dusk, rain; Alex, #63)"
+  - id: gt_013
+    camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    type: blocked_box
+    start: 2026-09-26T23:03:32Z
+    end: 2026-09-26T23:04:04Z
+    bbox: [163, 156, 212, 216]
+    note: "black SUV stopped on the crosswalk / in the box in a jam (dusk, rain; Alex, #63)"
+  - id: gt_014
+    camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    type: blocked_box
+    start: 2026-09-26T23:04:10Z
+    end: 2026-09-26T23:04:45Z
+    bbox: [210, 152, 270, 212]
+    note: "dark red SUV stopped on the crosswalk / in the box in the same jam as gt_013 (dusk, rain; Alex, #63)"
 
 not_blockages:
   - id: no_001
