@@ -39,10 +39,18 @@ def det(box, cls=CAR, conf=0.8):
     return Detection(tuple(float(v) for v in box), cls, conf)
 
 
+def no_flow_rules() -> dict:
+    """The rules without the traffic-moving-past check: these made-up streets have no
+    passing traffic unless a test adds it (see the flow tests below)."""
+    rules = copy.deepcopy(load_rules())
+    rules["flow"]["min_passing_per_min"] = 0
+    return rules
+
+
 def run(frames, rules=None, frozen=None):
     """Feed one list of boxes per frame (5 s apart) through tracker + engine.
     Returns the engine's update for every frame."""
-    rules = rules or load_rules()
+    rules = rules or no_flow_rules()
     tracker, engine = CameraTracker(rules), EventEngine(MASK, rules)
     updates = []
     for i, dets in enumerate(frames):
@@ -149,7 +157,7 @@ def test_frozen_feed_fires_and_hides_vehicles():
 
 
 def test_thresholds_come_from_the_rules():
-    rules = copy.deepcopy(load_rules())
+    rules = no_flow_rules()
     rules["dwell_s"]["double_parked"] = 30
     assert [i for i, _ in opened(run([[CURBSIDE]] * 8, rules))] == [6]
 
@@ -225,6 +233,57 @@ def test_vehicle_seen_in_too_few_frames_never_fires():
     # the same spot "still" for 60 s, but empty in every other frame: different vehicles
     gappy = [[CURBSIDE] if i % 2 == 0 else [] for i in range(30)]
     assert opened(run(gappy)) == []
-    rules = copy.deepcopy(load_rules())
+    rules = no_flow_rules()
     rules["stationary"]["min_seen_frac"] = 0.0
     assert len(opened(run(gappy, rules))) == 1
+
+
+# --- traffic moving past (rules.yaml `flow`, issue #47) -----------------------------------
+# a car driving up the middle lane, a new spot every frame (5 spots, so it never lines up
+# with a box it left 4 frames ago): 12 vehicles/min passing the curbside vehicle
+PASSING = [(150, 153, 190, 175), (160, 126, 200, 148), (150, 99, 190, 121),
+           (160, 72, 200, 94), (150, 45, 190, 67)]
+# the same traffic, but far up the street: not "past" a vehicle stopped at y 130
+FAR_AWAY = [(125, 5, 150, 25), (155, 5, 180, 25), (185, 5, 210, 25), (215, 5, 240, 25),
+            (125, 30, 150, 50)]
+
+
+def with_traffic(box, frames, passing=PASSING, start=0):
+    return [[box, passing[(start + i) % len(passing)]] for i in range(frames)]
+
+
+def test_double_parker_with_traffic_moving_past_fires_on_time():
+    events = opened(run(with_traffic(CURBSIDE, 14), load_rules()))
+    assert [(i, e.type) for i, e in events] == [(12, EventType.DOUBLE_PARKED)]
+
+
+def test_jam_holds_the_event_until_traffic_moves_then_opens_with_its_start():
+    rules = load_rules()
+    assert rules["flow"]["min_passing_per_min"] > 0
+    jam = [[CURBSIDE]] * 30                                 # 150 s, nothing moving
+    moving = with_traffic(CURBSIDE, 10)
+    events = opened(run(jam + moving, rules))
+    # 4/min over the last 90 s = 6 vehicles past it: frames 30..35
+    assert [i for i, _ in events] == [35]
+    event = events[0][1]
+    assert event.start_ts == T0                              # stopped since the first frame
+    assert event.duration_s == 35 * 5
+
+
+def test_travel_lane_stop_in_a_jam_is_held():
+    assert opened(run([[MIDDLE]] * 26, load_rules())) == []
+    assert len(opened(run(with_traffic(MIDDLE, 26, passing=[(125, 150, 150, 175),
+                                                             (200, 120, 235, 145),
+                                                             (125, 95, 150, 118),
+                                                             (200, 65, 235, 90),
+                                                             (125, 40, 150, 62)]),
+                          load_rules()))) == 1
+
+
+def test_traffic_far_up_the_street_does_not_count_as_passing():
+    assert opened(run(with_traffic(CURBSIDE, 30, passing=FAR_AWAY), load_rules())) == []
+
+
+def test_blocked_box_fires_in_a_jam():
+    events = opened(run([[IN_BOX]] * 8, load_rules()))
+    assert [(i, e.type) for i, e in events] == [(6, EventType.BLOCKED_BOX)]

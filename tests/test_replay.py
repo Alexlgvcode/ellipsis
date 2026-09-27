@@ -22,6 +22,11 @@ spec.loader.exec_module(replay_mod)
 
 CAM = "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae"   # 7 Ave @ 36 St (has a lane mask)
 TRUCK = (191.0, 79.0, 226.0, 129.0)             # double parked by the planters (see #16)
+# a car driving up the middle lane past the truck, a new spot every frame (rules.yaml `flow`:
+# without traffic moving past it, a stopped truck is part of a jam, not a blockage)
+PASSING = [(135.0, 200.0, 175.0, 230.0), (142.0, 170.0, 176.0, 195.0),
+           (150.0, 145.0, 178.0, 165.0), (156.0, 124.0, 180.0, 140.0),
+           (162.0, 102.0, 182.0, 115.0)]
 
 
 def write_frames(root, camera_id, times, day="20260926"):
@@ -84,14 +89,16 @@ def api(tmp_path):
 
 
 def stub_detector(truck_until):
-    """The truck is there in the first `truck_until` frames, then gone."""
+    """The truck is there in the first `truck_until` frames, then gone; traffic passes it."""
     seen = {"n": 0}
 
     def detect(frames):
         out = []
         for _ in frames:
-            out.append([Detection(TRUCK, VehicleClass.BUS, 0.8)] if seen["n"] < truck_until
-                       else [])
+            n = seen["n"]
+            car = Detection(PASSING[n % len(PASSING)], VehicleClass.CAR, 0.8)
+            out.append([Detection(TRUCK, VehicleClass.BUS, 0.8), car] if n < truck_until
+                       else [car])
             seen["n"] += 1
         return out
     return detect

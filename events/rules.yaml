@@ -40,6 +40,16 @@ tracking:
   max_gap_s: 30    # a track unseen for longer ends, even if fewer than track_lost_frames were
                    # missed (recording gaps, restarts): nobody saw the vehicle stay put
 
+flow:                    # a stopped vehicle is a blockage only if traffic kept moving past it
+  min_passing_per_min: 4 # hold double_parked / stopped_in_lane events while fewer vehicles than
+                         # this passed it per minute (a jam); 0 = off. On evaluation/ (issue #47)
+                         # 3-6 with window 60-120 s all give precision 82% -> 90% (drops the
+                         # 6 Ave @ 30 St jam alert), recall and time to alert unchanged
+  window_s: 90           # measured over the last signal cycle of its still streak
+  near_height_frac: 2.5  # "past it" = a new track whose box bottom is within this x the
+                         # stopped vehicle's height of its bottom (1.5 loses the cab pickup
+                         # gt_004 at 3+/min: few cars pass close to a small box)
+
 queue:                   # only the front vehicle of a queue in a travel lane is an event;
   max_gap_frac: 0.6      # stopped vehicles closer than this x the vehicle's height behind it
   min_x_overlap: 0.3     # and overlapping sideways by this fraction are queued behind it

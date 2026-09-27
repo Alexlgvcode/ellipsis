@@ -8,12 +8,18 @@ from vision.detect import Detection
 
 CAM = "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae"   # 7 Ave @ 36 St
 TRUCK = Detection((191.0, 79.0, 226.0, 129.0), VehicleClass.TRUCK, 0.8)  # double parked
+# a car driving up the middle lane past the truck, a new spot every frame: the traffic that
+# makes a stopped truck a blockage rather than part of a jam (rules.yaml `flow`)
+PASSING = [Detection(b, VehicleClass.CAR, 0.8) for b in (
+    (135.0, 200.0, 175.0, 230.0), (142.0, 170.0, 176.0, 195.0), (150.0, 145.0, 178.0, 165.0),
+    (156.0, 124.0, 180.0, 140.0), (162.0, 102.0, 182.0, 115.0))]
 T0 = datetime(2026, 9, 26, 18, 0, 0, tzinfo=timezone.utc)
 
 
 def feed(pipe, views, start=0):
-    return [pipe.step(T0 + timedelta(seconds=5 * (start + i)), None, [TRUCK], frozen=False,
-                      view=v) for i, v in enumerate(views)]
+    return [pipe.step(T0 + timedelta(seconds=5 * (start + i)), None,
+                      [TRUCK, PASSING[(start + i) % len(PASSING)]], frozen=False, view=v)
+            for i, v in enumerate(views)]
 
 
 def test_moved_view_pauses_the_camera_and_closes_its_events():

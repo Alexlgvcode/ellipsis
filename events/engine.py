@@ -20,6 +20,14 @@ Front of queue: in travel lanes, vehicles stopped right behind another stopped
 vehicle are its impact, not separate events. Double-parked vehicles back to back
 are each an event (e.g. two delivery trucks on 7 Ave @ 36 St).
 
+Traffic moving past (rules.yaml `flow`): a stopped vehicle is only a blockage if
+traffic kept moving past it. In a jam nobody moves, so double_parked and
+stopped_in_lane events are held while fewer than `flow.min_passing_per_min`
+vehicles passed it over the last `flow.window_s`; once traffic flows again the event
+opens with the original start_ts. Frames are 2-5 s apart, so a moving vehicle never
+overlaps its last box: every new track on the road is a vehicle driving by.
+blocked_box isn't held: blocking the box is what drivers do in a jam.
+
 Frozen feed: pass feed_still=True when a frame is near-identical to the previous
 one (ingest.health.is_frozen). After dwell_s.frozen_feed a frozen_feed event opens,
 and vehicles are ignored while the picture is frozen. Don't feed frozen frames
@@ -31,6 +39,7 @@ to the tracker either, or parked vehicles' timers keep counting.
 from __future__ import annotations
 
 import argparse
+from collections import deque
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -48,6 +57,9 @@ ZONE_EVENTS: dict[LaneZone, tuple[EventType, str]] = {
     LaneZone.BOX: (EventType.BLOCKED_BOX, "blocked_box"),
     LaneZone.BUS_STOP: (EventType.DOUBLE_PARKED, "bus_stop"),
 }
+
+# zones where vehicles drive: new tracks here count as traffic moving past
+ROAD_ZONES = {LaneZone.CURB_ADJACENT, LaneZone.TRAVEL, LaneZone.BOX, LaneZone.BUS_STOP}
 
 
 @dataclass
@@ -75,6 +87,11 @@ class EventEngine:
         self.min_seen_frac = rules["stationary"].get("min_seen_frac", 0.0)
         self.max_gap_frac = rules["queue"]["max_gap_frac"]
         self.min_x_overlap = rules["queue"]["min_x_overlap"]
+        flow = rules.get("flow") or {}
+        self.min_passing = flow.get("min_passing_per_min", 0.0)
+        self.flow_window_s = flow.get("window_s", 90.0)
+        self.near_frac = flow.get("near_height_frac", 1.5)
+        self.movers: deque[tuple[datetime, float]] = deque()  # (ts, box bottom y) of passers
         self.open: dict[int, Event] = {}  # track id -> its open event
         self.frozen_since: datetime | None = None
         self.frozen_event: Event | None = None
@@ -95,6 +112,7 @@ class EventEngine:
 
         live = {t.id for t in tracks}
         still = [t for t in tracks if not t.missed and t.stationary_s > 0]
+        self._record_movers(ts, tracks)
         for t in tracks:
             if t.missed:
                 continue  # hidden this frame (a bus passing in front): keep its event open
@@ -122,6 +140,8 @@ class EventEngine:
                 continue
             if t.seen_frac < self.min_seen_frac:
                 continue  # gaps while "still": likely different vehicles passing one spot
+            if zone is not LaneZone.BOX and self.passing_per_min(t, ts) < self.min_passing:
+                continue  # nothing moving past it: a jam, not a blockage (yet)
             event = self._new_event(t, zone)
             self.open[t.id] = event
             out.opened.append(event)
@@ -137,7 +157,27 @@ class EventEngine:
         self.open.clear()
         return closed
 
+    def passing_per_min(self, t: Track, ts: datetime) -> float:
+        """Vehicles per minute that drove past `t` (a new track whose box bottom is within
+        `near_height_frac` x t's height of t's bottom) over the last `flow.window_s` of its
+        still streak."""
+        span = min(self.flow_window_s, t.stationary_s)
+        if span <= 0:
+            return 0.0
+        y2, near = t.bbox[3], self.near_frac * (t.bbox[3] - t.bbox[1])
+        passed = sum((ts - m_ts).total_seconds() < span and abs(y - y2) <= near
+                     for m_ts, y in self.movers)
+        return passed / (span / 60)
+
     # --- helpers -------------------------------------------------------------------------
+
+    def _record_movers(self, ts: datetime, tracks: Sequence[Track]) -> None:
+        for t in tracks:
+            if t.hits == 1 and not t.missed and t.last_seen == ts \
+                    and self.mask.lane_zone(t.bbox) in ROAD_ZONES:
+                self.movers.append((ts, t.bbox[3]))
+        while self.movers and (ts - self.movers[0][0]).total_seconds() >= self.flow_window_s:
+            self.movers.popleft()
 
     def _cut_off(self, bbox) -> bool:
         w, h = self.mask.frame_size
