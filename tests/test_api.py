@@ -208,6 +208,27 @@ def test_feedback_survives_an_api_restart(make_client):
     assert got == decisions
 
 
+def test_mocks_from_an_older_data_mock_are_removed(make_client, sample_event):
+    # a database from before data/mock/ was rebuilt: an old mock (snapshot under data/mock/,
+    # id no longer in events.json) with a decision, next to a real replay event
+    old = {**sample_event, "id": "evt_mock_001", "snapshot_path": "data/mock/snapshots/old.jpg"}
+    real = {**sample_event, "id": "evt_real", "snapshot_path": "data/snapshots/cam/evt_real.jpg"}
+    first = make_client(mock_mode=False)
+    for e in (old, real):
+        first.post("/events", json=e)
+    first.post("/events/evt_mock_001/feedback", json={"action": "accept"})
+    first.__exit__(None, None, None)
+
+    mock = make_client(mock_mode=True)
+    ids = {e["id"] for e in mock.get("/events").json()}
+    assert ids == set(MOCK_IDS) | {"evt_real"}            # the old mock is gone, not the real one
+    assert mock.get("/events/evt_mock_001/feedback").status_code == 404
+    mock.__exit__(None, None, None)
+
+    live = make_client(mock_mode=False)
+    assert [e["id"] for e in live.get("/events").json()] == ["evt_real"]
+
+
 def test_turning_mock_mode_off_removes_mock_feedback(make_client):
     mock = make_client(mock_mode=True)
     mock.post(f"/events/{MOCK_IDS[0]}/feedback", json={"action": "accept"})

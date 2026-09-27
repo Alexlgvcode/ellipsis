@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 
 from sqlalchemy.engine import Engine
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 
 from api.models import (
     CameraRow,
@@ -46,13 +46,46 @@ def seed_cameras(session: Session, cameras_path: Path) -> int:
     return len(cams)
 
 
+MOCK_SNAPSHOTS = "data/mock/"  # every mock event's snapshot is under here; real ones aren't
+
+
+def _mock_ids(mock_dir: Path) -> set[str]:
+    path = mock_dir / "events.json"
+    return {e["id"] for e in json.loads(path.read_text())} if path.exists() else set()
+
+
+def _stored_mock_ids(session: Session) -> set[str]:
+    """Mock events in the database, including ones from an older data/mock/ (their ids are
+    gone from events.json, but their snapshot is still under data/mock/)."""
+    return {row.id for row in session.exec(select(EventRow))
+            if (row.payload.get("snapshot_path") or "").startswith(MOCK_SNAPSHOTS)}
+
+
+def _delete_events(session: Session, ids: set[str]) -> int:
+    """Delete events with their recommendations, feedback and notes."""
+    removed = 0
+    for event_id in sorted(ids):
+        for child in (session.get(model, event_id) for model in (RecommendationRow, FeedbackRow,
+                                                                 SummaryRow)):
+            if child:
+                session.delete(child)
+        row = session.get(EventRow, event_id)
+        if row:
+            session.delete(row)
+            removed += 1
+    session.flush()
+    return removed
+
+
 def seed_mocks(session: Session, mock_dir: Path) -> int:
-    """Upsert data/mock/ events, recommendations and congestion. Re-running resets them."""
+    """Upsert data/mock/ events, recommendations and congestion. Re-running resets them, and
+    mock events from an older data/mock/ are removed (scripts/build_mock.py rebuilds it)."""
     events_path = mock_dir / "events.json"
     recs_path = mock_dir / "recommendations.json"
     if not events_path.exists():
         return 0
     events = [Event(**e) for e in json.loads(events_path.read_text())]
+    _delete_events(session, _stored_mock_ids(session) - {e.id for e in events})
     for event in events:
         session.merge(EventRow.from_model(event))
     session.flush()  # events must exist before recommendations reference them
@@ -70,24 +103,11 @@ def _mock_congestion(mock_dir: Path) -> list[Congestion]:
 
 
 def remove_mocks(session: Session, mock_dir: Path) -> int:
-    """Delete the data/mock/ events (and their recommendations, feedback and notes) and
-    congestion, so a database used in mock mode earlier only shows real data once mock mode
-    is off."""
+    """Delete the mock events (today's data/mock/ and older ones, with their recommendations,
+    feedback and notes) and the data/mock/ congestion, so a database used in mock mode earlier
+    only shows real data once mock mode is off."""
     for c in _mock_congestion(mock_dir):
         row = session.get(CongestionRow, CongestionRow.from_model(c).id)
         if row:
             session.delete(row)
-    events_path = mock_dir / "events.json"
-    if not events_path.exists():
-        return 0
-    removed = 0
-    for e in json.loads(events_path.read_text()):
-        children = (RecommendationRow, FeedbackRow, SummaryRow)
-        for child in (session.get(model, e["id"]) for model in children):
-            if child:
-                session.delete(child)
-        row = session.get(EventRow, e["id"])
-        if row:
-            session.delete(row)
-            removed += 1
-    return removed
+    return _delete_events(session, _mock_ids(mock_dir) | _stored_mock_ids(session))
