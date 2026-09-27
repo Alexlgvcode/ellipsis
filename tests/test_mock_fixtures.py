@@ -76,3 +76,14 @@ def test_mock_congestion_matches_the_contract_and_the_masks(repo_root):
         mask = load_mask(r.camera_id)
         assert mask is not None, r.camera_id
         assert (r.approach, r.direction) in {(a.name, a.direction) for a in mask.approaches}
+
+
+def test_mock_notes_are_real_model_notes_for_mock_events(repo_root, events):
+    notes = _load(repo_root, "summaries.json")
+    ids = {e.id for e in events}
+    assert notes, "data/mock/summaries.json has no notes"
+    for n in notes:
+        assert n["event_id"] in ids
+        assert n["text"].strip()
+        assert n["model"] and n["facts"]  # which model wrote it, and from which facts
+    assert len({n["event_id"] for n in notes}) == len(notes)

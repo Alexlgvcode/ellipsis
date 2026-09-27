@@ -40,7 +40,7 @@ function sampleData(): Plugin {
     generateBundle() {
       const emit = (fileName: string, path: string) =>
         this.emitFile({ type: "asset", fileName: `demo/sample/${fileName}`, source: readFileSync(path) });
-      for (const f of ["events.json", "recommendations.json", "congestion.json"]) emit(f, resolve(mock, f));
+      for (const f of ["events.json", "recommendations.json", "congestion.json", "summaries.json"]) emit(f, resolve(mock, f));
       emit("cameras.json", resolve(repo, "data/cameras.json"));
       for (const f of readdirSync(resolve(mock, "snapshots"))) emit(`snapshots/${f}`, resolve(mock, "snapshots", f));
     },

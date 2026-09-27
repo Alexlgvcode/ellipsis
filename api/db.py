@@ -78,8 +78,9 @@ def _delete_events(session: Session, ids: set[str]) -> int:
 
 
 def seed_mocks(session: Session, mock_dir: Path) -> int:
-    """Upsert data/mock/ events, recommendations and congestion. Re-running resets them, and
-    mock events from an older data/mock/ are removed (scripts/build_mock.py rebuilds it)."""
+    """Upsert data/mock/ events, recommendations, incident notes and congestion. Re-running
+    resets them, and mock events from an older data/mock/ are removed (scripts/build_mock.py
+    rebuilds it)."""
     events_path = mock_dir / "events.json"
     recs_path = mock_dir / "recommendations.json"
     if not events_path.exists():
@@ -92,6 +93,12 @@ def seed_mocks(session: Session, mock_dir: Path) -> int:
     if recs_path.exists():
         for r in json.loads(recs_path.read_text()):
             session.merge(RecommendationRow.from_model(Recommendation(**r)))
+    ids = {e.id for e in events}
+    notes_path = mock_dir / "summaries.json"
+    for n in json.loads(notes_path.read_text()) if notes_path.exists() else []:
+        if n["event_id"] in ids:  # the note's prompt facts stay in the file, not the API
+            payload = {"event_id": n["event_id"], "text": n["text"], "model": n.get("model")}
+            session.merge(SummaryRow(event_id=n["event_id"], payload=payload))
     for c in _mock_congestion(mock_dir):
         session.merge(CongestionRow.from_model(c))
     return len(events)

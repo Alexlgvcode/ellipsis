@@ -30,7 +30,10 @@ Real, hand-checked blockages from `evaluation/ground_truth.yaml` (#16, #63), tim
 - **Not from the pipeline:** an incident marked *missed* wasn't alerted on by the engine; its
   event is built from the tag with confidence 0.5.
 - Left out: `gt_003` (police stop) and `gt_005` (bus lane), which are debatable as blockages.
-- Decisions and incident notes start empty: they come from the operator and the worker.
+- Incident notes (`summaries.json`): 7 of 13, written once by
+  gemini-3.7-flash from each incident's facts
+  (`facts`, the same prompt the worker sends), so they load without calling the model.
+- Operator decisions start empty.
 
 ## Congestion
 

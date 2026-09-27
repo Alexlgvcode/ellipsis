@@ -116,6 +116,8 @@ export interface SampleData {
   events: Event[];
   recommendations: Recommendation[];
   congestion: Congestion[];
+  /** Incident notes written once from each incident's facts (data/mock/summaries.json). */
+  summaries?: { event_id: string; text: string }[];
 }
 
 /**
@@ -134,9 +136,10 @@ export class SamplePlayer {
     }));
     const recommendations: Record<string, Recommendation | null> = {};
     for (const e of events) recommendations[e.id] = this.data.recommendations.find((r) => r.event_id === e.id) ?? null;
+    const notes = Object.fromEntries((this.data.summaries ?? []).map((n) => [n.event_id, n.text]));
     return {
       health: { status: "ok", mock_mode: true }, cameras: this.data.cameras, events, recommendations,
-      feedback: { ...this.feedback }, notes: {}, congestion: this.data.congestion, fetchedAt: this.now(),
+      feedback: { ...this.feedback }, notes, congestion: this.data.congestion, fetchedAt: this.now(),
     };
   }
 
@@ -173,9 +176,11 @@ const json = <T,>(path: string): Promise<T> =>
 export function demoPlayer(search: string = typeof location === "undefined" ? "" : location.search): Promise<Player> {
   player ??= (!new URLSearchParams(search).has("sample")
     ? json<Timeline>("timeline.json").then((t) => new DemoPlayer(t))
-    : Promise.all(["cameras", "events", "recommendations", "congestion"].map((f) => json(`sample/${f}.json`)))
-      .then(([cameras, events, recommendations, congestion]) => new SamplePlayer(
-        { cameras, events, recommendations, congestion } as SampleData)))
+    : Promise.all([
+      ...["cameras", "events", "recommendations", "congestion"].map((f) => json(`sample/${f}.json`)),
+      json("sample/summaries.json").catch(() => []),  // no notes is fine: the cards hide them
+    ]).then(([cameras, events, recommendations, congestion, summaries]) => new SamplePlayer(
+        { cameras, events, recommendations, congestion, summaries } as SampleData)))
     .then((p) => (loaded = p));
   return player;
 }

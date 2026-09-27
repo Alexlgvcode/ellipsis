@@ -81,8 +81,11 @@ it("serves the sample incidents all at once, like the API's mock mode", async ()
   expect(snap.events.map((e) => [e.id, e.snapshot_path])).toEqual([["a", "sample/snapshots/a.jpg"], ["b", null]]);
   expect(snap.recommendations).toEqual({ a: { ...rec, event_id: "a" }, b: null });
   expect(snap.congestion).toHaveLength(1);
+  expect(snap.notes).toEqual({});                  // no summaries.json: no notes
   player.decide("b", "false_positive");
   expect(player.snapshot().feedback).toEqual({ b: "false_positive" });
+  const noted = new SamplePlayer({ ...data, summaries: [{ event_id: "a", text: "A van is double parked." }] });
+  expect(noted.snapshot().notes).toEqual({ a: "A van is double parked." });  // b has none: hidden
 });
 
 it("a synced replay shows each recorded camera's still for the same moment, and only those cameras", () => {

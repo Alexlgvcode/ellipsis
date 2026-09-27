@@ -106,6 +106,15 @@ def test_mock_mode_serves_the_mocks(mock_client):
     assert rec["sim"]["delay_new"] > 0 and rec["intersections"]
 
 
+def test_mock_mode_serves_the_mock_notes(mock_client):
+    notes = json.loads((REPO_ROOT / "data" / "mock" / "summaries.json").read_text())
+    served = {n["event_id"]: n for n in mock_client.get("/summaries").json()}
+    assert set(served) == {n["event_id"] for n in notes}
+    first = notes[0]
+    assert served[first["event_id"]] == {"event_id": first["event_id"], "text": first["text"],
+                                         "model": first["model"]}
+
+
 def test_mock_mode_off_starts_empty(client):
     assert client.get("/events").json() == []
 
