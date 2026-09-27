@@ -1,7 +1,7 @@
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { clock } from "../lib/format";
 import {
-  STATUS_LABEL, counts, elapsed, filterIncidents, sortIncidents,
+  STATUS_LABEL, counts, decisionLabel, elapsed, filterIncidents, sortIncidents,
   type FirstSeen, type Incident, type IncidentStatus, type RailFilter, type RailSort,
 } from "../lib/incidents";
 
@@ -87,21 +87,24 @@ export function IncidentRail(p: Props) {
             <li key={status ?? "all"}>
               {status && <div className="group-hd">{STATUS_LABEL[status]} <span className="mono">{items.length}</span></div>}
               <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                {items.map((i) => (
+                {items.map((i) => {
+                  const tag = i.decision ? decisionLabel(i.decision, i.response.state !== "none") : STATUS_LABEL[i.status];
+                  return (
                   <li key={i.id}>
                     <button className={`row sev-${i.status}${i.status === "resolved" ? " resolved" : ""}`}
                       aria-current={p.selectedId === i.id} onClick={() => p.onSelect(i.id)}
-                      aria-label={`${i.location}, ${i.typeLabel}, ${STATUS_LABEL[i.status]}, ${clock(elapsed(i, p.seen, p.now))} elapsed`}>
+                      aria-label={`${i.location}, ${i.typeLabel}, ${tag}, ${clock(elapsed(i, p.seen, p.now))} elapsed`}>
                       <span className="sev" aria-hidden="true" />
                       <span>
                         <div className="loc">{i.location}</div>
                         <div className="type">{i.typeLabel}</div>
                         <div className="time">{clock(elapsed(i, p.seen, p.now))}</div>
                       </span>
-                      <span className="status">{STATUS_LABEL[i.status]}</span>
+                      <span className={`status${i.decision ? ` decided ${i.decision}` : ""}`}>{tag}</span>
                     </button>
                   </li>
-                ))}
+                  );
+                })}
               </ul>
             </li>
           ))}

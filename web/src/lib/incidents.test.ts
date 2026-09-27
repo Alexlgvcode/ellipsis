@@ -1,6 +1,6 @@
 import { CAMERAS, EVENTS, NOW, RECS, ev } from "../test/fixtures";
 import {
-  cameraCode, changeText, counts, elapsed, filterIncidents, isActive, simulationOf, sortIncidents,
+  cameraCode, changeText, counts, decisionLabel, elapsed, filterIncidents, isActive, simulationOf, sortIncidents,
   statusOf, toIncidents,
 } from "./incidents";
 import { clock } from "./format";
@@ -82,6 +82,26 @@ describe("rail", () => {
     const gone = list.find((i) => i.id === "gone")!;
     expect(elapsed(gone, seen, NOW + 5000)).toBe(gone.durationS);
     expect(elapsed(open, undefined, NOW + 5000)).toBe(open.durationS);
+  });
+});
+
+describe("operator decisions", () => {
+  const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, { evt_mock_001: "accept", evt_mock_003: "false_positive" });
+
+  it("carries each event's decision, or null", () => {
+    expect(list.map((i) => i.decision)).toEqual(["accept", null, "false_positive"]);
+  });
+
+  it("labels an accepted recommendation as applied in the sim only", () => {
+    expect(decisionLabel("accept", true)).toBe("Applied (sim)");
+    expect(decisionLabel("accept", false)).toBe("Accepted");
+    expect(decisionLabel("reject", true)).toBe("Rejected");
+    expect(decisionLabel("false_positive", true)).toBe("False positive");
+  });
+
+  it("stops counting a false positive as open, but keeps it in the list", () => {
+    expect(counts(list)).toMatchObject({ open: 2, all: 3 });
+    expect(counts(toIncidents(EVENTS, CAMERAS, RECS, NOW, true)).open).toBe(3);
   });
 });
 
