@@ -33,7 +33,7 @@ sim = [
     "sumolib>=1.20",
 ]
 # Product lead: incident summaries
-llm = ["anthropic>=1.8"]  # fallbacks="default" (api/summarize.py)
+llm = ["anthropic>=1.8", "google-genai>=2.25"]  # api/summarize.py: Claude or Gemini
 dev = ["pytest>=8.0", "pytest-asyncio>=1.0", "ruff>=0.4"]
 all = ["lane-watch[vision,sim,llm,dev]"]
 

@@ -1,11 +1,13 @@
-"""Optional (F12): a one-paragraph plain-language incident note per alert, written by Claude.
+"""Optional (F12): a one-paragraph plain-language incident note per alert, written by Gemini
+(default) or Claude: LW_SUMMARY_PROVIDER=gemini|claude.
 
     python -m api.summarize            # print a note for each event that has none yet
     python -m api.summarize --post     # also POST them to the API (/events/{id}/summary)
 
 The recommendation worker (signals/worker.py) writes a note right after it scores an event,
-so the note can mention the simulated timing change. Without ANTHROPIC_API_KEY every
-function here returns None and nothing else changes: the dashboard hides the note.
+so the note can mention the simulated timing change. Without the provider's key
+(GEMINI_API_KEY or ANTHROPIC_API_KEY) every function here returns None and nothing else
+changes: the dashboard hides the note.
 
 Only facts from the Event and Recommendation go into the prompt; the model is told not
 to add any. CI never calls the API: tests pass a fake client.
@@ -84,44 +86,76 @@ def build_prompt(event: Event, rec: Recommendation | None = None,
     return "\n".join(lines)
 
 
-def _client(api_key: str | None) -> Any | None:
+def model_name(settings: Any) -> str:
+    gemini = settings.summary_provider == "gemini"
+    return settings.gemini_model if gemini else settings.summary_model
+
+
+def _client(settings: Any) -> Any | None:
+    """The configured provider's SDK client, or None without its key or SDK."""
+    gemini = settings.summary_provider == "gemini"
+    api_key = settings.gemini_api_key if gemini else settings.anthropic_api_key
     if not api_key:
         return None
     try:
+        if gemini:
+            from google import genai
+
+            return genai.Client(api_key=api_key)
         import anthropic
+
+        return anthropic.Anthropic(api_key=api_key)
     except ImportError:
-        log.warning("ANTHROPIC_API_KEY is set but the SDK isn't installed: "
-                    "pip install -e '.[llm]'")
+        log.warning("%s key is set but its SDK isn't installed: pip install -e '.[llm]'",
+                    settings.summary_provider)
         return None
-    return anthropic.Anthropic(api_key=api_key)
+
+
+def _ask_claude(client: Any, model: str, prompt: str) -> str | None:
+    response = client.beta.messages.create(
+        model=model,
+        max_tokens=MAX_TOKENS,
+        system=SYSTEM,
+        messages=[{"role": "user", "content": prompt}],
+        output_config={"effort": "low"},  # a short note from given facts
+        betas=[FALLBACK_BETA],
+        fallbacks="default",
+    )
+    if response.stop_reason == "refusal":
+        return None
+    return " ".join(b.text for b in response.content if b.type == "text")
+
+
+def _ask_gemini(client: Any, model: str, prompt: str) -> str | None:
+    # a GenerateContentConfigDict: no SDK import needed beyond the client itself
+    response = client.models.generate_content(
+        model=model,
+        contents=prompt,
+        config={"system_instruction": SYSTEM, "max_output_tokens": MAX_TOKENS},
+    )
+    return response.text  # None when the response was blocked
 
 
 def summarize(event: Event, rec: Recommendation | None = None,
               camera_name: str | None = None, client: Any | None = None,
-              model: str | None = None) -> str | None:
-    """The note, or None: no API key, the SDK missing, an API error or a refusal."""
+              model: str | None = None, provider: str | None = None) -> str | None:
+    """The note, or None: no API key, the SDK missing, an API error, a refusal or a block."""
     settings = get_settings()
-    client = client or _client(settings.anthropic_api_key)
+    provider = provider or settings.summary_provider
+    client = client or _client(settings)
     if client is None:
         return None
+    ask = _ask_gemini if provider == "gemini" else _ask_claude
+    default = settings.gemini_model if provider == "gemini" else settings.summary_model
     try:
-        response = client.beta.messages.create(
-            model=model or settings.summary_model,
-            max_tokens=MAX_TOKENS,
-            system=SYSTEM,
-            messages=[{"role": "user", "content": build_prompt(event, rec, camera_name)}],
-            output_config={"effort": "low"},  # a short note from given facts
-            betas=[FALLBACK_BETA],
-            fallbacks="default",
-        )
+        text = ask(client, model or default, build_prompt(event, rec, camera_name))
     except Exception as e:  # the dashboard must never depend on this call
         log.warning("summary for %s failed: %s", event.id, e)
         return None
-    if response.stop_reason == "refusal":
-        log.warning("summary for %s was declined", event.id)
+    if not text or not text.strip():
+        log.warning("summary for %s was declined or empty", event.id)
         return None
-    text = " ".join(b.text for b in response.content if b.type == "text").strip()
-    return text or None
+    return text.strip()
 
 
 def post_summary(api: httpx.Client, event: Event, rec: Recommendation | None = None,
@@ -130,7 +164,7 @@ def post_summary(api: httpx.Client, event: Event, rec: Recommendation | None = N
     text = summarize(event, rec, camera_name, client)
     if text:
         api.post(f"/events/{event.id}/summary",
-                 json={"text": text, "model": get_settings().summary_model}).raise_for_status()
+                 json={"text": text, "model": model_name(get_settings())}).raise_for_status()
     return text
 
 
@@ -139,8 +173,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--api", default=API)
     parser.add_argument("--post", action="store_true", help="store each note in the API")
     args = parser.parse_args(argv)
-    if _client(get_settings().anthropic_api_key) is None:
-        print("no ANTHROPIC_API_KEY (or SDK): nothing to do")
+    if _client(get_settings()) is None:
+        print("no API key (or SDK) for the summary provider: nothing to do")
         return 1
     with httpx.Client(base_url=args.api, timeout=120.0) as api:
         cameras = {c["id"]: c["name"] for c in api.get("/cameras").raise_for_status().json()}

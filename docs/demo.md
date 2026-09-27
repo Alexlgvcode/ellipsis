@@ -41,9 +41,9 @@ Expect the three OPEN lines above for 7 Ave (18:22:34, 18:22:44, 18:25:38) and o
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[all]"                  # vision (YOLO), sim (SUMO), llm (Claude notes), dev
+pip install -e ".[all]"                  # vision (YOLO), sim (SUMO), llm (Gemini notes), dev
 make web-install
-cp .env.example .env                     # then set ANTHROPIC_API_KEY for incident notes
+cp .env.example .env                     # then set GEMINI_API_KEY for incident notes (and ELEVENLABS_API_KEY for voice)
 ```
 
 - **Frames:** `data/frames/b0cbb042-…/20260926/` and `data/frames/ec9ffb62-…/20260926/` must
@@ -59,7 +59,7 @@ Four terminals from the repo root, each with `source .venv/bin/activate`:
 
 ```bash
 rm -f data/lanewatch.db && LW_MOCK_MODE=false LW_DATA_SOURCE=replay make api   # 1. fresh DB, real events, badge says REPLAY
-make recommend-worker                                      # 2. SUMO scoring + Claude notes
+make recommend-worker                                      # 2. SUMO scoring + Gemini notes
 make web                                                   # 3. http://localhost:5173
 ```
 
@@ -82,7 +82,7 @@ the replays as you begin the hook: the first alert lands about a minute in.
 |---|---|---|
 | 0:00–0:45 | **Hook.** Double parking on a Midtown avenue backs up the whole corridor; TMC operators watch hundreds of feeds by eye. | Map of the Midtown cameras; replay running |
 | ~1:04 | **Alert.** Two delivery trucks double parked on 7 Ave @ 36 St. | The alerts appear in the list |
-| 1:15–1:45 | **Decision.** Open the near truck (*Needs review*): the frame from when it alerted, with the box, how long it has been stopped, the lane. The card opens on the alert frame, with a line saying why it needs review. Click **Accept** in the decision bar pinned to the bottom of the card. | Card shows *Applied (sim)*, plus the Claude incident note if the key is set |
+| 1:15–1:45 | **Decision.** Open the near truck (*Needs review*): the frame from when it alerted, with the box, how long it has been stopped, the lane. The card opens on the alert frame, with a line saying why it needs review. Click **Accept** in the decision bar pinned to the bottom of the card. | Card shows *Applied (sim)*, plus the Gemini incident note if the key is set |
 | 1:45–2:30 | **Sim payoff.** **Compare in simulation** (in the pinned decision bar, right under Accept): default versus recommended timing on the same signal, with delay per vehicle and the queue chart. Read out the card's numbers as they are. | Simulation mode |
 | ~2:42 | Second alert: cab stopped in the lane on 8th Ave @ 31st St. It's another type, and it also goes through a human decision. | New alert in the list |
 | 2:30–3:00 | **Proof and close.** Precision 82%, recall 90%, median time to alert 63 s on hand-tagged footage. Every change goes through a human. | Metrics slide |
@@ -148,6 +148,6 @@ so an operator makes that call.
 | `Address already in use` on 8000 | `lsof -nP -iTCP:8000 -sTCP:LISTEN`, or `make api PORT=8001` and `LW_API_URL=http://localhost:8001 make web` |
 | No alerts after 1:30 | Was the API started with `LW_MOCK_MODE=false`, and did replay print `OPEN` lines? Rerun the check above |
 | Alert shows but no recommendation | Is the worker terminal running? Scoring takes about 25 s per event. Is SUMO installed (`pip install -e ".[sim]"`)? |
-| Card has no incident note | Set `ANTHROPIC_API_KEY` in `.env` and restart the worker. Without a key, the demo works without notes |
+| Card has no incident note | Set `GEMINI_API_KEY` in `.env` and restart the worker. Without a key, the demo works without notes |
 | Mock incidents show up | Delete `data/lanewatch.db` and restart the API with `LW_MOCK_MODE=false` |
 | Map is blank | No internet for map tiles: play the backup video |
