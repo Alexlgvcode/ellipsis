@@ -24,6 +24,19 @@ change, judge them and add each one to `ground_truth.yaml`.
 illegally, is not a blockage. Debatable groups get a `category` (`bus_lane`,
 `police`, `camera_moved`), so results can be shown with and without them.
 
+**Demo incidents.** `demo: true` marks the blockages the demo replays (picked in #16; script and
+timings in [docs/demo.md](../docs/demo.md)):
+
+| Id | Camera | Type | Real duration |
+|---|---|---|---|
+| `gt_001` | 7 Ave @ 36 St | double parked (near box truck) | 521 s |
+| `gt_002` | 7 Ave @ 36 St | double parked (far delivery truck) | 565 s |
+| `gt_009` | 8th Ave @ 31st St | stopped in lane (cab) | 82 s |
+
+Durations come from Brian's longer recording; this window clips the trucks. No real blocked
+box has been recorded yet. `tests/test_demo_incidents.py` fails if a rule or engine change
+stops any of them alerting as the right type within 90 s.
+
 **Adding footage.**
 1. Record it with `scripts/record_frames.py`.
 2. Add a `windows` entry per camera to `ground_truth.yaml`.
