@@ -113,9 +113,8 @@ function repaint(map: MLMap, PALETTE: MapColors) {
 /** Overlay colours that follow the palette (semantic colours stay fixed). */
 function paintOverlays(map: MLMap, c: MapColors) {
   const set = (id: string, prop: string, v: unknown) => { if (map.getLayer(id)) (map.setPaintProperty as (i: string, p: string, v: unknown) => void).call(map, id, prop, v); };
-  set("cams", "circle-color", ["case", ["get", "live"], HEALTHY, c.cameraOff]);
+  // camera dot + icon colour comes with the data: the camera's incident status, else live / off
   set("cams", "circle-stroke-color", c.markerStroke);
-  set("cams-icon", "icon-color", ["case", ["get", "live"], HEALTHY, c.cameraOff]);
   set("cams-icon", "icon-halo-color", c.markerStroke);
   set("signals", "circle-color", c.signal);
   set("signals", "circle-stroke-color", c.markerStroke);
@@ -203,23 +202,25 @@ function addOverlays(map: MLMap) {
       "icon-size": ["interpolate", ["linear"], ["zoom"], 14, 0.55, 16, 0.85, 18, 1.4],
     } });
   add({ id: "cams", type: "circle", source: "cams",
-    paint: { "circle-radius": ["case", ["get", "source"], 5, 3], "circle-stroke-width": ["case", ["get", "source"], 2, 1] } });
+    paint: { "circle-radius": 4, "circle-stroke-width": 1, "circle-color": ["get", "color"] } });
   // Camera icon above each dot; click either to open the camera's live feed.
   add({ id: "cams-icon", type: "symbol", source: "cams",
     layout: {
-      "icon-image": "cam-icon", "icon-anchor": "bottom", "icon-offset": [0, -6],
-      "icon-size": ["case", ["get", "source"], 1.15, 0.9], "icon-allow-overlap": true, "icon-ignore-placement": true,
+      "icon-image": "cam-icon", "icon-anchor": "bottom", "icon-offset": [0, -7],
+      "icon-size": 1.15, "icon-allow-overlap": true, "icon-ignore-placement": true,
     },
-    paint: { "icon-halo-width": 1 } });
+    paint: { "icon-halo-width": 1, "icon-color": ["get", "color"] } });
   add({ id: "signals", type: "circle", source: "signals",
     paint: { "circle-radius": 4, "circle-stroke-width": 1.5 } });
   add({ id: "incident-ring", type: "circle", source: "incidents", filter: ["==", ["get", "selected"], true],
-    paint: { "circle-radius": 14, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 1.5 } });
+    paint: { "circle-radius": 9, "circle-color": "rgba(0,0,0,0)", "circle-stroke-width": 1.5 } });
+  // An incident is its camera's dot in the status colour: the same size as any camera dot
+  // (the camera icon above it takes the colour too).
   add({ id: "incidents", type: "circle", source: "incidents",
     paint: {
-      "circle-radius": ["case", ["==", ["get", "status"], "critical"], 8, 6.5],
+      "circle-radius": 4,
       "circle-color": ["get", "color"],
-      "circle-stroke-width": ["case", ["==", ["get", "status"], "critical"], 1.5, 2],
+      "circle-stroke-width": 1,
       "circle-opacity": ["get", "opacity"], "circle-stroke-opacity": ["get", "opacity"],
     } });
 }
@@ -265,10 +266,12 @@ export function MapShell(p: Props) {
     map.on("mouseleave", "incidents", () => { map.getCanvas().style.cursor = ""; });
     for (const layer of ["cams", "cams-icon"]) {
       map.on("click", layer, (e) => {
-        const id = e.features?.[0]?.properties?.id;
-        // an incident marker on top of the camera wins (its panel has the feed too)
+        const props = e.features?.[0]?.properties;
+        // a camera with an incident opens the incident (its panel has the feed too)
         const onIncident = map.queryRenderedFeatures(e.point, { layers: ["incidents"] }).length > 0;
-        if (id && !onIncident && !latest.current.sim) latest.current.onSelectCamera?.(String(id));
+        if (!props?.id || onIncident || latest.current.sim) return;
+        if (props.incident) latest.current.onSelect(String(props.incident));
+        else latest.current.onSelectCamera?.(String(props.id));
       });
       map.on("mouseenter", layer, () => { map.getCanvas().style.cursor = "pointer"; });
       map.on("mouseleave", layer, () => { map.getCanvas().style.cursor = ""; });
@@ -291,9 +294,14 @@ export function MapShell(p: Props) {
     }))));
 
     const shown = selected?.camera.id ?? p.selectedCameraId; // the camera being looked at
+    const worst = layers.incidents || sim ? worstIncidents(incidents) : new Map<string, Incident>();
     (map.getSource("cams") as GeoJSONSource).setData(fc(cameras
-      .filter((c) => layers.cameras || c.id === shown)
-      .map((c) => point([c.lon, c.lat], { id: c.id, live: c.is_online, source: c.id === shown }))));
+      .filter((c) => layers.cameras || c.id === shown || worst.has(c.id))
+      .map((c) => {
+        const inc = worst.get(c.id);
+        const color = inc ? STATUS_COLOR[inc.status] : c.is_online ? HEALTHY : p.colors.cameraOff;
+        return point([c.lon, c.lat], { id: c.id, color, incident: inc?.id ?? null });
+      })));
 
     const signalPts = layers.signals && !sim
       ? incidents.flatMap((i) => i.response.changes.map((ch) => parseSignalId(ch.id)).filter(Boolean)
@@ -340,7 +348,7 @@ export function MapShell(p: Props) {
       }
     }
     seen.current = ids;
-  }, [p.incidents, p.cameras, p.selectedId, p.selectedCameraId, p.layers, p.sim, p.heat, ready]);
+  }, [p.incidents, p.cameras, p.selectedId, p.selectedCameraId, p.layers, p.sim, p.heat, p.colors, ready]);
 
   // --- congestion heatmap (Traffic layer; hidden in simulation, which draws its own queue) ---
   useEffect(() => {
@@ -498,6 +506,19 @@ export function MapShell(p: Props) {
       <MapNavigationControls is3d={is3d} {...nav} />
     </>
   );
+}
+
+const SEVERITY: Record<Incident["status"], number> = { critical: 3, confirmed: 2, needs_review: 1, resolved: 0 };
+
+/** Each camera's most severe open incident (resolved ones don't colour the camera). */
+function worstIncidents(incidents: Incident[]): Map<string, Incident> {
+  const out = new Map<string, Incident>();
+  for (const i of incidents) {
+    if (i.status === "resolved") continue;
+    const cur = out.get(i.camera.id);
+    if (!cur || SEVERITY[i.status] > SEVERITY[cur.status]) out.set(i.camera.id, i);
+  }
+  return out;
 }
 
 /** First `meters` of a polyline. */
