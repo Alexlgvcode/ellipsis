@@ -73,7 +73,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         {sim ? (
           <dl className="kv">
             <dt>delay per vehicle</dt><dd>{sim.baselineDelay.toFixed(1)}s</dd>
-            <dt>queue estimate</dt><dd>{sim.queueBefore} vehicles</dd>
+            <dt>queue estimate</dt><dd>{Math.round(sim.queueBefore)} vehicles</dd>
             <dt>queue length</dt><dd>≈{Math.round(queueMeters(sim.queueBefore))} m</dd>
           </dl>
         ) : (

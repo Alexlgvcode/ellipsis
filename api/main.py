@@ -22,6 +22,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
+from api import voice
 from api.db import init_db, make_engine, remove_mocks, seed_cameras, seed_mocks
 from api.models import (
     CameraRow,
@@ -177,6 +178,20 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if not path.is_relative_to(settings.data_dir.resolve()) or not path.is_file():
             raise HTTPException(status.HTTP_404_NOT_FOUND, "snapshot not found")
         return FileResponse(path)
+
+    @app.get("/events/{event_id}/voice", response_class=FileResponse)
+    def get_voice(event_id: str, session: SessionDep) -> FileResponse:
+        """A short spoken alert (ElevenLabs), generated once; 404 without a key."""
+        event = event_or_404(session, event_id).to_model()
+        path = settings.data_dir / "voice" / f"{event_id}.mp3"
+        if not path.is_file():
+            cam = session.get(CameraRow, event.camera_id)
+            audio = voice.speak(voice.alert_text(event, cam.to_model().name if cam else None))
+            if audio is None:
+                raise HTTPException(status.HTTP_404_NOT_FOUND, "spoken alerts are off")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(audio)
+        return FileResponse(path, media_type="audio/mpeg")
 
     @app.post("/recommendations", status_code=status.HTTP_201_CREATED)
     def post_recommendation(rec: Recommendation, session: SessionDep) -> Recommendation:

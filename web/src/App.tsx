@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchSnapshot, postFeedback } from "./api/client";
+import { fetchSnapshot, postFeedback, voiceUrl } from "./api/client";
 import type { FeedbackAction } from "./api/types";
 import { BrandLoader } from "./components/BrandMark";
 import { IncidentInspector } from "./components/IncidentInspector";
@@ -37,6 +37,9 @@ export default function App() {
   const [decided, setDecided] = useState<Record<string, FeedbackAction>>({});
   const [saving, setSaving] = useState(false);
   const [decideError, setDecideError] = useState<{ id: string; msg: string } | null>(null);
+  // Spoken alerts (ElevenLabs): off until the viewer turns them on (browsers block autoplay).
+  const [sound, setSound] = useState(false);
+  const announced = useRef<Set<string> | null>(null);
   const theme = THEME;
   useEffect(() => { applyTheme(theme); }, [theme]);
 
@@ -57,6 +60,20 @@ export default function App() {
   const selected = incidents.find((i) => i.id === selectedId) ?? null;
   const simIncident = incidents.find((i) => i.id === simId) ?? null;
   const onOverlay = useCallback((o: SimOverlay | null) => setOverlay(o), []);
+  useEffect(() => {
+    if (!sound) { announced.current = null; return; }
+    const open = incidents.filter((i) => i.status !== "resolved").map((i) => i.id);
+    if (!announced.current) { announced.current = new Set(open); return; }  // no backlog on switch-on
+    const fresh = open.filter((id) => !announced.current!.has(id));
+    fresh.forEach((id) => announced.current!.add(id));
+    (async () => {
+      for (const id of fresh) {
+        const url = await voiceUrl(id);
+        if (!url) continue;
+        await new Audio(url).play().catch(() => undefined);   // no key or no file: stay silent
+      }
+    })();
+  }, [incidents, sound]);
   const onDecide = useCallback(async (id: string, action: FeedbackAction) => {
     setSaving(true);
     setDecideError(null);
@@ -82,7 +99,7 @@ export default function App() {
     <div className={`app${offline ? " has-banner" : ""}${collapsed ? " rail-collapsed" : ""}${selected && !simIncident ? " has-inspector" : ""}`}>
       <a className="skip-link" href="#incidents">Skip to incidents</a>
       <TopBar openIncidents={counts(incidents).open} camerasOnline={cams.filter((c) => c.is_online).length}
-        camerasTotal={cams.length} feed={feed} now={now} />
+        camerasTotal={cams.length} feed={feed} now={now} sound={sound} onSound={setSound} />
       {offline && <StatusBanner lastOkAt={poll.lastOkAt} />}
 
       <MapShell

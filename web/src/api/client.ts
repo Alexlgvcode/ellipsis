@@ -2,8 +2,13 @@ import type {
   Camera, Congestion, Event, Feedback, FeedbackAction, Health, Recommendation, Summary,
 } from "./types";
 
+import { DEMO_BASE, demoPlayer } from "./demo";
+
 /** All requests go through the Vite proxy (/api -> LW_API_URL). */
 export const API_BASE = "/api";
+
+/** Built with VITE_DEMO=1: no API, the bundled recording plays instead (api/demo.ts). */
+export const DEMO = import.meta.env.VITE_DEMO === "1";
 
 export class ApiUnavailable extends Error {}
 
@@ -34,6 +39,7 @@ export interface Snapshot {
 }
 
 export async function fetchSnapshot(): Promise<Snapshot> {
+  if (DEMO) return (await demoPlayer()).snapshot();
   const [health, cameras, events, fb, sums, congestion] = await Promise.all([
     get<Health>("/health"),
     get<Camera[]>("/cameras"),
@@ -57,6 +63,7 @@ export async function fetchSnapshot(): Promise<Snapshot> {
 
 /** Record the operator's decision on an alert. The latest one replaces the earlier. */
 export async function postFeedback(eventId: string, action: FeedbackAction): Promise<void> {
+  if (DEMO) return (await demoPlayer()).decide(eventId, action);
   let resp: Response;
   try {
     resp = await fetch(`${API_BASE}/events/${encodeURIComponent(eventId)}/feedback`, {
@@ -70,4 +77,11 @@ export async function postFeedback(eventId: string, action: FeedbackAction): Pro
   if (!resp.ok) throw new ApiUnavailable(`API error ${resp.status} saving feedback`);
 }
 
-export const snapshotUrl = (eventId: string) => `${API_BASE}/events/${encodeURIComponent(eventId)}/snapshot`;
+export const snapshotUrl = (eventId: string, path?: string | null) =>
+  DEMO && path ? `${DEMO_BASE}${path}` : `${API_BASE}/events/${encodeURIComponent(eventId)}/snapshot`;
+
+/** The spoken alert for an event (ElevenLabs), or null when there is none. */
+export async function voiceUrl(eventId: string): Promise<string | null> {
+  if (DEMO) return (await demoPlayer()).voice(eventId);
+  return `${API_BASE}/events/${encodeURIComponent(eventId)}/voice`;
+}

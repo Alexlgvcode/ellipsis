@@ -31,7 +31,7 @@ export function LiveCameraFeed({ incident, now }: { incident: Incident; now: num
 
   const offline = cam.state === "offline" || failed || !cam.imageUrl;
   const liveSrc = cam.imageUrl ? `${cam.imageUrl}${cam.imageUrl.includes("?") ? "&" : "?"}t=${bucket}` : "";
-  const src = view === "live" ? liveSrc : snapshotUrl(incident.id);
+  const src = view === "live" ? liveSrc : snapshotUrl(incident.id, incident.snapshotPath);
   const [x1, y1, x2, y2] = incident.bbox;
   const tag = `${incident.typeLabel} · ${clock(incident.durationS)}`;
 
