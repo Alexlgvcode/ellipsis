@@ -39,8 +39,11 @@ describe("mock data", () => {
     expect(dp.response.sim).toMatchObject({ baselineDelay: 48.3, recommendedDelay: 39.1, queueBefore: 21, queueAfter: 13, improvementPct: 19 });
     expect(dp.response.sim!.savedPerVehicle).toBeCloseTo(9.2);
     expect(dp.response.changes[0].text).toBe("Green −6s");
-    expect(sil.response.state).toBe("running");
+    expect(sil.response.state).toBe("done");
+    expect(sil.response.sim).toMatchObject({ baselineDelay: 50.4, recommendedDelay: 52.0, queueBefore: 4, queueAfter: 3 });
+    expect(sil.response.sim!.savedPerVehicle).toBeCloseTo(-1.6);
     expect(sil.response.changes[0].text).toBe("Green +10s");
+    expect(simulationOf({ event_id: "x", intersections: [], sim: null }).state).toBe("running");
   });
 
   it("drops events whose camera is unknown", () => {

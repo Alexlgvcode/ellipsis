@@ -145,6 +145,13 @@ button { font: inherit; color: inherit; }
 .kv dt { color: var(--text-2); }
 .kv dd { margin: 0; font-family: var(--mono); text-align: right; }
 .good { color: var(--healthy-text); }
+.verdict { margin: 8px 0 0; font-weight: 600; font-size: 15px; line-height: 1.35; }
+.qchart { margin: 10px 0 0; }
+.qchart svg { width: 100%; height: auto; display: block; background: var(--subtle); border-radius: 6px; }
+.qchart figcaption { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: 11.5px; color: var(--text-2); }
+.qchart .swatch { display: inline-block; width: 14px; height: 0; margin-right: 4px; vertical-align: middle; border-top: 2px solid var(--text-2); }
+.qchart .swatch.dash { border-top-style: dashed; }
+.qchart .swatch.rec { border-top-color: var(--text); border-top-style: solid; }
 .cta {
   display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: var(--s3);
   padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: var(--r-control); background: var(--raised);

@@ -44,6 +44,9 @@ export interface Simulation {
   improvementPct: number;
   queueBefore: number;
   queueAfter: number;
+  /** Queue on the blocked lane every 15 s, when the run recorded one. */
+  seriesDefault?: number[];
+  seriesNew?: number[];
 }
 
 export interface SignalChangeView {
@@ -110,6 +113,8 @@ export function simulationOf(rec: Recommendation | null | undefined): Incident["
       baselineDelay: d0, recommendedDelay: d1, savedPerVehicle: d0 - d1,
       improvementPct: d0 > 0 ? Math.round(((d0 - d1) / d0) * 100) : 0,
       queueBefore: q0, queueAfter: q1,
+      seriesDefault: rec.sim.queue_series_default ?? [],
+      seriesNew: rec.sim.queue_series_new ?? [],
     },
   };
 }

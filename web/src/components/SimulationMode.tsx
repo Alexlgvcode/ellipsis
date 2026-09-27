@@ -1,6 +1,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { BrandLoader } from "./BrandMark";
+import { QueueChart, savedLabel } from "./QueueChart";
 import { IntersectionView } from "./IntersectionView";
 import type { SimOverlay } from "./MapShell";
 import { parseCameraName, parseSignalId, toLngLat } from "../lib/grid";
@@ -150,14 +151,17 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
       {/* Top-left: the "so what" */}
       <aside className="float sim-summary" aria-label="Base versus sim summary">
         <div className="kicker">Base vs Sim</div>
-        {sim && settled ? (
+        {sim ? (
           <div className="settle" aria-live="polite">
-            <div className="primary"><span className="mono">{sim.savedPerVehicle.toFixed(1)}s</span> saved per vehicle</div>
-            <ul className="support">
-              <li><b className="mono">{sim.improvementPct}%</b> lower average delay</li>
-              <li><b className="mono">{sim.queueBefore - sim.queueAfter}</b> fewer queued vehicles</li>
-              {sim.queueAfter < sim.queueBefore && <li className="interpret">Improved {direction}</li>}
-            </ul>
+            <div className="primary">{savedLabel(sim.savedPerVehicle)}</div>
+            <QueueChart sim={sim} />
+            {settled && (
+              <ul className="support">
+                {sim.savedPerVehicle > 0.05 && <li><b className="mono">{sim.improvementPct}%</b> lower average delay</li>}
+                {sim.queueAfter < sim.queueBefore && <li><b className="mono">{sim.queueBefore - sim.queueAfter}</b> fewer queued vehicles</li>}
+                {sim.savedPerVehicle > 0.05 && <li className="interpret">Improved {direction}</li>}
+              </ul>
+            )}
           </div>
         ) : (
           <p className="pending" aria-live="polite">{STAGE_TEXT[stage]}</p>
@@ -222,9 +226,9 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
               <div className="inset-where">{main?.signal ?? incident.location} · illustrative close-up</div>
               <dl className="kv">
                 <dt>Average delay</dt>
-                <dd className={!isBase && sim ? "good" : ""}>{sim ? `${(isBase ? sim.baselineDelay : sim.recommendedDelay).toFixed(1)}s` : dash}</dd>
+                <dd className={!isBase && sim && sim.recommendedDelay < sim.baselineDelay ? "good" : ""}>{sim ? `${(isBase ? sim.baselineDelay : sim.recommendedDelay).toFixed(1)}s` : dash}</dd>
                 <dt>Queue</dt>
-                <dd className={!isBase && sim ? "good" : ""}>{sim ? `${isBase ? sim.queueBefore : sim.queueAfter} vehicles` : dash}</dd>
+                <dd className={!isBase && sim && sim.queueAfter < sim.queueBefore ? "good" : ""}>{sim ? `${isBase ? sim.queueBefore : sim.queueAfter} vehicles` : dash}</dd>
                 <dt>Green phase</dt>
                 <dd>{main ? (isBase ? `${main.before}s` : <>{main.before}s → {main.after}s <span className="delta">{fmtDelta(main.delta)}</span></>) : dash}</dd>
                 <dt>Flow</dt>
