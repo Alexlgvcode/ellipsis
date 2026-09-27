@@ -85,6 +85,12 @@ describe("rail", () => {
   });
 });
 
+it("knows which incidents have an alert frame", () => {
+  const [withFrame] = toIncidents([ev({ snapshot_path: "data/snapshots/x.jpg" })], CAMERAS, {}, NOW, false);
+  const [without] = toIncidents([ev()], CAMERAS, {}, NOW, false);
+  expect([withFrame.hasSnapshot, without.hasSnapshot]).toEqual([true, false]);
+});
+
 it("carries the Claude incident note when there is one", () => {
   const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, {}, { evt_mock_001: "A van is double parked." });
   expect(list.map((i) => i.note)).toEqual(["A van is double parked.", null, null]);

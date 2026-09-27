@@ -77,6 +77,8 @@ export interface Incident {
   thresholdS: number;
   laneZone: LaneZone;
   bbox: [number, number, number, number];
+  /** The API has the frame from when the alert fired. */
+  hasSnapshot: boolean;
   camera: { id: string; code: string; name: string; state: CameraState; imageUrl: string | null };
   response: { state: "none" | "running" | "done"; changes: SignalChangeView[]; sim: Simulation | null };
   decision: FeedbackAction | null;
@@ -152,6 +154,7 @@ export function toIncidents(
       thresholdS: DWELL_S[e.type],
       laneZone: e.lane_zone,
       bbox: e.bbox,
+      hasSnapshot: Boolean(e.snapshot_path),
       camera: {
         id: cam.id, code: cameraCode(cam.name, cam.id), name: cam.name,
         state: cam.is_online ? "live" : "offline", imageUrl: cam.image_url || null,

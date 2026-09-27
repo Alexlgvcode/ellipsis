@@ -27,7 +27,7 @@ export function IncidentRail(p: Props) {
 
   if (p.collapsed) {
     return (
-      <aside className="rail collapsed" aria-label="Active incidents">
+      <aside id="incidents" tabIndex={-1} className="rail collapsed" aria-label="Active incidents">
         <div className="rail-hd">
           <button className="icon-btn" onClick={() => p.onCollapse(false)} aria-label="Expand incident list">
             <ChevronsRight size={16} />
@@ -47,7 +47,7 @@ export function IncidentRail(p: Props) {
     : [[null, list] as const];
 
   return (
-    <aside className="rail" aria-label="Active incidents">
+    <aside id="incidents" tabIndex={-1} className="rail" aria-label="Active incidents">
       <div className="rail-hd">
         <div className="rail-title">
           <span>Active incidents</span>

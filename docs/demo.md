@@ -58,12 +58,14 @@ cp .env.example .env                     # then set ANTHROPIC_API_KEY for incide
 Four terminals from the repo root, each with `source .venv/bin/activate`:
 
 ```bash
-rm -f data/lanewatch.db && LW_MOCK_MODE=false make api    # 1. fresh database, real events only
+rm -f data/lanewatch.db && LW_MOCK_MODE=false LW_DATA_SOURCE=replay make api   # 1. fresh DB, real events, badge says REPLAY
 make recommend-worker                                      # 2. SUMO scoring + Claude notes
 make web                                                   # 3. http://localhost:5173
 ```
 
-Open http://localhost:5173 full screen. The top bar should say **LIVE** with 0 incidents.
+Open http://localhost:5173 full screen. The top bar should say **REPLAY** with 0 incidents. Say
+that it's recorded footage run through the live pipeline; the same code runs on live
+cameras (`make live`, with the badge showing LIVE).
 Then start the replays together in terminal 4:
 
 ```bash
@@ -80,8 +82,8 @@ the replays as you begin the hook: the first alert lands about a minute in.
 |---|---|---|
 | 0:00–0:45 | **Hook.** Double parking on a Midtown avenue backs up the whole corridor; TMC operators watch hundreds of feeds by eye. | Map of the Midtown cameras; replay running |
 | ~1:04 | **Alert.** Two delivery trucks double parked on 7 Ave @ 36 St. | The alerts appear in the list |
-| 1:15–1:45 | **Decision.** Open the near truck (*Needs review*): the frame from when it alerted, with the box, how long it has been stopped, the lane. Click **Accept**. | Card shows *Applied (sim)*, plus the Claude incident note if the key is set |
-| 1:45–2:30 | **Sim payoff.** **Open simulation**: default versus recommended timing on the same signal, with delay per vehicle and the queue chart. Read out the card's numbers as they are. | Simulation mode |
+| 1:15–1:45 | **Decision.** Open the near truck (*Needs review*): the frame from when it alerted, with the box, how long it has been stopped, the lane. The card opens on the alert frame, with a line saying why it needs review. Click **Accept** in the decision bar pinned to the bottom of the card. | Card shows *Applied (sim)*, plus the Claude incident note if the key is set |
+| 1:45–2:30 | **Sim payoff.** **Compare in simulation** (in the pinned decision bar, right under Accept): default versus recommended timing on the same signal, with delay per vehicle and the queue chart. Read out the card's numbers as they are. | Simulation mode |
 | ~2:42 | Second alert: cab stopped in the lane on 8th Ave @ 31st St. It's another type, and it also goes through a human decision. | New alert in the list |
 | 2:30–3:00 | **Proof and close.** Precision 82%, recall 90%, median time to alert 63 s on hand-tagged footage. Every change goes through a human. | Metrics slide |
 
