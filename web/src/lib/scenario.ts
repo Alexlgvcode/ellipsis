@@ -1,5 +1,9 @@
 import type { SignalChangeView } from "./incidents";
 import { parseSignalId } from "./grid";
+// SUMO signal id -> intersection, generated from sim/network/tls_nodes.json (api/summarize.py signal_name)
+import SIGNAL_NAMES_JSON from "./signal-names.json";
+
+const SIGNAL_NAMES: Record<string, string> = SIGNAL_NAMES_JSON;
 
 /**
  * Baseline green times from the modeled Midtown plan (sim/network/signal_plans.yaml,
@@ -26,7 +30,7 @@ export function timingChange(ch: SignalChangeView): TimingChange {
   const approach = STREET_PHASES.has(ch.phase) ? "street" : "avenue";
   const before = approach === "street" ? STREET_GREEN_S : AVENUE_GREEN_S;
   return {
-    signal: parseSignalId(ch.id)?.label ?? ch.id,
+    signal: SIGNAL_NAMES[ch.id] ?? parseSignalId(ch.id)?.label ?? "Nearby signal",
     approach, before, after: Math.max(0, before + ch.changeS), delta: ch.changeS,
   };
 }

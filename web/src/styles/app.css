@@ -24,9 +24,9 @@ button { font: inherit; color: inherit; }
 .map-shell .maplibregl-ctrl-attrib a { color: var(--text-2); }
 
 /* ---------- brand ---------- */
-.brand { display: inline-flex; align-items: baseline; gap: 9px; font-size: 20px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
+.brand { display: inline-flex; align-items: baseline; gap: 8px; font-size: 17px; font-weight: 600; letter-spacing: -0.03em; color: var(--text); }
 .dots { display: inline-flex; gap: 5px; transform: translateY(-1px); }
-.dots i { width: 7px; height: 7px; border-radius: 50%; display: block; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; display: block; }
 .dots i:nth-child(1) { background: var(--dot-red); }
 .dots i:nth-child(2) { background: var(--dot-amber); }
 .dots i:nth-child(3) { background: var(--dot-green); }
@@ -77,7 +77,7 @@ button { font: inherit; color: inherit; }
 .rail-hd { position: sticky; top: 0; padding: var(--s4) var(--s4) var(--s3); border-bottom: 1px solid var(--border); background: var(--panel); }
 .rail-title { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
 .rail-title .count { font-family: var(--mono); font-size: 13px; letter-spacing: 0; }
-.rail-tools { display: flex; justify-content: space-between; align-items: center; margin-top: var(--s3); }
+.rail-tools { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 8px; margin-top: var(--s3); }
 .filters { display: flex; gap: 2px; }
 .filters button, .sort button, .icon-btn {
   border: 0; background: none; cursor: pointer; border-radius: var(--r-control); padding: 3px 7px; font-size: 12px; color: var(--text-2);
@@ -140,7 +140,7 @@ button { font: inherit; color: inherit; }
 .cam-line { display: flex; gap: 10px; align-items: center; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--text-2); }
 .live { display: inline-flex; align-items: center; gap: 5px; color: var(--healthy-text); font-weight: 600; }
 .live i { width: 6px; height: 6px; border-radius: 50%; background: var(--healthy); }
-.offline-tag { color: var(--text-2); font-weight: 600; }
+.offline-tag, .source-tag { color: var(--text-2); font-weight: 600; }
 .feed { position: relative; aspect-ratio: 16 / 10.9; background: var(--feed-bg); border-radius: 8px; overflow: hidden; }
 .feed img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .feed.is-offline img { filter: grayscale(1) opacity(0.55); }
