@@ -145,7 +145,7 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
 
       <div className="sim-top">
         <BackLink onClose={onClose} />
-        <span className="sim-title">Signal timing simulation · simulated</span>
+        <span className="sim-title">Signal timing simulation</span>
       </div>
 
       {/* Top-left: the "so what" */}
@@ -157,7 +157,7 @@ export function SimulationMode({ incident, anchor, colors, onClose, onOverlay, o
             <QueueChart sim={sim} />
             {settled && (
               <ul className="support">
-                {sim.savedPerVehicle > 0.05 && <li><b className="mono">{sim.improvementPct}%</b> lower average delay</li>}
+                {sim.savedPerVehicle > 0.05 && <li><b className="mono">{sim.improvementPct >= 1 ? `${sim.improvementPct}%` : "<1%"}</b> lower average delay</li>}
                 {Math.round(sim.queueBefore - sim.queueAfter) > 0 && <li><b className="mono">{Math.round(sim.queueBefore - sim.queueAfter)}</b> fewer queued vehicles</li>}
                 {sim.savedPerVehicle > 0.05 && <li className="interpret">Improved {direction}</li>}
               </ul>

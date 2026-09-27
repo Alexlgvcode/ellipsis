@@ -1,5 +1,6 @@
 import { ChevronRight, X } from "lucide-react";
 import { useEffect } from "react";
+import { CameraTag } from "./CameraTag";
 import { LiveCameraFeed, type FeedMode } from "./LiveCameraFeed";
 import { QueueChart, savedLabel } from "./QueueChart";
 import { clock, nyTime, pct } from "../lib/format";
@@ -45,18 +46,19 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         <div className="inc-loc">{i.location}</div>
         <div className="inc-meta">
           <span className="big" aria-label="Elapsed">{clock(t)}</span>
-          <span style={{ color: "var(--text-2)" }}>{pct(i.confidence)} conf.</span>
+          <span style={{ color: "var(--text-2)" }}>{pct(i.confidence)} confidence</span>
         </div>
         {i.status === "needs_review" && (
           <p className="review-hint">Low confidence ({pct(i.confidence)}): check the frame before acting.</p>
         )}
         <div className="cam-line">
           <span>{i.camera.code}</span>
-          {i.camera.state === "live"
-            ? <span className="live"><i aria-hidden="true" />LIVE</span>
-            : <span className="offline-tag">OFFLINE</span>}
+          <CameraTag camera={i.camera} mode={feedMode} />
         </div>
       </section>
+
+      {/* 2. Live camera feed */}
+      <LiveCameraFeed camera={i.camera} incident={i} now={now} mode={feedMode} />
 
       {i.note && (
         <section className="sec" aria-label="Incident note">
@@ -65,9 +67,6 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
           <p className="note-src">AI-written (Gemini) from the detection and simulation data only</p>
         </section>
       )}
-
-      {/* 2. Live camera feed */}
-      <LiveCameraFeed camera={i.camera} incident={i} now={now} mode={feedMode} />
 
       {/* 3. Traffic impact */}
       <section className="sec">
@@ -88,7 +87,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
       {/* 4. Recommended response */}
       <section className="sec">
         <h3>Recommended response</h3>
-        <div>Signal timing simulation</div>
+        {i.response.state !== "none" && <div>Signal timing simulation</div>}
         {sim ? (
           <>
             <p className={sim.savedPerVehicle > 0.05 ? "verdict good" : "verdict"}>{savedLabel(sim.savedPerVehicle)}</p>

@@ -14,3 +14,9 @@ it("turns a signal change into explicit before/after green times from the modele
 it("describes queue pressure in words", () => {
   expect([21, 13, 5].map(queuePressure)).toEqual(["High", "Moderate", "Low"]);
 });
+
+it("names real SUMO signals by intersection, never by their raw id", () => {
+  const ch = { id: "cluster_10173490593_10173490594_10173490596_10268795725_#2more", phase: 1, changeS: -10.9, text: "" };
+  expect(timingChange(ch).signal).toBe("Broadway @ 39 St");
+  expect(timingChange({ ...ch, id: "unknown_cluster" }).signal).toBe("Nearby signal");
+});

@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import type { CameraView } from "../lib/incidents";
+import { CameraTag } from "./CameraTag";
 import { LiveCameraFeed, type FeedMode } from "./LiveCameraFeed";
 
 /** A camera opened from the map: the incident panel's frame with just the live feed. */
@@ -22,9 +23,7 @@ export function CameraInspector({ camera, now, onClose, feedMode = "live" }: {
         </div>
         <div className="cam-line">
           <span>{camera.code}</span>
-          {camera.state === "live"
-            ? <span className="live"><i aria-hidden="true" />LIVE</span>
-            : <span className="offline-tag">OFFLINE</span>}
+          <CameraTag camera={camera} mode={feedMode === "replay" ? "replay" : "live"} />
         </div>
       </section>
       <LiveCameraFeed camera={camera} now={now} mode={feedMode === "replay" ? "replay" : "live"} />

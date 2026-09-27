@@ -82,7 +82,8 @@ export function LiveCameraFeed({ camera: cam, incident, now, mode = "live" }: {
         ) : (
           <span>{cam.code} · {recorded ? "From the recording, not the live feed" : "Alert frame"}</span>
         )}
-        <span>{nyTime(view === "live" || !incident ? (loadedAt ?? now) : incident.startedAt, true)}</span>
+        {/* a recording's frame carries its own clock; a "now" time next to it would contradict it */}
+        {mode === "live" && <span>{nyTime(view === "live" || !incident ? (loadedAt ?? now) : incident.startedAt, true)}</span>}
       </div>
     </section>
   );
