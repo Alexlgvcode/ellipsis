@@ -16,6 +16,15 @@ time to alert = when the alert fired - when the vehicle stopped (skipped when th
 
 `exclude` drops ground-truth categories (e.g. bus_lane, police) from both sides, to
 report results with and without debatable groups.
+
+Congestion (issue #47) is scored separately, on `congestion_windows` (footage reviewed
+for congestion: free except during its `congestion` intervals). At each level (congested,
+and slow or worse), runs of readings at that level or above are the alerts:
+
+    precision      runs that overlap a tagged interval (any level) / all runs
+    recall         tagged intervals at that level or above that a run overlaps / all of them
+    time to detect first reading at that level inside the interval - its start (unclipped)
+    agreement      share of the reviewed frames where the reading's level is the tagged one
 """
 
 from __future__ import annotations
@@ -69,10 +78,28 @@ class Truth:
     note: str = ""
 
 
+LEVELS = ("free", "slow", "congested")  # in order: "slow or worse" = rank >= 1
+
+
+@dataclass(frozen=True)
+class CongestionTruth:
+    id: str
+    camera: str
+    start: datetime
+    end: datetime
+    level: str                  # slow | congested
+    approach: str | None = None  # None: whichever approach the camera has
+    start_clipped: bool = False
+    end_clipped: bool = False
+    note: str = ""
+
+
 @dataclass
 class GroundTruth:
     windows: list[Window]
     items: list[Truth]  # blockages (real=True) and not_blockages (real=False)
+    congestion_windows: list[Window] = field(default_factory=list)
+    congestion: list[CongestionTruth] = field(default_factory=list)
 
     @property
     def blockages(self) -> list[Truth]:
@@ -80,6 +107,9 @@ class GroundTruth:
 
     def in_windows(self, camera: str, t: datetime) -> bool:
         return any(w.camera == camera and w.start <= t <= w.end for w in self.windows)
+
+    def in_congestion_windows(self, camera: str, t: datetime) -> bool:
+        return any(w.camera == camera and w.start <= t <= w.end for w in self.congestion_windows)
 
 
 def load_ground_truth(path: Path = GROUND_TRUTH) -> GroundTruth:
@@ -93,7 +123,17 @@ def load_ground_truth(path: Path = GROUND_TRUTH) -> GroundTruth:
                 end=_ts(b["end"]), bbox=tuple(float(v) for v in b["bbox"]), real=real,
                 start_clipped=bool(b.get("start_clipped")), end_clipped=bool(b.get("end_clipped")),
                 category=b.get("category"), note=b.get("note", "")))
-    return GroundTruth(windows, items)
+    cwindows = [Window(w["camera"], _ts(w["start"]), _ts(w["end"]))
+                for w in raw.get("congestion_windows") or []]
+    congestion = [CongestionTruth(
+        id=c["id"], camera=c["camera"], start=_ts(c["start"]), end=_ts(c["end"]),
+        level=c["level"], approach=c.get("approach"),
+        start_clipped=bool(c.get("start_clipped")), end_clipped=bool(c.get("end_clipped")),
+        note=c.get("note", "")) for c in raw.get("congestion") or []]
+    for c in congestion:
+        if c.level not in LEVELS[1:]:
+            raise ValueError(f"{c.id}: level must be slow or congested, not {c.level!r}")
+    return GroundTruth(windows, items, cwindows, congestion)
 
 
 @dataclass(frozen=True)
@@ -199,3 +239,127 @@ def evaluate(predictions: Iterable[Prediction], gt: GroundTruth, *, min_iou: flo
                 times.append((p.alert_ts - t.start).total_seconds())
     missed = [t for t in blockages if t.id not in caught]
     return Report(matches, missed, blockages, times)
+
+
+# --- congestion ------------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class CongestionSample:
+    """One congestion reading: a camera approach's level at one frame."""
+    camera: str
+    approach: str
+    ts: datetime
+    level: str
+
+
+@dataclass(frozen=True)
+class Run:
+    camera: str
+    approach: str
+    start: datetime
+    end: datetime
+
+
+@dataclass
+class LevelScore:
+    runs: list[Run]              # stretches of readings at this level or above
+    false_runs: list[Run]        # ...that overlap no tagged interval
+    intervals: list[CongestionTruth]  # tagged at this level or above
+    missed: list[CongestionTruth]
+    time_to_detect_s: list[float] = field(default_factory=list)
+
+    @property
+    def precision(self) -> float | None:
+        return 1 - len(self.false_runs) / len(self.runs) if self.runs else None
+
+    @property
+    def recall(self) -> float | None:
+        return 1 - len(self.missed) / len(self.intervals) if self.intervals else None
+
+    @property
+    def median_time_to_detect_s(self) -> float | None:
+        return statistics.median(self.time_to_detect_s) if self.time_to_detect_s else None
+
+    def summary(self) -> dict:
+        return {"runs": len(self.runs), "false_runs": len(self.false_runs),
+                "intervals": len(self.intervals), "missed": len(self.missed),
+                "precision": self.precision, "recall": self.recall,
+                "median_time_to_detect_s": self.median_time_to_detect_s}
+
+
+@dataclass
+class CongestionReport:
+    levels: dict[str, LevelScore]            # "congested" and "slow" (= slow or worse)
+    confusion: dict[tuple[str, str], int]    # (tagged, read) -> frames
+
+    @property
+    def agreement(self) -> float | None:
+        total = sum(self.confusion.values())
+        same = sum(n for (t, p), n in self.confusion.items() if t == p)
+        return same / total if total else None
+
+    def summary(self) -> dict:
+        return {"agreement": self.agreement, "frames": sum(self.confusion.values()),
+                **{level: s.summary() for level, s in self.levels.items()}}
+
+
+def _tagged_level(s: CongestionSample, truths: Sequence[CongestionTruth]) -> str:
+    hits = [t.level for t in truths if t.camera == s.camera and t.approach in (None, s.approach)
+            and t.start <= s.ts <= t.end]
+    return max(hits, key=LEVELS.index) if hits else "free"
+
+
+def level_runs(samples: Sequence[CongestionSample], level: str,
+               max_gap_s: float = 60.0) -> list[Run]:
+    """Stretches of readings at `level` or above, per camera approach (a gap > max_gap_s,
+    e.g. while paused, ends one)."""
+    rank = LEVELS.index(level)
+    runs: list[Run] = []
+    key = lambda s: (s.camera, s.approach, s.ts)  # noqa: E731
+    cur: Run | None = None
+    for s in sorted(samples, key=key):
+        on = LEVELS.index(s.level) >= rank
+        same = cur is not None and (cur.camera, cur.approach) == (s.camera, s.approach) \
+            and (s.ts - cur.end).total_seconds() <= max_gap_s
+        if on and same:
+            cur = Run(cur.camera, cur.approach, cur.start, s.ts)
+            continue
+        if cur is not None:
+            runs.append(cur)
+        cur = Run(s.camera, s.approach, s.ts, s.ts) if on else None
+    if cur is not None:
+        runs.append(cur)
+    return runs
+
+
+def evaluate_congestion(samples: Iterable[CongestionSample], gt: GroundTruth, *,
+                        slack_s: float = 30.0, max_gap_s: float = 60.0) -> CongestionReport:
+    samples = [s for s in samples if gt.in_congestion_windows(s.camera, s.ts)]
+    slack = timedelta(seconds=slack_s)
+    confusion: dict[tuple[str, str], int] = {}
+    for s in samples:
+        k = (_tagged_level(s, gt.congestion), s.level)
+        confusion[k] = confusion.get(k, 0) + 1
+    levels = {}
+    for name in ("congested", "slow"):
+        rank = LEVELS.index(name)
+        runs = level_runs(samples, name, max_gap_s)
+        intervals = [t for t in gt.congestion if LEVELS.index(t.level) >= rank
+                     and gt.in_congestion_windows(t.camera, t.start)]
+
+        def overlap(r: Run, t: CongestionTruth) -> bool:
+            return r.camera == t.camera and t.approach in (None, r.approach) \
+                and r.start <= t.end + slack and r.end >= t.start - slack
+
+        false_runs = [r for r in runs if not any(overlap(r, t) for t in gt.congestion)]
+        missed, times = [], []
+        for t in intervals:
+            hits = [s.ts for s in samples if s.camera == t.camera
+                    and t.approach in (None, s.approach) and LEVELS.index(s.level) >= rank
+                    and t.start - slack <= s.ts <= t.end + slack]
+            if not hits:
+                missed.append(t)
+            elif not t.start_clipped:
+                times.append((min(hits) - t.start).total_seconds())
+        levels[name] = LevelScore(runs, false_runs, intervals, missed, times)
+    return CongestionReport(levels, confusion)

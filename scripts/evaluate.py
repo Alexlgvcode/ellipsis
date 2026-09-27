@@ -4,16 +4,18 @@
     python scripts/evaluate.py --rules my_rules.yaml # try other thresholds in seconds
     python scripts/evaluate.py --exclude bus_lane police camera_moved
     python scripts/evaluate.py --candidates         # GIFs of possible missed blockages
+    python scripts/evaluate.py --congestion-review  # sheets to tag congestion on new footage
 
 Runs tracker + event engine over every reviewed window in
 evaluation/ground_truth.yaml and prints precision, recall, type accuracy and time to
 alert, overall and per camera, then lists missed blockages and unreviewed alerts
-(alerts nobody has judged yet: add them to the ground truth).
+(alerts nobody has judged yet: add them to the ground truth). Then the same for
+congestion (events/congestion.py) on the `congestion_windows`.
 
 Detections come from evaluation/detections/ (committed, so this runs from a clean
 checkout without the frames or the YOLO model). --refresh-cache rebuilds them from
-data/frames/ (needs `.[vision]`); do that after recording new footage or changing
-a camera's reference frame.
+data/frames/ (needs `.[vision]`); do that after recording new footage. After changing
+or adding a camera's reference frame, --refresh-view is enough.
 """
 
 from __future__ import annotations
@@ -33,14 +35,19 @@ sys.path.insert(0, str(REPO_ROOT))
 from common.config import get_settings  # noqa: E402
 from common.schemas import Event, VehicleClass  # noqa: E402
 from evaluation.metrics import (  # noqa: E402
+    LEVELS,
+    CongestionReport,
+    CongestionSample,
     GroundTruth,
     Prediction,
     Report,
     Window,
     evaluate,
+    evaluate_congestion,
+    level_runs,
     load_ground_truth,
 )
-from events.masks import MASKS_DIR, load_masks  # noqa: E402
+from events.masks import load_masks  # noqa: E402
 from events.pipeline import CameraPipeline  # noqa: E402
 from events.rules import load_rules  # noqa: E402
 from vision.detect import Detection  # noqa: E402
@@ -58,13 +65,13 @@ def build_cache(w: Window, frames_dir: Path, detector) -> dict:
     """Detections, frozen flags and view similarity for every recorded frame in a window."""
     from PIL import Image
 
-    from events.view import edge_signature, view_similarity
+    from events.view import best_similarity, load_references
     from ingest.health import is_frozen, thumbnail
 
     root = frames_dir / w.camera
     frames = sorted((p for p in root.glob("*/*.jpg") if w.start <= frame_timestamp(p) <= w.end),
                     key=frame_timestamp)
-    reference = edge_signature(Image.open(MASKS_DIR / f"{w.camera}.jpg"))
+    references = load_references(w.camera)
     rows, prev = [], None
     for path, dets in zip(frames, detector(frames), strict=True):
         image = Image.open(path)
@@ -72,7 +79,7 @@ def build_cache(w: Window, frames_dir: Path, detector) -> dict:
         rows.append({
             "ts": frame_timestamp(path).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "frozen": bool(prev is not None and is_frozen(prev, thumb)),
-            "view": round(view_similarity(reference, image), 3),
+            "view": round(best_similarity(references, image), 3),
             "dets": [[*(round(v, 1) for v in d.bbox), d.cls.value, round(d.conf, 2)]
                      for d in dets],
         })
@@ -81,10 +88,31 @@ def build_cache(w: Window, frames_dir: Path, detector) -> dict:
             "note": "YOLO detections per frame: x1,y1,x2,y2,class,conf", "frames": rows}
 
 
-def load_cache(w: Window, refresh: bool, detector_factory) -> dict | None:
+def refresh_view(data: dict, frames_dir: Path) -> bool:
+    """Recompute the cached view similarity (after adding a reference frame), keeping the
+    detections. False when the frames aren't here."""
+    from PIL import Image
+
+    from events.view import best_similarity, load_references
+
+    root = frames_dir / data["camera"]
+    references = load_references(data["camera"])
+    stamps = [datetime.fromisoformat(row["ts"].replace("Z", "+00:00")) for row in data["frames"]]
+    paths = [root / f"{ts:%Y%m%d}" / f"{ts:%H%M%S}.jpg" for ts in stamps]
+    if not all(p.exists() for p in paths):
+        return False
+    for row, p in zip(data["frames"], paths, strict=True):
+        row["view"] = round(best_similarity(references, Image.open(p)), 3)
+    return True
+
+
+def load_cache(w: Window, refresh: bool, detector_factory, view: bool = False) -> dict | None:
     path = cache_path(w)
     if path.exists() and not refresh:
-        return json.loads(gzip.decompress(path.read_bytes()))
+        data = json.loads(gzip.decompress(path.read_bytes()))
+        if view and refresh_view(data, get_settings().frames_dir):
+            path.write_bytes(gzip.compress(json.dumps(data, separators=(",", ":")).encode()))
+        return data
     frames_dir = get_settings().frames_dir
     if not (frames_dir / w.camera).exists():
         return None
@@ -108,6 +136,21 @@ def run_window(cache: dict, rules: dict) -> list[Prediction]:
             alert_at[e.id] = ts
         final.update({e.id: e for e in update.changed})
     return [Prediction(e, alert_at[i]) for i, e in final.items() if i in alert_at]
+
+
+def run_congestion(cache: dict, rules: dict) -> list[CongestionSample]:
+    """The pipeline's congestion reading for every frame of a cached window."""
+    pipe = CameraPipeline.for_camera(cache["camera"], rules)
+    if pipe is None:
+        return []
+    samples = []
+    for row in cache["frames"]:
+        ts = datetime.fromisoformat(row["ts"].replace("Z", "+00:00"))
+        dets = [Detection(tuple(d[:4]), VehicleClass(d[4]), d[5]) for d in row["dets"]]
+        pipe.step(ts, None, dets, frozen=row["frozen"], view=row.get("view"))
+        samples += [CongestionSample(r.camera_id, r.approach, r.ts, r.level.value)
+                    for r in pipe.congestion.readings if r.ts == ts]
+    return samples
 
 
 ACTIVE_ZONES = {"travel", "curb_adjacent", "box", "bus_stop"}
@@ -213,6 +256,89 @@ def write_candidate_gifs(candidates: list[dict], names: dict[str, str], out: Pat
     (out / "candidates.yaml").write_text("\n".join(lines) + "\n")
 
 
+LEVEL_COLORS = {"free": (60, 200, 90), "slow": (255, 190, 0), "congested": (255, 50, 50)}
+
+
+def write_congestion_review(caches: list[dict], rules: dict, names: dict[str, str],
+                            out: Path) -> list[Path]:
+    """Per window: one frame a minute labelled with the congestion reading, and a
+    congestion_review.yaml with the window and the monitor's runs, to tag."""
+    from PIL import Image, ImageDraw
+
+    frames_dir = get_settings().frames_dir
+    out.mkdir(parents=True, exist_ok=True)
+    lines = ["# Congestion to tag: look at the sheets, fix/extend the proposed intervals",
+             "# (or delete them: free), then copy the window into congestion_windows: and the",
+             "# intervals into congestion: in evaluation/ground_truth.yaml.",
+             "congestion_windows:"]
+    tags = ["congestion:"]
+    sheets = []
+    for cache in caches:
+        cam, name = cache["camera"], names.get(cache["camera"], cache["camera"][:8])
+        samples = run_congestion(cache, rules)
+        if not samples:
+            continue
+        start, end = samples[0].ts, samples[-1].ts
+        lines += [f"  - camera: {cam}   # {name}", f"    start: {start:%Y-%m-%dT%H:%M:%SZ}",
+                  f"    end: {end:%Y-%m-%dT%H:%M:%SZ}", '    note: ""']
+        for n, r in enumerate(level_runs(samples, "slow"), 1):
+            level = max((s.level for s in samples if r.start <= s.ts <= r.end), key=LEVELS.index)
+            tags += [f"  - id: cg_{start:%m%d%H%M}_{cam[:4]}_{n:02d}   # proposed by the monitor",
+                     f"    camera: {cam}   # {name}", f"    approach: {r.approach}",
+                     f"    start: {r.start:%Y-%m-%dT%H:%M:%SZ}",
+                     f"    end: {r.end:%Y-%m-%dT%H:%M:%SZ}", f"    level: {level}", '    note: ""']
+        by_ts = {s.ts: s for s in samples}
+        paths = {frame_timestamp(p): p for p in (frames_dir / cam).glob("*/*.jpg")
+                 if start <= frame_timestamp(p) <= end}
+        picks, t = [], start
+        while t <= end:
+            picks.append(min(by_ts, key=lambda x: abs((x - t).total_seconds())))
+            t += timedelta(minutes=1)
+        picks = [p for p in picks if p in paths]
+        if not picks:
+            continue
+        w, h, cols = 264, 180, 5
+        sheet = Image.new("RGB", (w * cols, (h + 16) * -(-len(picks) // cols)), (20, 20, 20))
+        d = ImageDraw.Draw(sheet)
+        for i, ts in enumerate(picks):
+            x, y = (i % cols) * w, (i // cols) * (h + 16)
+            sheet.paste(Image.open(paths[ts]).convert("RGB").resize((w, h)), (x, y))
+            level = by_ts[ts].level
+            d.rectangle((x, y + h, x + w, y + h + 16), fill=LEVEL_COLORS[level])
+            d.text((x + 4, y + h + 3), f"{name}  {ts:%H:%M:%S} UTC  {level}", fill=(0, 0, 0))
+        slug = name.replace(" ", "").replace("@", "_").replace("/", "-")
+        path = out / f"{start:%Y%m%dT%H%M}_{slug}.jpg"
+        sheet.save(path, quality=85)
+        sheets.append(path)
+    (out / "congestion_review.yaml").write_text("\n".join(lines + tags) + "\n")
+    return sheets
+
+
+def print_congestion(report: CongestionReport, gt: GroundTruth, names: dict[str, str]) -> None:
+    s = report.summary()
+    print(f"\n== congestion ({len(gt.congestion_windows)} reviewed windows, {s['frames']} frames)"
+          f"   level agreement {_pct(report.agreement)}")
+    for level, label in (("congested", "congested    "), ("slow", "slow or worse")):
+        ls = report.levels[level]
+        tt = ls.median_time_to_detect_s
+        print(f"   {label}  precision {_pct(ls.precision)} ({len(ls.runs) - len(ls.false_runs)}"
+              f"/{len(ls.runs)} runs)   recall {_pct(ls.recall)} "
+              f"({len(ls.intervals) - len(ls.missed)}/{len(ls.intervals)} intervals)   "
+              "median time to detect " + ("-" if tt is None else f"{tt:.0f} s"))
+    print("   frames, tagged (rows) x read (columns):  " + "".join(f"{v:>10}" for v in LEVELS))
+    for t in LEVELS:
+        print(f"   {'':41}{t:>10}" + "".join(f"{report.confusion.get((t, p), 0):>10}"
+                                            for p in LEVELS))
+    for level in ("congested", "slow"):
+        ls = report.levels[level]
+        for t in ls.missed:
+            print(f"   missed ({level}): {t.id}  {names.get(t.camera, t.camera[:8]):<24} "
+                  f"{t.start:%H:%M:%S}-{t.end:%H:%M:%S}  {t.note}")
+        for r in ls.false_runs:
+            print(f"   false ({level}): {names.get(r.camera, r.camera[:8]):<24} {r.approach:<10} "
+                  f"{r.start:%H:%M:%S}-{r.end:%H:%M:%S}")
+
+
 def _pct(v: float | None) -> str:
     return "  -  " if v is None else f"{v:5.0%}"
 
@@ -263,11 +389,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                     help="ground-truth categories to leave out, e.g. bus_lane police")
     ap.add_argument("--refresh-cache", action="store_true",
                     help="rebuild evaluation/detections/ from data/frames/ (needs .[vision])")
+    ap.add_argument("--refresh-view", action="store_true",
+                    help="only recompute the cached view similarity from data/frames/, e.g. "
+                         "after adding a reference frame (no YOLO needed)")
     ap.add_argument("--out", type=Path, default=REPO_ROOT / "runs" / "eval")
     ap.add_argument("--candidates", action="store_true",
                     help="also list vehicles still >= --min-still s in an active zone that no "
                          "alert or ground-truth entry covers, with GIFs (needs data/frames/)")
     ap.add_argument("--min-still", type=float, default=45.0)
+    ap.add_argument("--congestion-review", action="store_true",
+                    help="sheets + congestion_review.yaml for cached footage not yet reviewed "
+                         "for congestion, to tag (needs data/frames/)")
     args = ap.parse_args(argv)
 
     gt = load_ground_truth(args.ground_truth) if args.ground_truth else load_ground_truth()
@@ -281,7 +413,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     predictions: list[Prediction] = []
     stills: list[dict] = []
     for w in gt.windows:
-        cache = load_cache(w, args.refresh_cache, detector_factory)
+        cache = load_cache(w, args.refresh_cache, detector_factory, view=args.refresh_view)
         if cache is None:
             print(f"skipping {names.get(w.camera, w.camera)} {w.start:%H:%M}: no cached "
                   "detections and no recorded frames")
@@ -298,8 +430,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         print_report(f"excluding {', '.join(strict)}", evaluate(predictions, gt, exclude=strict),
                      gt, names, verbose=False)
 
+    samples: list[CongestionSample] = []
+    for w in gt.congestion_windows:
+        cache = load_cache(w, args.refresh_cache, detector_factory, view=args.refresh_view)
+        if cache is None:
+            print(f"skipping congestion {names.get(w.camera, w.camera)} {w.start:%H:%M}: no "
+                  "cached detections and no recorded frames")
+            continue
+        samples += run_congestion(cache, rules)
+    congestion = evaluate_congestion(samples, gt)
+    print_congestion(congestion, gt, names)
+
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / "report.json").write_text(json.dumps(report.summary(), indent=2))
+    (args.out / "report.json").write_text(json.dumps(
+        {**report.summary(), "congestion": congestion.summary()}, indent=2))
     with (args.out / "predictions.jsonl").open("w") as f:
         for m in report.matches:
             f.write(json.dumps({"outcome": m.outcome, "truth": m.truth.id if m.truth else None,
@@ -315,6 +459,18 @@ def main(argv: Sequence[str] | None = None) -> int:
                   f"{c['start']:%H:%M:%S}  still {c['still_s']:>4.0f}s  {c['cls']}")
         write_candidate_gifs(cands, names, args.out / "candidates")
         print(f"GIFs + candidates.yaml -> {args.out / 'candidates'}")
+    if args.congestion_review:
+        todo = []
+        for path in sorted(CACHE_DIR.glob("*.json.gz")):
+            cache = json.loads(gzip.decompress(path.read_bytes()))
+            start = datetime.fromisoformat(cache["start"])
+            if args.refresh_view and refresh_view(cache, get_settings().frames_dir):
+                path.write_bytes(gzip.compress(json.dumps(cache, separators=(",", ":")).encode()))
+            if not gt.in_congestion_windows(cache["camera"], start):
+                todo.append(cache)
+        sheets = write_congestion_review(todo, rules, names, args.out / "congestion_review")
+        print(f"\n{len(sheets)} windows to tag for congestion: sheets + congestion_review.yaml -> "
+              f"{args.out / 'congestion_review'}")
     return 0
 
 

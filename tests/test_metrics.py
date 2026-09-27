@@ -6,12 +6,16 @@ import pytest
 
 from common.schemas import Event, EventType, LaneZone
 from evaluation.metrics import (
+    CongestionSample,
+    CongestionTruth,
     GroundTruth,
     Prediction,
     Truth,
     Window,
     evaluate,
+    evaluate_congestion,
     iou,
+    level_runs,
     load_ground_truth,
 )
 
@@ -115,13 +119,73 @@ def test_excluding_a_category_drops_it_from_both_sides():
 def test_committed_ground_truth_loads_and_is_consistent():
     g = load_ground_truth()
     assert len(g.windows) >= 4 and len(g.blockages) >= 5
-    ids = [t.id for t in g.items]
+    ids = [t.id for t in g.items] + [c.id for c in g.congestion]
     assert len(ids) == len(set(ids))
     for t in g.items:
         assert t.start <= t.end, t.id
         assert g.in_windows(t.camera, t.start) or g.in_windows(t.camera, t.end), t.id
         x1, y1, x2, y2 = t.bbox
         assert 0 <= x1 < x2 <= 352 and 0 <= y1 < y2 <= 240, t.id
+    assert g.congestion_windows and g.congestion
+    for c in g.congestion:
+        assert c.start <= c.end, c.id
+        assert g.in_congestion_windows(c.camera, c.start), c.id
+
+
+# --- congestion --------------------------------------------------------------------------------
+
+def samples(levels, cam=CAM, start=0, step=5):
+    """One reading per `step` s: a string like "ffssCCCf" (free / slow / Congested)."""
+    names = {"f": "free", "s": "slow", "C": "congested"}
+    return [CongestionSample(cam, "avenue", at(start + i * step), names[c])
+            for i, c in enumerate(levels)]
+
+
+def cgt(*jams, windows=((CAM, 0, 3600),)):
+    return GroundTruth([], [], [Window(c, at(s), at(e)) for c, s, e in windows], list(jams))
+
+
+def jam(id, start, end, level="congested", cam=CAM, **kw):
+    return CongestionTruth(id=id, camera=cam, start=at(start), end=at(end), level=level, **kw)
+
+
+def test_congestion_caught_on_time():
+    r = evaluate_congestion(samples("f" * 20 + "C" * 40 + "f" * 20), cgt(jam("j1", 60, 300)))
+    c = r.levels["congested"]
+    assert (c.precision, c.recall, c.median_time_to_detect_s) == (1, 1, 40)
+    assert r.confusion[("congested", "congested")] == 40
+    # read free at 60-95 s and at 300 s (the jam's last moment), all tagged congested
+    assert r.confusion[("free", "free")] == 31 and r.confusion[("congested", "free")] == 9
+
+
+def test_a_run_on_free_traffic_is_a_false_alarm_and_a_missed_jam_lowers_recall():
+    r = evaluate_congestion(samples("CCCC" + "f" * 100), cgt(jam("j1", 300, 500)))
+    c = r.levels["congested"]
+    assert (len(c.runs), len(c.false_runs), c.precision, c.recall) == (1, 1, 0, 0)
+    assert [t.id for t in c.missed] == ["j1"]
+
+
+def test_slow_reading_on_a_jam_counts_at_slow_or_worse_only():
+    r = evaluate_congestion(samples("ssssss"), cgt(jam("j1", 0, 30)))
+    assert r.levels["congested"].recall == 0
+    assert r.levels["slow"].recall == 1 and r.levels["slow"].precision == 1
+
+
+def test_flickering_level_splits_into_runs():
+    runs = level_runs(samples("CCsCCsCC"), "congested")
+    assert len(runs) == 3
+    assert len(level_runs(samples("CCsCCsCC"), "slow")) == 1
+
+
+def test_readings_outside_the_congestion_windows_are_ignored():
+    r = evaluate_congestion(samples("CCCC", cam=OTHER), cgt())
+    assert r.levels["congested"].runs == [] and r.agreement is None
+
+
+def test_clipped_jam_start_is_left_out_of_time_to_detect():
+    r = evaluate_congestion(samples("fC"), cgt(jam("j1", 0, 10, start_clipped=True)))
+    assert r.levels["congested"].recall == 1
+    assert r.levels["congested"].time_to_detect_s == []
 
 
 def test_evaluation_runs_from_a_clean_checkout(tmp_path, repo_root):
@@ -133,12 +197,15 @@ def test_evaluation_runs_from_a_clean_checkout(tmp_path, repo_root):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     g = load_ground_truth()
-    missing = [w for w in g.windows if not mod.cache_path(w).exists()]
+    missing = [w for w in g.windows + g.congestion_windows if not mod.cache_path(w).exists()]
     assert not missing, f"no committed detections for {missing}"
 
     assert mod.main(["--out", str(tmp_path)]) == 0
     report = json.loads((tmp_path / "report.json").read_text())
     assert report["alerts"] > 0 and report["blockages"] == len(g.blockages)
+    assert report["congestion"]["frames"] > 0
+    assert report["congestion"]["congested"]["intervals"] == sum(
+        c.level == "congested" for c in g.congestion)
     # the double-parked delivery trucks on 7 Ave @ 36 St are always caught
     outcomes = [json.loads(line) for line in (tmp_path / "predictions.jsonl").open()]
     trucks = [o for o in outcomes if o["truth"] in ("gt_001", "gt_002")]

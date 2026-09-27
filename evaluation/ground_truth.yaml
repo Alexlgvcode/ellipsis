@@ -11,6 +11,12 @@
 # debatable groups (bus_lane, police, camera_moved).
 #
 # Verdict rule: does it block traffic? Parked (even illegally) out of the flow = not a blockage.
+#
+# Congestion (issue #47), at the end of the file:
+# congestion_windows:  footage reviewed for congestion. Inside one, the camera is free except
+#                      during its congestion intervals.
+# congestion:          intervals where traffic is slow or congested (a jam: it doesn't clear on
+#                      green). approach is optional (the mask's approach name).
 
 windows:
   - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
@@ -607,3 +613,19 @@ not_blockages:
     end: 2026-09-26T20:32:12Z
     bbox: [118, 66, 132, 80]
     note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+
+congestion_windows:
+  - camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "session 2"
+
+congestion:
+  - id: cg_001
+    camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    start: 2026-09-26T20:12:16Z   # clipped: already jammed when recording started
+    end: 2026-09-26T20:32:16Z     # clipped: still jammed when recording stopped
+    start_clipped: true
+    end_clipped: true
+    level: congested
+    note: "every lane stopped for the whole recording (the jam behind no_007/008/013/014; Alex)"
