@@ -13,6 +13,7 @@ x-app: &app
     LW_DATA_SOURCE: live
     LW_DEVICE: cpu
     LW_DATABASE_URL: sqlite:////app/data/db/lanewatch.db
+    LW_SIM_SEEDS: "42"  # worker: one seed keeps up with the alerts on CPUs shared with YOLO
 
 services:
   api:

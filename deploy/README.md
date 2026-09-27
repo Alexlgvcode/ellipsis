@@ -54,7 +54,11 @@ Everything restarts on its own after a crash or a reboot.
 
 **Limits, set in `deploy/.env`:**
 - `LW_NOTES_PER_DAY` (18): Gemini notes per day. The free tier allows 20 per model per day;
-  after the cap, cards show without a note.
+  after the cap, cards show without a note. If the worker log says `429 RESOURCE_EXHAUSTED`,
+  that model's quota is used up for today (it resets at midnight Pacific): set another
+  `LW_GEMINI_MODEL` (e.g. `gemini-3.8-flash` ↔ `gemini-3.7-flash`) and `docker compose up -d`.
+- `LW_SIM_SEEDS` (`42`, in `compose.yml`): the worker scores each alert with one SUMO seed
+  instead of three, so it keeps up on CPUs shared with YOLO. Gains are noisier with one seed.
 - `LW_VOICE_PER_DAY` (40): new spoken alerts per day (ElevenLabs); ones already made keep playing.
 - Frames are deleted after 30 minutes (`--keep-minutes` in `compose.yml`), so the disk
   doesn't fill up. Snapshots of alerts are kept.

@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from functools import lru_cache
 from pathlib import Path
 
@@ -45,7 +46,8 @@ EXTEND_FRACTION = 0.20
 SIM_START_S = 300.0   # the routes' warm-up: demand is at its midday level from here
 MAX_STOP_S = 300.0    # longer stops look the same to the retiming decision
 TAIL_S = 180.0        # two cycles after the vehicle leaves, for the queue to clear
-SEEDS = (42, 43, 44)
+# LW_SIM_SEEDS=42 on a server that shares its CPUs with YOLO: one seed scores ~3x faster
+SEEDS = tuple(int(s) for s in os.environ.get("LW_SIM_SEEDS", "42,43,44").split(","))
 API = "http://127.0.0.1:8000"
 
 
