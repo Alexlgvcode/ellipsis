@@ -67,6 +67,7 @@ class Truth:
     end_clipped: bool = False
     category: str | None = None
     note: str = ""
+    demo: bool = False  # replayed in the demo (docs/demo.md)
 
 
 @dataclass
@@ -92,7 +93,7 @@ def load_ground_truth(path: Path = GROUND_TRUTH) -> GroundTruth:
                 id=b["id"], camera=b["camera"], type=b["type"], start=_ts(b["start"]),
                 end=_ts(b["end"]), bbox=tuple(float(v) for v in b["bbox"]), real=real,
                 start_clipped=bool(b.get("start_clipped")), end_clipped=bool(b.get("end_clipped")),
-                category=b.get("category"), note=b.get("note", "")))
+                category=b.get("category"), note=b.get("note", ""), demo=bool(b.get("demo"))))
     return GroundTruth(windows, items)
 
 
