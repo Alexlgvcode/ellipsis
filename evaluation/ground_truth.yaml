@@ -72,6 +72,10 @@ windows:
     start: 2026-09-26T22:38:08Z
     end: 2026-09-26T23:08:05Z
     note: "session 3 (dusk, rain): its 4 alerts reviewed, all blocked box (#63); not yet searched for missed blockages"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "night recording (rain): its 2 alerts reviewed (#63); not yet searched for missed blockages"
 
 blockages:
   - id: gt_001
@@ -178,6 +182,13 @@ blockages:
     end: 2026-09-26T23:04:45Z
     bbox: [210, 152, 270, 212]
     note: "dark red SUV stopped on the crosswalk / in the box in the same jam as gt_013 (dusk, rain; Alex, #63)"
+  - id: gt_015
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: double_parked
+    start: 2026-09-27T01:18:45Z
+    end: 2026-09-27T01:30:05Z
+    bbox: [177, 53, 222, 95]
+    note: "white box truck in the lane next to the curb, ~11 min (night, rain); the tracker lost it 01:23:36-01:26:40, one truck (Alex, #63)"
 
 not_blockages:
   - id: no_001
@@ -649,6 +660,14 @@ not_blockages:
     end: 2026-09-26T20:32:12Z
     bbox: [118, 66, 132, 80]
     note: "short travel-lane stop, assumed red light: the 5 sampled ones all were (missed-blockage review)"
+  - id: no_068
+    camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    type: stopped_in_lane
+    start: 2026-09-27T01:15:21Z   # clipped: already there when recording started
+    end: 2026-09-27T01:19:35Z
+    start_clipped: true
+    bbox: [277, 112, 337, 151]
+    note: "illegally parked at the corner but not blocking traffic, same spot as no_006 (night; Alex, #63)"
 
 congestion_windows:
   - camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
