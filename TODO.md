@@ -36,7 +36,7 @@ Don't start the next stage's features until your own gates pass.
   - no 311 or 511NY
   - 6–10 intersections in SUMO
   - two retiming rules
-  - Streamlit dashboard that polls the API
+  - React dashboard (`web/`) that polls the API
   - replay is the demo; live mode is a bonus
 
 > ⚠️ **Start recording frames in Stage 2, while it's daylight.** We have no footage, and the demo needs daytime incidents from today.

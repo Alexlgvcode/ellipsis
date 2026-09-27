@@ -1,0 +1,65 @@
+/* ellipsis design tokens (docs/dashboard-design-spec.md §3–4, §8, §29). */
+:root {
+  /* surfaces: defaults are Night Shift (the chosen palette). lib/palettes.ts rewrites these at runtime. */
+  --canvas: #1c201e;
+  --panel: #202322;
+  --raised: #252927;
+  --subtle: #2b302d;
+  --border: #3a3f3c;
+  --border-subtle: #303531;
+  --border-strong: #5b605c;
+  --connector: #7c817d;
+  --feed-bg: #2a2e2c;
+  --beam: 255, 255, 255;
+
+  /* text */
+  --text: #f2f4f1;
+  --text-2: #aeb5af;
+  --text-muted: #8a918b;
+  --text-disabled: #676d68;
+  --text-inverse: #202322;
+  --selected-fill: #363937;
+  --selected-border: #7a7e7b;
+
+  /* semantic: color only for state */
+  --healthy: #2f8f62;
+  --healthy-text: #237250; /* AA on panel */
+  --healthy-soft: #e5f2ea;
+  --healthy-border: #bfdccb;
+  --amber: #c88a22;
+  --amber-text: #7f560e;
+  --amber-soft: #f7ecd5;
+  --amber-border: #e6c98e;
+  --incident: #e7644c;
+  --incident-text: #a53d28;
+  --incident-soft: #f9e5df;
+  --incident-border: #f0b6aa;
+  --critical: #c9473d;
+  --critical-text: #a8372e;
+  --critical-soft: #f6dfdc;
+  --critical-border: #e7a6a0;
+
+  /* road state */
+  --road-moderate: #d2a14c;
+  --road-heavy: #d96a4b;
+  --road-severe: #c9473d;
+
+  /* brand dots */
+  --dot-red: #d84c4c;
+  --dot-amber: #d99a2b;
+  --dot-green: #3e9b6c;
+
+  /* type */
+  --font: "Geist Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* space, radius, elevation */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 20px; --s6: 24px;
+  --r-control: 7px;
+  --r-panel: 11px;
+  --shadow-float: 0 1px 2px rgba(27, 29, 27, 0.06), 0 6px 18px rgba(27, 29, 27, 0.08);
+
+  --topbar-h: 56px;
+  --rail-w: 288px;
+  --inspector-w: 380px;
+}

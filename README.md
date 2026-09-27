@@ -27,7 +27,7 @@ cameras -> ingest (poll, dedupe, health) -> vision (YOLO + IoU tracker)
 | `signals/` | Sim lead | Camera→signal mapping, rule-based retiming |
 | `sim/` | Sim lead | SUMO network, routes, scenario runner |
 | `api/` | Product lead | FastAPI backend, websocket feed, summaries |
-| `dashboard/` | Product lead | Operator UI |
+| `web/` | Product lead | ellipsis dashboard (React + MapLibre), see [docs/dashboard.md](docs/dashboard.md) |
 | `data/` | — | Frames, labels, open data (gitignored, kept local) |
 | `scripts/` | — | Recording, 311 matching, replay |
 
