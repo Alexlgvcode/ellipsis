@@ -34,6 +34,9 @@ interface Props {
   cameras: Camera[];
   selectedId: string | null;
   onSelect: (id: string) => void;
+  /** Camera opened from the map (its panel shows the live feed), and how to open one. */
+  selectedCameraId?: string | null;
+  onSelectCamera?: (id: string) => void;
   layers: Layers;
   onLayers: (l: Layers) => void;
   sim: SimOverlay | null;
@@ -112,6 +115,8 @@ function paintOverlays(map: MLMap, c: MapColors) {
   const set = (id: string, prop: string, v: unknown) => { if (map.getLayer(id)) (map.setPaintProperty as (i: string, p: string, v: unknown) => void).call(map, id, prop, v); };
   set("cams", "circle-color", ["case", ["get", "live"], HEALTHY, c.cameraOff]);
   set("cams", "circle-stroke-color", c.markerStroke);
+  set("cams-icon", "icon-color", ["case", ["get", "live"], HEALTHY, c.cameraOff]);
+  set("cams-icon", "icon-halo-color", c.markerStroke);
   set("signals", "circle-color", c.signal);
   set("signals", "circle-stroke-color", c.markerStroke);
   set("incident-ring", "circle-stroke-color", c.ring);
@@ -119,6 +124,29 @@ function paintOverlays(map: MLMap, c: MapColors) {
 }
 
 /** Small top-down car glyph, pointing east; rotated per feature on the map. */
+/** Video-camera glyph (rounded body + lens wedge, like the FaceTime logo), white on
+ * transparent: an SDF icon, coloured by the layer like the camera dot under it. */
+function cameraImage(): ImageData | null {
+  const c = document.createElement("canvas");
+  c.width = 32; c.height = 22;
+  const ctx = c.getContext("2d");
+  if (!ctx) return null;
+  ctx.fillStyle = "white";
+  ctx.beginPath();
+  ctx.roundRect(2, 3, 20, 16, 4); // body
+  ctx.fill();
+  ctx.beginPath();                // lens wedge, opening to the right
+  ctx.moveTo(23, 9);
+  ctx.lineTo(29, 4.5);
+  ctx.quadraticCurveTo(30.5, 4, 30.5, 5.5);
+  ctx.lineTo(30.5, 16.5);
+  ctx.quadraticCurveTo(30.5, 18, 29, 17.5);
+  ctx.lineTo(23, 13);
+  ctx.closePath();
+  ctx.fill();
+  return ctx.getImageData(0, 0, 32, 22);
+}
+
 function carImage(color: string): ImageData | null {
   const c = document.createElement("canvas");
   c.width = 28; c.height = 14;
@@ -142,6 +170,8 @@ function addOverlays(map: MLMap) {
     const img = !map.hasImage(`car-${st}`) && carImage(CAR_COLOR[st]);
     if (img) map.addImage(`car-${st}`, img, { pixelRatio: 2 });
   }
+  const cam = !map.hasImage("cam-icon") && cameraImage();
+  if (cam) map.addImage("cam-icon", cam, { pixelRatio: 2, sdf: true });
   for (const id of ["impact", "cams", "signals", "incidents", "sim-queue", "sim-cars"]) {
     if (!map.getSource(id)) map.addSource(id, { type: "geojson", data: fc([]) });
   }
@@ -174,6 +204,13 @@ function addOverlays(map: MLMap) {
     } });
   add({ id: "cams", type: "circle", source: "cams",
     paint: { "circle-radius": ["case", ["get", "source"], 5, 3], "circle-stroke-width": ["case", ["get", "source"], 2, 1] } });
+  // Camera icon above each dot; click either to open the camera's live feed.
+  add({ id: "cams-icon", type: "symbol", source: "cams",
+    layout: {
+      "icon-image": "cam-icon", "icon-anchor": "bottom", "icon-offset": [0, -6],
+      "icon-size": ["case", ["get", "source"], 1.15, 0.9], "icon-allow-overlap": true, "icon-ignore-placement": true,
+    },
+    paint: { "icon-halo-width": 1 } });
   add({ id: "signals", type: "circle", source: "signals",
     paint: { "circle-radius": 4, "circle-stroke-width": 1.5 } });
   add({ id: "incident-ring", type: "circle", source: "incidents", filter: ["==", ["get", "selected"], true],
@@ -226,6 +263,16 @@ export function MapShell(p: Props) {
     });
     map.on("mouseenter", "incidents", () => { map.getCanvas().style.cursor = "pointer"; });
     map.on("mouseleave", "incidents", () => { map.getCanvas().style.cursor = ""; });
+    for (const layer of ["cams", "cams-icon"]) {
+      map.on("click", layer, (e) => {
+        const id = e.features?.[0]?.properties?.id;
+        // an incident marker on top of the camera wins (its panel has the feed too)
+        const onIncident = map.queryRenderedFeatures(e.point, { layers: ["incidents"] }).length > 0;
+        if (id && !onIncident && !latest.current.sim) latest.current.onSelectCamera?.(String(id));
+      });
+      map.on("mouseenter", layer, () => { map.getCanvas().style.cursor = "pointer"; });
+      map.on("mouseleave", layer, () => { map.getCanvas().style.cursor = ""; });
+    }
     return () => { map.remove(); mapRef.current = null; };
   }, []);
 
@@ -243,9 +290,10 @@ export function MapShell(p: Props) {
       opacity: sim && i.id !== focusId ? 0.3 : 1,
     }))));
 
+    const shown = selected?.camera.id ?? p.selectedCameraId; // the camera being looked at
     (map.getSource("cams") as GeoJSONSource).setData(fc(cameras
-      .filter((c) => layers.cameras || c.id === selected?.camera.id)
-      .map((c) => point([c.lon, c.lat], { live: c.is_online, source: c.id === selected?.camera.id }))));
+      .filter((c) => layers.cameras || c.id === shown)
+      .map((c) => point([c.lon, c.lat], { id: c.id, live: c.is_online, source: c.id === shown }))));
 
     const signalPts = layers.signals && !sim
       ? incidents.flatMap((i) => i.response.changes.map((ch) => parseSignalId(ch.id)).filter(Boolean)
@@ -292,7 +340,7 @@ export function MapShell(p: Props) {
       }
     }
     seen.current = ids;
-  }, [p.incidents, p.cameras, p.selectedId, p.layers, p.sim, p.heat, ready]);
+  }, [p.incidents, p.cameras, p.selectedId, p.selectedCameraId, p.layers, p.sim, p.heat, ready]);
 
   // --- congestion heatmap (Traffic layer; hidden in simulation, which draws its own queue) ---
   useEffect(() => {
