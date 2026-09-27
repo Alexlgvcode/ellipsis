@@ -60,7 +60,8 @@ export function IncidentRail(p: Props) {
         </div>
         <div className="rail-tools">
           <div className="filters" role="group" aria-label="Filter incidents">
-            {([["critical", "Critical", c.critical], ["review", "Review", c.review], ["all", "All", c.all]] as const).map(([k, label, n]) => (
+            {([["critical", "Critical", c.critical], ["review", "Review", c.review], ["all", "All", c.all],
+              ["resolved", "Resolved", c.resolved]] as const).map(([k, label, n]) => (
               <button key={k} aria-pressed={p.filter === k} onClick={() => p.onFilter(k)}>
                 {label}<span className="n">{n}</span>
               </button>

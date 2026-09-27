@@ -97,6 +97,10 @@ export default function App() {
   if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
 
   const offline = Boolean(poll.error);
+  // Sample data and replays are recordings: their alert frames aren't the camera's live view.
+  const recorded = mock || snap?.health.source === "replay";
+  // Resolved incidents leave the map (the one open in the card stays until it's closed).
+  const onMap = incidents.filter((i) => i.status !== "resolved" || i.id === selectedId);
   const feed: FeedState = offline ? "offline" : mock ? "sample" : snap?.health.source === "replay" ? "replay" : "live";
   const cams = snap?.cameras ?? [];
   const railW = simIncident ? 0 : collapsed ? 48 : RAIL_W;
@@ -110,7 +114,7 @@ export default function App() {
       {offline && <StatusBanner lastOkAt={poll.lastOkAt} />}
 
       <MapShell
-        incidents={incidents} cameras={cams} selectedId={selectedId} onSelect={setSelectedId}
+        incidents={onMap} cameras={cams} selectedId={selectedId} onSelect={setSelectedId}
         layers={layers} onLayers={setLayers} sim={simIncident ? overlay : null}
         insetLeft={narrow ? 0 : simIncident ? 400 : railW} insetRight={(selected || openCam) && !simIncident && !narrow ? INSPECTOR_W + 24 : 0}
         insetBottom={narrow && (selected || openCam) && !simIncident ? window.innerHeight * 0.5 : 0}
@@ -125,7 +129,7 @@ export default function App() {
       )}
 
       {selected && !simIncident && (
-        <IncidentInspector incident={selected} seen={seen} now={now}
+        <IncidentInspector incident={selected} seen={seen} now={now} recorded={recorded}
           onClose={() => setSelectedId(null)} onOpenSimulation={() => setSimId(selected.id)}
           onDecide={(a) => onDecide(selected.id, a)} saving={saving}
           decideError={decideError?.id === selected.id ? decideError.msg : null} />

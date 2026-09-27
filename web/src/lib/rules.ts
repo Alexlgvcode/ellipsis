@@ -8,8 +8,12 @@ export const DWELL_S: Record<EventType, number> = {
   frozen_feed: 30,
 };
 
-/** An event not updated for this long is treated as resolved (live and replay modes). */
-export const ACTIVE_WINDOW_S = 300;
+/**
+ * An event not updated for this long is treated as resolved (live and replay modes). Live and
+ * replay post every open event on each new frame (every 2-5 s), so a minute of silence means
+ * the engine closed it: the vehicle drove off.
+ */
+export const ACTIVE_WINDOW_S = 60;
 
 /** Below this confidence an incident is shown as "Needs review". */
 export const REVIEW_BELOW = 0.75;
