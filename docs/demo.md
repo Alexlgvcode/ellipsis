@@ -15,8 +15,9 @@ Picked and checked in #16, from the 2026-09-26 recording (times UTC; EDT is UTC�
 | 1:25 stops, **2:42 alert** | 8th Ave @ 31st St | cab stopped in the travel lane, 82 s | `gt_009` | *Needs review* (0.52) |
 | 3:07 stops, 4:08 alert | 7 Ave @ 36 St | NYPD SUV pulls up behind the near truck, 107 s | `gt_003` | Confirmed (0.89), after the 3 minutes |
 
-Replay window: **18:21:30–18:31:00**. No real blocked box was ever recorded, so the demo
-shows two event types. Say so if asked; don't stage one.
+Replay window: **18:21:30–18:31:00**. It has two event types. Real blocked boxes were
+recorded later, at dusk at Broadway @ 6 Ave / 33 St (`gt_011`–`gt_014`, 22:46–23:05 UTC,
+caught by the engine); they're in mock mode (below), not in this replay.
 
 **Sim numbers: present what the card shows.** The worker scores each alert once, when it
 opens, so the sim assumes a stop of about 60 s. In a test run, that gave the near truck
@@ -86,6 +87,23 @@ the replays as you begin the hook: the first alert lands about a minute in.
 | 1:45–2:30 | **Sim payoff.** **Compare in simulation** (in the pinned decision bar, right under Accept): default versus recommended timing on the same signal, with delay per vehicle and the queue chart. Read out the card's numbers as they are. | Simulation mode |
 | ~2:42 | Second alert: cab stopped in the lane on 8th Ave @ 31st St. It's another type, and it also goes through a human decision. | New alert in the list |
 | 2:30–3:00 | **Proof and close.** Precision 82%, recall 90%, median time to alert 63 s on hand-tagged footage. Every change goes through a human. | Metrics slide |
+
+## Mock mode (fallback)
+
+If the replay can't run (no recorded frames, YOLO or SUMO on the laptop, or no time for the
+cold start), show mock mode. It serves `data/mock/`: **13 real, hand-checked incidents** from
+the recordings, all three types (7 double parked, 3 stopped in lane, 4 blocked boxes; day,
+dusk and night), with their real frames, boxes and durations, SUMO-scored recommendations,
+and the congestion heatmap. Nothing to start but the API and the dashboard:
+
+```bash
+rm -f data/lanewatch.db && LW_MOCK_MODE=true make api
+make web
+```
+
+The top bar says **SAMPLE DATA**. Say it's the recorded incidents loaded as a snapshot, not a
+live feed; the list and `data/mock/README.md` say where each one comes from. Rebuild it after
+tagging new incidents with `python scripts/build_mock.py` (needs `data/frames/` and `.[sim]`).
 
 ## Backup video
 

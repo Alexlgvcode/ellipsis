@@ -98,8 +98,9 @@ Defined in [common/schemas.py](common/schemas.py).
 | GET | `/events/{id}/summary` | 404 if none |
 | GET | `/summaries` | Every note, one request per dashboard poll |
 
-With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events and
-recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to
+With `LW_MOCK_MODE=true` (the default), the API loads `data/mock/` at startup: real,
+hand-checked incidents from the recordings with their SUMO recommendations and congestion,
+built by `python scripts/build_mock.py` (see `data/mock/README.md`). The database is SQLite at `data/lanewatch.db`; delete it to
 start fresh.
 
 For a replay on the dashboard, start the API with mock mode off so those sample

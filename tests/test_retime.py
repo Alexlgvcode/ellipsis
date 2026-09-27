@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from common.schemas import Event
+from common.schemas import Event, EventType
 from signals.mapping import OUT, ZONES, load_mapping
 from signals.retime import (
     blockage_for,
@@ -37,25 +37,30 @@ def test_every_masked_camera_is_mapped():
         assert abs(sum(d for d, _ in program) - 90) <= 1
 
 
+def first_mock(kind: EventType) -> Event:
+    """The first mock event of a type (data/mock/ has every blocking type)."""
+    return next(e for e in mock_events() if e.type is kind)
+
+
 def test_each_rule_cuts_the_expected_signal():
     mapping = load_mapping()
-    events = {e.id: e for e in mock_events()}
-    parked = signal_changes(events["evt_mock_001"], mapping)[0]
-    stopped = signal_changes(events["evt_mock_002"], mapping)[0]
-    box = signal_changes(events["evt_mock_003"], mapping)[0]
-    assert parked.id == mapping["cameras"][events["evt_mock_001"].camera_id]["upstream"]
-    assert stopped.id == mapping["cameras"][events["evt_mock_002"].camera_id]["upstream"]
-    assert box.id == mapping["cameras"][events["evt_mock_003"].camera_id]["tls"]
+    events = {k: first_mock(k) for k in
+              (EventType.DOUBLE_PARKED, EventType.STOPPED_IN_LANE, EventType.BLOCKED_BOX)}
+    parked, stopped, box = (signal_changes(e, mapping)[0] for e in events.values())
+    cams = {k: mapping["cameras"][e.camera_id] for k, e in events.items()}
+    assert parked.id == cams[EventType.DOUBLE_PARKED]["upstream"]
+    assert stopped.id == cams[EventType.STOPPED_IN_LANE]["upstream"]
+    assert box.id == cams[EventType.BLOCKED_BOX]["tls"]
     assert parked.change_s < 0 and stopped.change_s < 0 and box.change_s < 0
-    eight = mapping["cameras"]["6a85384f-d82e-4bff-b5f1-15c22cca70e6"]
-    lane = blockage_for(events["evt_mock_001"], mapping).lane_id
-    assert lane == eight["lanes"]["curb_adjacent"]["id"]
+    lane = blockage_for(events[EventType.DOUBLE_PARKED], mapping).lane_id
+    assert lane == cams[EventType.DOUBLE_PARKED]["lanes"]["curb_adjacent"]["id"]
 
 
-@pytest.mark.parametrize("event_id", ["evt_mock_001", "evt_mock_002", "evt_mock_003"])
-def test_changes_keep_the_cycle_the_floor_and_the_cap(event_id):
+@pytest.mark.parametrize("kind", [EventType.DOUBLE_PARKED, EventType.STOPPED_IN_LANE,
+                                  EventType.BLOCKED_BOX])
+def test_changes_keep_the_cycle_the_floor_and_the_cap(kind):
     mapping = load_mapping()
-    event = next(e for e in mock_events() if e.id == event_id)
+    event = first_mock(kind)
     change = signal_changes(event, mapping)[0]
     phases = [(float(d), s) for d, s in mapping["programs"][change.id]]
     assert within_bounds(phases, change.phase, change.change_s)

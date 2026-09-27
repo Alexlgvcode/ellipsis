@@ -1,0 +1,68 @@
+[
+  {
+    "camera_id": "1e60ade7-c760-48cf-acd9-d9d6cbfa9420",
+    "approach": "7_ave",
+    "direction": "southbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "congested",
+    "score": 0.82,
+    "occupancy": 0.31,
+    "stuck_share": 0.74,
+    "since_ts": "2026-09-26T15:52:00Z"
+  },
+  {
+    "camera_id": "0dc7c2b4-614d-46a3-9610-3ba09f3f1284",
+    "approach": "6_ave",
+    "direction": "northbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "congested",
+    "score": 0.66,
+    "occupancy": 0.24,
+    "stuck_share": 0.81,
+    "since_ts": "2026-09-26T15:48:30Z"
+  },
+  {
+    "camera_id": "ee1b1d85-e8ce-485f-a539-12962933eb9f",
+    "approach": "7_ave",
+    "direction": "southbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "slow",
+    "score": 0.38,
+    "occupancy": 0.19,
+    "stuck_share": 0.46,
+    "since_ts": "2026-09-26T15:57:10Z"
+  },
+  {
+    "camera_id": "f06979b2-3497-4330-9882-a06c8a442b7c",
+    "approach": "6_ave",
+    "direction": "northbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "slow",
+    "score": 0.31,
+    "occupancy": 0.17,
+    "stuck_share": 0.41,
+    "since_ts": "2026-09-26T15:58:20Z"
+  },
+  {
+    "camera_id": "6a85384f-d82e-4bff-b5f1-15c22cca70e6",
+    "approach": "8_ave",
+    "direction": "northbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "congested",
+    "score": 0.75,
+    "occupancy": 0.28,
+    "stuck_share": 0.72,
+    "since_ts": "2026-09-26T15:59:10Z"
+  },
+  {
+    "camera_id": "ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c",
+    "approach": "8_ave",
+    "direction": "northbound",
+    "ts": "2026-09-26T16:02:00Z",
+    "level": "free",
+    "score": 0.0,
+    "occupancy": 0.07,
+    "stuck_share": 0.1,
+    "since_ts": "2026-09-26T15:30:00Z"
+  }
+]

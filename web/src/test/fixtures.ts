@@ -6,11 +6,13 @@ export const REPO = resolve(__dirname, "../../..");
 const json = <T,>(p: string): T => JSON.parse(readFileSync(resolve(REPO, p), "utf8")) as T;
 
 export const CAMERAS = json<Camera[]>("data/cameras.json");
-export const EVENTS = json<Event[]>("data/mock/events.json");
+// The dashboard tests' own sample data: a frozen copy of the original hand-made mocks, so the
+// UI tests don't change whenever data/mock/ is rebuilt from the recordings (scripts/build_mock.py).
+export const EVENTS = json<Event[]>("web/src/test/data/events.json");
 export const RECS: Record<string, Recommendation> = Object.fromEntries(
-  json<Recommendation[]>("data/mock/recommendations.json").map((r) => [r.event_id, r]),
+  json<Recommendation[]>("web/src/test/data/recommendations.json").map((r) => [r.event_id, r]),
 );
-export const CONGESTION = json<Congestion[]>("data/mock/congestion.json");
+export const CONGESTION = json<Congestion[]>("web/src/test/data/congestion.json");
 export const NOW = Date.parse("2026-09-26T18:00:00Z");
 
 export const ev = (over: Partial<Event> = {}): Event => ({

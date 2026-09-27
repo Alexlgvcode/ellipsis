@@ -1,0 +1,23 @@
+[
+  {
+    "event_id": "evt_mock_001",
+    "intersections": [
+      {"id": "tls_8av_32st", "phase": 0, "change_s": -6}
+    ],
+    "sim": {"delay_default": 48.3, "delay_new": 39.1, "queue_default": 21, "queue_new": 13}
+  },
+  {
+    "event_id": "evt_mock_003",
+    "intersections": [
+      {"id": "tls_7av_34st_cross", "phase": 2, "change_s": -5}
+    ],
+    "sim": {"delay_default": 36.4, "delay_new": 31.8, "queue_default": 14, "queue_new": 10}
+  },
+  {
+    "event_id": "evt_mock_002",
+    "intersections": [
+      {"id": "tls_7av_34st", "phase": 0, "change_s": 10}
+    ],
+    "sim": {"delay_default": 50.4, "delay_new": 52.0, "queue_default": 4, "queue_new": 3}
+  }
+]
