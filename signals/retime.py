@@ -8,28 +8,44 @@ the upstream green by 15 percent. Rule 2: a blocked box cuts the cross-street
 green by 15 percent. The cycle stays 90 s, no green falls under 8 s, and no
 phase moves by more than 20 percent.
 
+No single rule helps every incident (issue #51), so with SUMO the recommendation is
+the best of three candidates, each scored against the same plan A:
+  - the rule above
+  - 20 percent more green for the blocked approach at its own signal (it discharges
+    past the blockage more slowly, so it needs longer to clear)
+  - both
+If none of them beats plan A, the best one is still returned with its numbers, and the
+dashboard says the default plan is faster.
+
 The blockage is the event: that camera's lane for the zone, and the event's
-duration. Volumes stay the published counts.
+duration (capped). The sim warms up first, so the network is at midday demand when the
+vehicle stops, and runs on after it leaves so the queue can clear. Volumes stay the
+published counts.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+from functools import lru_cache
 from pathlib import Path
 
 import httpx
 
 from common.schemas import Event, EventType, LaneZone, Recommendation, SignalChange
 from signals.mapping import load_mapping
-from sim.run_scenario import Blockage, adjust_phases, run_scenario
+from sim.run_scenario import NET, Blockage, adjust_phases, run_candidates
 
 REPO = Path(__file__).resolve().parents[1]
 MOCK_EVENTS = REPO / "data" / "mock" / "events.json"
 CUT_FRACTION = 0.15
 MAX_FRACTION = 0.20
 MIN_GREEN_S = 8.0
-SIM_START_S = 120.0
+EXTEND_FRACTION = 0.20
+SIM_START_S = 300.0   # the routes' warm-up: demand is at its midday level from here
+MAX_STOP_S = 300.0    # longer stops look the same to the retiming decision
+TAIL_S = 180.0        # two cycles after the vehicle leaves, for the queue to clear
+SEEDS = (42, 43, 44)
 API = "http://127.0.0.1:8000"
 
 
@@ -74,24 +90,66 @@ def signal_changes(event: Event, mapping: dict) -> list[SignalChange]:
     return [SignalChange(id=tls, phase=phase, change_s=change)]
 
 
+def _lane(event: Event, mapping: dict) -> dict:
+    cam = mapping["cameras"][event.camera_id]
+    return cam["lanes"].get(event.lane_zone.value) or cam["lanes"]["travel"]
+
+
 def blockage_for(event: Event, mapping: dict) -> Blockage:
     """The lane the still was looking at, stopped for the event's duration."""
-    cam = mapping["cameras"][event.camera_id]
-    zone = event.lane_zone.value
-    lane = cam["lanes"].get(zone) or cam["lanes"]["travel"]
-    duration = min(float(event.duration_s), 100.0)
+    lane = _lane(event, mapping)
+    duration = min(float(event.duration_s), MAX_STOP_S)
     return Blockage(lane["id"], float(lane["pos_m"]), SIM_START_S, duration)
 
 
+@lru_cache
+def _net():
+    import sumolib  # the sim extra; without it only the rule is offered
+
+    return sumolib.net.readNet(str(REPO / NET), withPrograms=False)
+
+
+def approach_phase(event: Event, mapping: dict) -> int | None:
+    """The longest green at the camera's signal that lets the blocked lane through."""
+    tls = mapping["cameras"][event.camera_id]["tls"]
+    try:
+        lane = _net().getLane(_lane(event, mapping)["id"])
+    except (ImportError, KeyError):
+        return None
+    links = {c.getTLLinkIndex() for c in lane.getOutgoing() if c.getTLSID() == tls}
+    greens = [(d, i) for i, (d, state) in enumerate(_phases(mapping, tls))
+              if links and all(state[k] in "Gg" for k in links)]
+    return max(greens)[1] if greens else None
+
+
+def candidate_plans(event: Event, mapping: dict) -> list[list[SignalChange]]:
+    """The rule, more green for the blocked approach, and both (when that phase exists)."""
+    rule = signal_changes(event, mapping)
+    phase = approach_phase(event, mapping)
+    if phase is None:
+        return [rule]
+    tls = mapping["cameras"][event.camera_id]["tls"]
+    phases = _phases(mapping, tls)
+    extend = round(EXTEND_FRACTION * phases[phase][0], 1)
+    if not within_bounds(phases, phase, extend):
+        return [rule]
+    own = [SignalChange(id=tls, phase=phase, change_s=extend)]
+    if any(c.id == tls and c.phase == phase for c in rule):
+        return [rule, own]  # "both" would undo the rule on the same phase
+    return [rule, own, rule + own]
+
+
 def recommend(event: Event, mapping: dict, *, simulate: bool = False,
-              seeds: tuple[int, ...] = (42,), end_s: float | None = None) -> Recommendation:
-    changes = signal_changes(event, mapping)
-    sim = None
-    if simulate:
-        blockage = blockage_for(event, mapping)
-        horizon = end_s if end_s is not None else SIM_START_S + blockage.duration_s + 40
-        sim = run_scenario(blockage, changes, seeds=seeds, end_s=horizon).sim
-    return Recommendation(event_id=event.id, intersections=changes, sim=sim)
+              seeds: tuple[int, ...] = SEEDS, end_s: float | None = None) -> Recommendation:
+    """The rule's change; with `simulate`, the best of the candidate plans in SUMO."""
+    if not simulate:
+        return Recommendation(event_id=event.id, intersections=signal_changes(event, mapping))
+    plans = candidate_plans(event, mapping)
+    blockage = blockage_for(event, mapping)
+    horizon = end_s if end_s is not None else SIM_START_S + blockage.duration_s + TAIL_S
+    reports = run_candidates(blockage, plans, seeds=seeds, end_s=horizon)
+    best = min(range(len(plans)), key=lambda k: reports[k].sim.delay_new)
+    return Recommendation(event_id=event.id, intersections=plans[best], sim=reports[best].sim)
 
 
 def mock_events(path: Path = MOCK_EVENTS) -> list[Event]:
