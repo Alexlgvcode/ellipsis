@@ -113,7 +113,8 @@ def test_recommendation_sim_filled_in_later(client, sample_event):
     rec = {"event_id": "evt_test", "intersections": [{"id": "tls_1", "phase": 0, "change_s": -6}]}
     assert client.post("/recommendations", json=rec).status_code == 201
     assert client.get("/recommendations/evt_test").json()["sim"] is None
-    sim = {"delay_default": 40, "delay_new": 30, "queue_default": 12, "queue_new": 8}
+    sim = {"delay_default": 40, "delay_new": 30, "queue_default": 12, "queue_new": 8,
+           "queue_series_default": [], "queue_series_new": []}
     client.post("/recommendations", json={**rec, "sim": sim})
     assert client.get("/recommendations/evt_test").json()["sim"] == sim
 
@@ -142,3 +143,57 @@ def test_turning_mock_mode_off_removes_the_mocks(make_client, sample_event):
     real = make_client(mock_mode=False)
     assert [e["id"] for e in real.get("/events").json()] == [sample_event["id"]]
     assert real.get("/recommendations/evt_mock_001").status_code == 404
+
+
+@pytest.mark.parametrize("action", ["accept", "reject", "false_positive"])
+def test_each_feedback_action_is_stored_and_returned(client, sample_event, action):
+    client.post("/events", json=sample_event)
+    resp = client.post("/events/evt_test/feedback", json={"action": action, "note": "checked"})
+    assert resp.status_code == 201
+    want = {"event_id": "evt_test", "action": action, "note": "checked"}
+    assert resp.json() == want
+    assert client.get("/events/evt_test/feedback").json() == want
+    assert client.get("/feedback").json() == [want]
+
+
+def test_latest_feedback_replaces_the_earlier_one(client, sample_event):
+    client.post("/events", json=sample_event)
+    client.post("/events/evt_test/feedback", json={"action": "accept"})
+    client.post("/events/evt_test/feedback", json={"action": "reject"})
+    assert [f["action"] for f in client.get("/feedback").json()] == ["reject"]
+
+
+def test_feedback_on_unknown_event_returns_404(client):
+    assert client.post("/events/nope/feedback", json={"action": "accept"}).status_code == 404
+    assert client.get("/events/nope/feedback").status_code == 404
+
+
+def test_event_without_feedback_returns_404(client, sample_event):
+    client.post("/events", json=sample_event)
+    assert client.get("/events/evt_test/feedback").status_code == 404
+    assert client.get("/feedback").json() == []
+
+
+@pytest.mark.parametrize("body", [{"action": "approve"}, {}, {"action": None}])
+def test_invalid_feedback_action_returns_422(client, sample_event, body):
+    client.post("/events", json=sample_event)
+    assert client.post("/events/evt_test/feedback", json=body).status_code == 422
+
+
+def test_feedback_survives_an_api_restart(make_client):
+    first = make_client(mock_mode=True)
+    for eid, action in [("evt_mock_001", "accept"), ("evt_mock_002", "reject"),
+                        ("evt_mock_003", "false_positive")]:
+        first.post(f"/events/{eid}/feedback", json={"action": action})
+    first.__exit__(None, None, None)
+    again = make_client(mock_mode=True)  # re-seeding the mocks keeps the decisions
+    got = {f["event_id"]: f["action"] for f in again.get("/feedback").json()}
+    assert got == {"evt_mock_001": "accept", "evt_mock_002": "reject",
+                   "evt_mock_003": "false_positive"}
+
+
+def test_turning_mock_mode_off_removes_mock_feedback(make_client):
+    mock = make_client(mock_mode=True)
+    mock.post("/events/evt_mock_001/feedback", json={"action": "accept"})
+    mock.__exit__(None, None, None)
+    assert make_client(mock_mode=False).get("/feedback").json() == []

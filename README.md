@@ -29,7 +29,7 @@ cameras -> ingest (poll, dedupe, health) -> vision (YOLO + IoU tracker)
 | `api/` | Product lead | FastAPI backend, websocket feed, summaries |
 | `web/` | Product lead | ellipsis dashboard (React + MapLibre), see [docs/dashboard.md](docs/dashboard.md) |
 | `data/` | — | Frames, labels, open data (gitignored, kept local) |
-| `scripts/` | — | Recording, 311 matching, replay |
+| `scripts/` | — | Recording, 311 matching, replay, live mode |
 
 ## Setup
 
@@ -91,6 +91,12 @@ Defined in [common/schemas.py](common/schemas.py).
 | GET | `/events/{id}/snapshot` | JPEG of the raw frame; draw `bbox` on top of it yourself |
 | POST | `/recommendations` | Create, or update by `event_id` (e.g. to add `sim` later); 404 if the event is unknown |
 | GET | `/recommendations/{event_id}` | 404 if none yet |
+| POST | `/events/{id}/feedback` | `{"action": "accept" \| "reject" \| "false_positive", "note": ...}`; the latest decision replaces the earlier one; 404 if the event is unknown, 422 for any other action |
+| GET | `/events/{id}/feedback` | 404 if no decision yet |
+| GET | `/feedback` | Every decision, one request per dashboard poll |
+| POST | `/events/{id}/summary` | Store the Claude incident note: `{"text": ..., "model": ...}` |
+| GET | `/events/{id}/summary` | 404 if none |
+| GET | `/summaries` | Every note, one request per dashboard poll |
 
 With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events and
 recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to
@@ -107,6 +113,23 @@ python scripts/replay.py --camera "7 Ave @ 36 St" --start 18:22 --end 18:30 --as
 
 The dashboard (`make web`) polls the API. The alert opens after about 60 s of the
 vehicle sitting still, and the delay and queue appear once the worker finishes.
+
+With `ANTHROPIC_API_KEY` set (and `pip install -e ".[llm]"`), the worker also asks Claude
+for a one-paragraph incident note after scoring each event; the dashboard shows it on the
+incident card. `python -m api.summarize --post` writes notes for events that have none,
+e.g. the mock ones. Without a key nothing changes.
+
+Live mode runs the same pipeline on the masked cameras as their frames arrive (every 2 s),
+in place of the replay line above. It needs the vision extra (`pip install -e ".[vision]"`):
+
+```bash
+make live                                   # all masked cameras
+python -m scripts.live --camera "7 Ave @ 36 St" --camera "Broadway @ 38 St"
+```
+
+Offline cameras aren't polled. A frozen feed isn't sent to the detector and raises a
+`frozen_feed` alert after 30 s. Frames are also saved to `data/frames/`, so a live session
+doubles as a recording.
 
 ## Data sources
 

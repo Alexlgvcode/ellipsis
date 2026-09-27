@@ -36,12 +36,29 @@ export interface SimResult {
   delay_new: number;
   queue_default: number;
   queue_new: number;
+  queue_series_default?: number[];
+  queue_series_new?: number[];
 }
 
 export interface Recommendation {
   event_id: string;
   intersections: SignalChange[];
   sim: SimResult | null;
+}
+
+export type FeedbackAction = "accept" | "reject" | "false_positive";
+
+export interface Feedback {
+  event_id: string;
+  action: FeedbackAction;
+  note?: string | null;
+}
+
+/** Incident note written by Claude (api/summarize.py). API-only, not in common/schemas.py. */
+export interface Summary {
+  event_id: string;
+  text: string;
+  model?: string | null;
 }
 
 export interface Health {

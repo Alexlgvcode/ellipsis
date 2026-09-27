@@ -39,6 +39,10 @@ export function insetScene(sim: Simulation, greenS: number, plan: "base" | "sim"
 
 /** Plain-language flow for the close-up stats. */
 export function flowWord(sim: Simulation, plan: "base" | "sim"): string {
-  if (plan === "sim") return sim.queueAfter < sim.queueBefore ? "Improved" : "Unchanged";
+  if (plan === "sim") {
+    if (sim.recommendedDelay < sim.baselineDelay - 0.05) return "Improved";
+    if (sim.recommendedDelay > sim.baselineDelay + 0.05) return "Slower";
+    return sim.queueAfter < sim.queueBefore ? "Improved" : "Unchanged";
+  }
   return ({ High: "Congested", Moderate: "Slowed", Low: "Moderate" } as const)[queuePressure(sim.queueBefore)];
 }

@@ -5,7 +5,8 @@
 
 Polls GET /events. A double park, a stop in a lane, or a blocked box on a mapped
 camera with no simulation yet is scored with the retiming rules and SUMO, then
-posted to /recommendations. Replay updates duration on every frame; scoring again
+posted to /recommendations, followed by a Claude incident note when ANTHROPIC_API_KEY
+is set (api/summarize.py). Replay updates duration on every frame; scoring again
 would rerun SUMO for the whole clip, so a recommendation that already has `sim`
 is left alone.
 """
@@ -18,6 +19,7 @@ from collections.abc import Callable
 
 import httpx
 
+from api.summarize import post_summary
 from common.schemas import Event, EventType, Recommendation
 from signals.mapping import load_mapping
 from signals.retime import recommend
@@ -26,6 +28,16 @@ API = "http://127.0.0.1:8000"
 POLL_S = 2.0
 
 Score = Callable[[Event, dict], Recommendation]
+Note = Callable[[httpx.Client, Event, Recommendation, str | None], object]
+
+
+def default_note(client: httpx.Client, event: Event, rec: Recommendation,
+                 camera_name: str | None) -> object:
+    try:
+        return post_summary(client, event, rec, camera_name)
+    except httpx.HTTPError as exc:  # a note is optional; the recommendation is posted
+        print(f"note for {event.id} not stored: {exc}")
+        return None
 
 
 def default_score(event: Event, mapping: dict) -> Recommendation:
@@ -41,7 +53,7 @@ def _needs_score(client: httpx.Client, event_id: str) -> bool:
 
 
 def pass_once(client: httpx.Client, mapping: dict | None = None,
-              score: Score = default_score) -> int:
+              score: Score = default_score, note: Note = default_note) -> int:
     """Score events that do not yet have simulation numbers. Returns how many."""
     mapping = mapping if mapping is not None else load_mapping()
     known = mapping["cameras"]
@@ -54,6 +66,7 @@ def pass_once(client: httpx.Client, mapping: dict | None = None,
             continue
         rec = score(event, mapping)
         client.post("/recommendations", json=rec.model_dump(mode="json")).raise_for_status()
+        note(client, event, rec, known[event.camera_id].get("name"))
         scored += 1
         change = rec.intersections[0]
         sim = rec.sim

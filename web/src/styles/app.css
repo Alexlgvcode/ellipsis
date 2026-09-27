@@ -97,6 +97,8 @@ button { font: inherit; color: inherit; }
 .row .time { font-family: var(--mono); font-size: 13px; margin-top: 4px; }
 .row .status { align-self: end; font-size: 11.5px; color: var(--sev-text); font-weight: 500; }
 .row.resolved .loc, .row.resolved .time { color: var(--text-muted); }
+.row .status.decided { color: var(--text-2); }
+.row .status.decided.accept { color: var(--healthy-text); }
 .sev-needs_review { --sev: var(--amber); --sev-text: var(--amber-text); }
 .sev-confirmed { --sev: var(--incident); --sev-text: var(--incident-text); }
 .sev-critical { --sev: var(--critical); --sev-text: var(--critical-text); }
@@ -145,6 +147,13 @@ button { font: inherit; color: inherit; }
 .kv dt { color: var(--text-2); }
 .kv dd { margin: 0; font-family: var(--mono); text-align: right; }
 .good { color: var(--healthy-text); }
+.verdict { margin: 8px 0 0; font-weight: 600; font-size: 15px; line-height: 1.35; }
+.qchart { margin: 10px 0 0; }
+.qchart svg { width: 100%; height: auto; display: block; background: var(--subtle); border-radius: 6px; }
+.qchart figcaption { display: flex; justify-content: space-between; gap: 8px; margin-top: 4px; font-size: 11.5px; color: var(--text-2); }
+.qchart .swatch { display: inline-block; width: 14px; height: 0; margin-right: 4px; vertical-align: middle; border-top: 2px solid var(--text-2); }
+.qchart .swatch.dash { border-top-style: dashed; }
+.qchart .swatch.rec { border-top-color: var(--text); border-top-style: solid; }
 .cta {
   display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: var(--s3);
   padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: var(--r-control); background: var(--raised);
@@ -152,6 +161,20 @@ button { font: inherit; color: inherit; }
 }
 .cta:hover { background: var(--subtle); }
 .cta[disabled] { cursor: default; color: var(--text-muted); }
+.note { margin: 0; line-height: 1.45; }
+.note-src { margin: 6px 0 0; font-size: 11.5px; color: var(--text-2); }
+.decision { margin: 0; font-weight: 600; color: var(--text-2); }
+.decision.accept { color: var(--healthy-text); }
+.decision.reject, .decision.false_positive { color: var(--text); }
+.decide { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: var(--s3); }
+.decide button {
+  padding: 8px 6px; border: 1px solid var(--border-strong); border-radius: var(--r-control); background: var(--raised);
+  font-size: 12.5px; font-weight: 500; cursor: pointer;
+}
+.decide button:hover { background: var(--subtle); }
+.decide button[aria-pressed="true"] { background: var(--selected-fill); font-weight: 600; }
+.decide button[disabled] { cursor: default; color: var(--text-muted); }
+.decide-err { margin: 8px 0 0; color: var(--critical-text); font-size: 12.5px; }
 details.sec summary { display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 600; list-style: none; }
 details.sec summary::-webkit-details-marker { display: none; }
 details.sec[open] summary svg { transform: rotate(90deg); }

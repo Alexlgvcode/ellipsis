@@ -75,6 +75,10 @@ class SimResult(BaseModel):
     delay_new: float       # avg delay per vehicle, s (plan B)
     queue_default: float   # max queue on blocked approach, vehicles
     queue_new: float
+    # Queue on the blocked lane every 15 s. Empty for older results; the
+    # dashboard then charts a rise to the two peaks above.
+    queue_series_default: list[float] = Field(default_factory=list)
+    queue_series_new: list[float] = Field(default_factory=list)
 
 
 class Recommendation(BaseModel):

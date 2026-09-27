@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchSnapshot } from "./api/client";
+import { fetchSnapshot, postFeedback } from "./api/client";
+import type { FeedbackAction } from "./api/types";
 import { BrandLoader } from "./components/BrandMark";
 import { IncidentInspector } from "./components/IncidentInspector";
 import { IncidentRail } from "./components/IncidentRail";
@@ -31,14 +32,19 @@ export default function App() {
   const [layers, setLayers] = useState<Layers>({ incidents: true, traffic: true, cameras: false, signals: false });
   const [, setRetry] = useState(0);
   const [anchor, setAnchor] = useState<{ x: number; y: number } | null>(null);
+  // decisions saved from this browser, shown before the next poll picks them up
+  const [decided, setDecided] = useState<Record<string, FeedbackAction>>({});
+  const [saving, setSaving] = useState(false);
+  const [decideError, setDecideError] = useState<{ id: string; msg: string } | null>(null);
   const theme = THEME;
   useEffect(() => { applyTheme(theme); }, [theme]);
 
   const snap = poll.data;
   const mock = Boolean(snap?.health.mock_mode);
   const incidents = useMemo(
-    () => (snap ? toIncidents(snap.events, snap.cameras, snap.recommendations, snap.fetchedAt, mock) : []),
-    [snap, mock],
+    () => (snap ? toIncidents(snap.events, snap.cameras, snap.recommendations, snap.fetchedAt, mock,
+      { ...snap.feedback, ...decided }, snap.notes) : []),
+    [snap, mock, decided],
   );
   const seenRef = useRef<FirstSeen>({});
   for (const i of incidents) seenRef.current[i.id] ??= { durationS: i.durationS, atMs: snap!.fetchedAt };
@@ -46,6 +52,18 @@ export default function App() {
   const selected = incidents.find((i) => i.id === selectedId) ?? null;
   const simIncident = incidents.find((i) => i.id === simId) ?? null;
   const onOverlay = useCallback((o: SimOverlay | null) => setOverlay(o), []);
+  const onDecide = useCallback(async (id: string, action: FeedbackAction) => {
+    setSaving(true);
+    setDecideError(null);
+    try {
+      await postFeedback(id, action);
+      setDecided((d) => ({ ...d, [id]: action }));
+    } catch {
+      setDecideError({ id, msg: "Couldn't save the decision. Check the API connection and try again." });
+    } finally {
+      setSaving(false);
+    }
+  }, []);
 
   if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
 
@@ -77,7 +95,9 @@ export default function App() {
 
       {selected && !simIncident && (
         <IncidentInspector incident={selected} seen={seen} now={now}
-          onClose={() => setSelectedId(null)} onOpenSimulation={() => setSimId(selected.id)} />
+          onClose={() => setSelectedId(null)} onOpenSimulation={() => setSimId(selected.id)}
+          onDecide={(a) => onDecide(selected.id, a)} saving={saving}
+          decideError={decideError?.id === selected.id ? decideError.msg : null} />
       )}
 
       {simIncident && (

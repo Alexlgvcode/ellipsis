@@ -1,6 +1,6 @@
 import { CAMERAS, EVENTS, NOW, RECS, ev } from "../test/fixtures";
 import {
-  cameraCode, changeText, counts, elapsed, filterIncidents, isActive, simulationOf, sortIncidents,
+  cameraCode, changeText, counts, decisionLabel, elapsed, filterIncidents, isActive, simulationOf, sortIncidents,
   statusOf, toIncidents,
 } from "./incidents";
 import { clock } from "./format";
@@ -39,8 +39,11 @@ describe("mock data", () => {
     expect(dp.response.sim).toMatchObject({ baselineDelay: 48.3, recommendedDelay: 39.1, queueBefore: 21, queueAfter: 13, improvementPct: 19 });
     expect(dp.response.sim!.savedPerVehicle).toBeCloseTo(9.2);
     expect(dp.response.changes[0].text).toBe("Green −6s");
-    expect(sil.response.state).toBe("running");
+    expect(sil.response.state).toBe("done");
+    expect(sil.response.sim).toMatchObject({ baselineDelay: 50.4, recommendedDelay: 52.0, queueBefore: 4, queueAfter: 3 });
+    expect(sil.response.sim!.savedPerVehicle).toBeCloseTo(-1.6);
     expect(sil.response.changes[0].text).toBe("Green +10s");
+    expect(simulationOf({ event_id: "x", intersections: [], sim: null }).state).toBe("running");
   });
 
   it("drops events whose camera is unknown", () => {
@@ -79,6 +82,31 @@ describe("rail", () => {
     const gone = list.find((i) => i.id === "gone")!;
     expect(elapsed(gone, seen, NOW + 5000)).toBe(gone.durationS);
     expect(elapsed(open, undefined, NOW + 5000)).toBe(open.durationS);
+  });
+});
+
+it("carries the Claude incident note when there is one", () => {
+  const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, {}, { evt_mock_001: "A van is double parked." });
+  expect(list.map((i) => i.note)).toEqual(["A van is double parked.", null, null]);
+});
+
+describe("operator decisions", () => {
+  const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, { evt_mock_001: "accept", evt_mock_003: "false_positive" });
+
+  it("carries each event's decision, or null", () => {
+    expect(list.map((i) => i.decision)).toEqual(["accept", null, "false_positive"]);
+  });
+
+  it("labels an accepted recommendation as applied in the sim only", () => {
+    expect(decisionLabel("accept", true)).toBe("Applied (sim)");
+    expect(decisionLabel("accept", false)).toBe("Accepted");
+    expect(decisionLabel("reject", true)).toBe("Rejected");
+    expect(decisionLabel("false_positive", true)).toBe("False positive");
+  });
+
+  it("stops counting a false positive as open, but keeps it in the list", () => {
+    expect(counts(list)).toMatchObject({ open: 2, all: 3 });
+    expect(counts(toIncidents(EVENTS, CAMERAS, RECS, NOW, true)).open).toBe(3);
   });
 });
 

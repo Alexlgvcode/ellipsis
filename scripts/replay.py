@@ -34,6 +34,7 @@ from PIL import Image  # noqa: E402
 
 from common.config import get_settings  # noqa: E402
 from common.schemas import Event  # noqa: E402
+from events.engine import EngineUpdate  # noqa: E402
 from events.pipeline import CameraPipeline  # noqa: E402
 from vision.detect import Detection  # noqa: E402
 from vision.track import frame_timestamp  # noqa: E402
@@ -100,14 +101,49 @@ class EventSink:
             return False
 
 
+class Publisher:
+    """Saves a snapshot when an event opens, then posts every change to the API.
+    Shared by replay and live mode (scripts/live.py)."""
+
+    def __init__(self, sink: EventSink, snapshots_dir: Path, log: Callable[[str], None] = print,
+                 time_shift: timedelta = timedelta(0)):
+        self.sink = sink
+        self.snapshots_dir = snapshots_dir
+        self.log = log
+        self.time_shift = time_shift
+        self.final: dict[str, Event] = {}  # each event's latest state, as posted
+        self._snapshots: dict[str, str] = {}
+
+    def publish(self, camera_id: str, frame: Path | None, ts: datetime,
+                update: EngineUpdate) -> None:
+        """`frame` is the frame the update came from (None for a frozen-feed tick)."""
+        for event in update.opened:
+            if frame is None:
+                continue
+            dest = self.snapshots_dir / camera_id / f"{event.id}.jpg"
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(frame, dest)
+            self._snapshots[event.id] = _repo_relative(dest)
+        for kind, events in (("OPEN ", update.opened), ("     ", update.updated),
+                             ("CLOSE", update.closed)):
+            for event in events:
+                event = event.model_copy(update={
+                    "snapshot_path": self._snapshots.get(event.id, event.snapshot_path),
+                    "start_ts": event.start_ts + self.time_shift})
+                self.sink.post(event)
+                self.final[event.id] = event
+                if kind != "     ":
+                    self.log(f"{ts:%H:%M:%S}  {kind}  {event.type.value:<16} "
+                             f"{event.duration_s:>5.0f}s  {event.id}")
+
+
 def replay(frames: Sequence[Path], pipe: CameraPipeline, detect: DetectFn, sink: EventSink,
            snapshots_dir: Path, speed: float = 10.0, batch: int = 16,
            log: Callable[[str], None] = print,
            time_shift: timedelta = timedelta(0)) -> dict[str, Event]:
     """Run frames through the pipeline in time order; returns each event's final state
     (as posted: with its snapshot, and start_ts moved by `time_shift`)."""
-    final: dict[str, Event] = {}
-    snapshots: dict[str, str] = {}
+    publisher = Publisher(sink, snapshots_dir, log, time_shift)
     prev_ts: datetime | None = None
     last_wall = time.monotonic()
     for i in range(0, len(frames), batch):
@@ -119,25 +155,8 @@ def replay(frames: Sequence[Path], pipe: CameraPipeline, detect: DetectFn, sink:
                 if wait > 0:
                     time.sleep(wait)
             prev_ts, last_wall = ts, time.monotonic()
-
-            update = pipe.step(ts, Image.open(path), dets)
-            for event in update.opened:
-                dest = snapshots_dir / pipe.camera_id / f"{event.id}.jpg"
-                dest.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(path, dest)
-                snapshots[event.id] = _repo_relative(dest)
-            for kind, events in (("OPEN ", update.opened), ("     ", update.updated),
-                                 ("CLOSE", update.closed)):
-                for event in events:
-                    event = event.model_copy(update={
-                        "snapshot_path": snapshots.get(event.id, event.snapshot_path),
-                        "start_ts": event.start_ts + time_shift})
-                    sink.post(event)
-                    final[event.id] = event
-                    if kind != "     ":
-                        log(f"{ts:%H:%M:%S}  {kind}  {event.type.value:<16} "
-                            f"{event.duration_s:>5.0f}s  {event.id}")
-    return final
+            publisher.publish(pipe.camera_id, path, ts, pipe.step(ts, Image.open(path), dets))
+    return publisher.final
 
 
 def _detector(weights: str | None) -> DetectFn:

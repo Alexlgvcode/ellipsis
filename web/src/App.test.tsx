@@ -8,12 +8,24 @@ vi.mock("./components/MapShell", () => ({ MapShell: () => <div data-testid="map"
 import App from "./App";
 
 let apiDown = false;
+let feedbackFails = false;
+let saved: { event_id: string; action: string }[] = [];
+let notes: { event_id: string; text: string }[] = [];
 function mockApi() {
-  vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
     if (apiDown) throw new TypeError("Failed to fetch");
     const path = url.replace(/^\/api/, "");
+    const fb = /^\/events\/([^/]+)\/feedback$/.exec(path);
+    if (fb && init?.method === "POST") {
+      if (feedbackFails) return new Response("", { status: 500 });
+      const row = { event_id: decodeURIComponent(fb[1]), ...JSON.parse(String(init.body)) };
+      saved = [...saved.filter((f) => f.event_id !== row.event_id), row];
+      return new Response(JSON.stringify(row), { status: 201 });
+    }
     const body =
       path === "/health" ? { status: "ok", mock_mode: true }
+      : path === "/feedback" ? saved
+      : path === "/summaries" ? notes
       : path === "/cameras" ? CAMERAS
       : path.startsWith("/events") ? EVENTS
       : path.startsWith("/recommendations/") ? RECS[decodeURIComponent(path.split("/")[2])] : undefined;
@@ -23,7 +35,7 @@ function mockApi() {
 
 beforeEach(() => {
   Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
-  apiDown = false; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
+  apiDown = false; feedbackFails = false; saved = []; notes = []; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 const loaded = async () => { await screen.findByText("Active incidents"); };
@@ -46,15 +58,18 @@ it("selecting an incident opens the inspector with impact and the recommended re
   const insp = screen.getByRole("complementary", { name: "Incident at 8th Ave @ 33rd St" });
   expect(within(insp).getByText("Double parked vehicle")).toBeInTheDocument();
   expect(within(insp).getByText("21 vehicles")).toBeInTheDocument();
-  expect(within(insp).getByText("−19%")).toBeInTheDocument();
+  expect(within(insp).getByText("Recommended is faster by 9.2s per vehicle")).toBeInTheDocument();
+  expect(within(insp).getByRole("figure", { name: /Queue over time/ })).toBeInTheDocument();
   expect(within(insp).getByText("CAM-8AV-033")).toBeInTheDocument();
 });
 
-it("a pending scenario says so, and simulation mode lands on seconds saved", async () => {
+it("each demo incident says which side is faster, and by how much, on the card", async () => {
   render(<App />);
   await loaded();
   fireEvent.click(screen.getByRole("button", { name: /Stopped in lane/ }));
-  expect(screen.getByText("Scenario running…")).toBeInTheDocument();
+  expect(screen.getByText("Default is faster by 1.6s per vehicle")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /Blocking the box/ }));
+  expect(screen.getByText("Recommended is faster by 4.6s per vehicle")).toBeInTheDocument();
 
   fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
   fireEvent.click(screen.getByRole("button", { name: /Open simulation/ }));
@@ -67,13 +82,59 @@ it("a pending scenario says so, and simulation mode lands on seconds saved", asy
   expect(within(simView).getByText("39.1s")).toBeInTheDocument();
   expect(within(simView).getByText("Improved")).toBeInTheDocument();
   const summary = screen.getByRole("complementary", { name: "Base versus sim summary" });
-  expect(within(summary).queryByText(/saved per vehicle/)).toBeNull(); // settles last
+  expect(within(summary).getByText("Recommended is faster by 9.2s per vehicle")).toBeInTheDocument();
   await act(async () => { vi.advanceTimersByTime(10_500); });
-  expect(within(summary).getByText("9.2s")).toBeInTheDocument();
-  expect(within(summary).getByText(/saved per vehicle/)).toBeInTheDocument();
   expect(within(summary).getByText("19%")).toBeInTheDocument();
   expect(within(summary).getByText("Improved northbound flow on 8 Ave")).toBeInTheDocument();
   expect(within(summary).getByRole("button", { name: "Base" })).toBeEnabled();
+});
+
+it("records the operator's decision; an accepted alert shows as applied (sim)", async () => {
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  const insp = screen.getByRole("complementary", { name: "Incident at 8th Ave @ 33rd St" });
+  const group = within(insp).getByRole("group", { name: "Decide on this alert" });
+  expect(within(insp).getByText("No decision yet")).toBeInTheDocument();
+
+  await act(async () => { fireEvent.click(within(group).getByRole("button", { name: "Accept" })); });
+  expect(saved).toEqual([{ event_id: "evt_mock_001", action: "accept" }]);
+  expect(within(insp).getByRole("status")).toHaveTextContent("Applied (sim)");
+  expect(within(group).getByRole("button", { name: "Accept" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: /8th Ave @ 33rd St, Double parked, Applied \(sim\)/ })).toBeInTheDocument();
+
+  await act(async () => { fireEvent.click(within(group).getByRole("button", { name: "False positive" })); });
+  expect(saved).toEqual([{ event_id: "evt_mock_001", action: "false_positive" }]);
+  expect(within(insp).getByRole("status")).toHaveTextContent("False positive");
+  expect(screen.getByText("2", { selector: ".rail-title .count" })).toBeInTheDocument();
+});
+
+it("shows the Claude incident note on the card only when one exists", async () => {
+  notes = [{ event_id: "evt_mock_001", text: "A van is double parked on 8th Ave." }];
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  const note = screen.getByRole("region", { name: "Incident note" });
+  expect(within(note).getByText("A van is double parked on 8th Ave.")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /Blocking the box/ }));
+  expect(screen.queryByRole("region", { name: "Incident note" })).toBeNull();
+});
+
+it("shows decisions already saved in the API, e.g. after a reload", async () => {
+  saved = [{ event_id: "evt_mock_002", action: "reject" }];
+  render(<App />);
+  await loaded();
+  expect(screen.getByRole("button", { name: /7 Ave @ 34 St, Stopped in lane, Rejected/ })).toBeInTheDocument();
+});
+
+it("says so when a decision can't be saved, and keeps the old one", async () => {
+  feedbackFails = true;
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Reject" })); });
+  expect(screen.getByRole("alert")).toHaveTextContent(/Couldn't save the decision/);
+  expect(screen.getByText("No decision yet")).toBeInTheDocument();
 });
 
 it("keeps the last known state and shows a thin banner when the API drops", async () => {
