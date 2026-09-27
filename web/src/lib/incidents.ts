@@ -175,13 +175,15 @@ export function toIncidents(
   });
 }
 
-export type RailFilter = "critical" | "review" | "all";
+export type RailFilter = "critical" | "review" | "all" | "resolved";
 export type RailSort = "severity" | "newest";
 
+/** Resolved incidents leave the list; the Resolved filter still shows them. */
 export function filterIncidents(list: Incident[], filter: RailFilter): Incident[] {
   if (filter === "critical") return list.filter((i) => i.status === "critical");
   if (filter === "review") return list.filter((i) => i.status === "needs_review");
-  return list;
+  if (filter === "resolved") return list.filter((i) => i.status === "resolved");
+  return list.filter((i) => i.status !== "resolved");
 }
 
 export function sortIncidents(list: Incident[], sort: RailSort): Incident[] {
@@ -197,7 +199,8 @@ export function counts(list: Incident[]) {
     open: open.length,
     critical: open.filter((i) => i.status === "critical").length,
     review: open.filter((i) => i.status === "needs_review").length,
-    all: list.length,
+    all: list.filter((i) => i.status !== "resolved").length,
+    resolved: list.filter((i) => i.status === "resolved").length,
   };
 }
 

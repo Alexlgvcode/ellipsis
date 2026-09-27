@@ -125,8 +125,10 @@ it("opens a card on the alert frame, explains low confidence, and keeps the deci
   await loaded();
   fireEvent.click(screen.getByRole("button", { name: /Stopped in lane/ }));   // needs review, has a snapshot
   const insp = screen.getByRole("complementary", { name: /Incident at 7 Ave @ 34 St/ });
-  expect(within(insp).getByRole("heading", { name: "At alert" })).toBeInTheDocument();
-  expect(within(insp).getByRole("button", { name: "At alert" })).toHaveAttribute("aria-pressed", "true");
+  // sample data is a recording: its frame only, no live toggle that would show a different moment
+  expect(within(insp).getByRole("heading", { name: "Recorded frame" })).toBeInTheDocument();
+  expect(within(insp).queryByRole("button", { name: "Live" })).toBeNull();
+  expect(within(insp).getByText(/From the recording, not the live feed/)).toBeInTheDocument();
   expect(within(insp).getByText(/Low confidence \(\d+%\): check the frame before acting/)).toBeInTheDocument();
   const bar = within(insp).getByRole("region", { name: "Operator decision" });
   expect(bar).toHaveClass("decide-bar");
@@ -141,6 +143,30 @@ it("lets keyboard users skip the map to the incident list", async () => {
   const skip = screen.getByRole("link", { name: "Skip to incidents" });
   expect(skip).toHaveAttribute("href", "#incidents");
   expect(document.getElementById("incidents")).toHaveAccessibleName("Active incidents");
+});
+
+it("in live mode the card keeps the live view next to the alert frame, and resolved alerts leave the list", async () => {
+  const now = Date.now();
+  const live = { ...EVENTS[0], id: "evt_live", start_ts: new Date(now - 90_000).toISOString(), duration_s: 85,
+    snapshot_path: "data/snapshots/x.jpg" };
+  const gone = { ...EVENTS[1], id: "evt_gone", start_ts: new Date(now - 600_000).toISOString(), duration_s: 100 };
+  vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+    const path = url.replace(/^\/api/, "");
+    const body = path === "/health" ? { status: "ok", mock_mode: false, source: "live" }
+      : path === "/cameras" ? CAMERAS : path.startsWith("/events") ? [live, gone] : [];
+    return new Response(JSON.stringify(body), { status: path.startsWith("/recommendations/") ? 404 : 200 });
+  }));
+  render(<App />);
+  await loaded();
+  const rows = screen.getAllByRole("button", { name: /elapsed/ });
+  expect(rows).toHaveLength(1);                                   // the resolved one is gone
+  fireEvent.click(screen.getByRole("button", { name: "Resolved1" }));
+  expect(screen.getAllByRole("button", { name: /elapsed/ })).toHaveLength(1);
+  fireEvent.click(screen.getByRole("button", { name: "All1" }));
+  fireEvent.click(screen.getAllByRole("button", { name: /elapsed/ })[0]);
+  const insp = screen.getByRole("complementary", { name: /Incident at/ });
+  expect(within(insp).getByRole("heading", { name: "At alert" })).toBeInTheDocument();
+  expect(within(insp).getByRole("button", { name: "Live" })).toBeInTheDocument();
 });
 
 it("says REPLAY, not LIVE, when the API serves a replay", async () => {

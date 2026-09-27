@@ -8,8 +8,8 @@ import { clock } from "./format";
 describe("status", () => {
   it("resolves events not updated within the active window (not in mock mode)", () => {
     const endedAgo = (s: number) => ev({ start_ts: new Date(NOW - (s + 60) * 1000).toISOString(), duration_s: 60 });
-    expect(isActive(endedAgo(300), NOW, false)).toBe(true);
-    expect(isActive(endedAgo(301), NOW, false)).toBe(false);
+    expect(isActive(endedAgo(60), NOW, false)).toBe(true);    // a minute without updates:
+    expect(isActive(endedAgo(61), NOW, false)).toBe(false);   // the engine closed it
     expect(isActive(endedAgo(9999), NOW, true)).toBe(true);
   });
 
@@ -54,7 +54,7 @@ describe("mock data", () => {
 describe("rail", () => {
   const list = toIncidents(
     [
-      ev({ id: "old", confidence: 0.9, start_ts: new Date(NOW - 400_000).toISOString(), duration_s: 250 }),
+      ev({ id: "old", confidence: 0.9, start_ts: new Date(NOW - 310_000).toISOString(), duration_s: 290 }),
       ev({ id: "review", confidence: 0.6 }),
       ev({ id: "crit", duration_s: 600 }),
       ev({ id: "gone", start_ts: new Date(NOW - 7_200_000).toISOString(), duration_s: 60 }),
@@ -67,10 +67,12 @@ describe("rail", () => {
     expect(sortIncidents(list, "newest").map((i) => i.id)).toEqual(["review", "crit", "old", "gone"]);
   });
 
-  it("filters and counts", () => {
+  it("filters and counts; resolved incidents leave the list unless asked for", () => {
     expect(filterIncidents(list, "critical").map((i) => i.id)).toEqual(["crit"]);
     expect(filterIncidents(list, "review").map((i) => i.id)).toEqual(["review"]);
-    expect(counts(list)).toEqual({ open: 3, critical: 1, review: 1, all: 4 });
+    expect(filterIncidents(list, "all").map((i) => i.id).sort()).toEqual(["crit", "old", "review"]);
+    expect(filterIncidents(list, "resolved").map((i) => i.id)).toEqual(["gone"]);
+    expect(counts(list)).toEqual({ open: 3, critical: 1, review: 1, all: 3, resolved: 1 });
   });
 
   it("counts elapsed time up from first sight, never backwards, for open incidents only", () => {
