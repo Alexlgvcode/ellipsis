@@ -50,6 +50,18 @@ flow:                    # a stopped vehicle is a blockage only if traffic kept 
                          # stopped vehicle's height of its bottom (1.5 loses the cab pickup
                          # gt_004 at 3+/min: few cars pass close to a small box)
 
+congestion:              # per-camera free / slow / congested state (events/congestion.py)
+  min_conf: 0.35         # detections counted as vehicles
+  stuck_iou: 0.5         # a vehicle overlapping a box of the previous frame this much hasn't moved
+  bin_s: 30              # the stuck share is measured per bin...
+  window_s: 180          # ...and a jam is when no bin of the last 2 signal cycles clears
+  max_gap_s: 30          # frames further apart than this aren't compared (recording gaps)
+  slow_floor: 0.3        # lowest stuck share of any bin in the window, for slow / congested
+  congested_floor: 0.5
+  min_occupancy: 0.15    # share of the approach covered by vehicles, below which it's free
+  full_occupancy: 0.4    # occupancy at which the score reaches the floor
+  cell_px: 4             # grid used to measure occupancy
+
 queue:                   # only the front vehicle of a queue in a travel lane is an event;
   max_gap_frac: 0.6      # stopped vehicles closer than this x the vehicle's height behind it
   min_x_overlap: 0.3     # and overlapping sideways by this fraction are queued behind it

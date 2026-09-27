@@ -5,12 +5,14 @@ same pipeline serves replay (scripts/replay.py), the engine CLI and live mode.
 
     pipe = CameraPipeline.for_camera(camera_id)
     update = pipe.step(ts, image, detections)   # -> EngineUpdate (opened/updated/closed)
+    pipe.congestion.readings                    # -> the camera's congestion state per approach
 
 Moved view: NYC DOT cameras pan and zoom. Each frame's edges are compared with the
 lane mask's reference frame (events/view.py); after `view.pause_after_frames` frames
 below `view.min_similarity` the camera is paused (`paused` is True): its open events
 close and none open, because the mask no longer lines up. It resumes, with a fresh
-tracker, after `view.resume_after_frames` frames back above the threshold.
+tracker, after `view.resume_after_frames` frames back above the threshold. Congestion
+starts over too, and has no readings while paused.
 """
 
 from __future__ import annotations
@@ -20,6 +22,7 @@ from datetime import datetime
 
 from PIL import Image
 
+from events.congestion import CongestionMonitor
 from events.engine import EngineUpdate, EventEngine
 from events.masks import MASKS_DIR
 from events.rules import load_rules
@@ -35,6 +38,7 @@ class CameraPipeline:
         self.rules = rules
         self.engine = engine
         self.tracker = CameraTracker(rules)
+        self.congestion = CongestionMonitor(engine.mask, rules)
         self.tracks: list[Track] = []  # the tracker's output for the last frame
         self._prev_thumb = None
         view = rules.get("view") or {}
@@ -65,6 +69,7 @@ class CameraPipeline:
             view = view_similarity(self._reference, image)
         if view is not None and self._view_changed(view):
             self.tracks = []
+            self.congestion.reset()
             return EngineUpdate(closed=self.engine.close_all()) if self.paused else EngineUpdate()
         if self.paused:
             return EngineUpdate()
@@ -76,7 +81,9 @@ class CameraPipeline:
             self.tracks = []
             return self.engine.update(ts, [], [], feed_still=True)
         self.tracks = self.tracker.update(ts, detections)
-        return self.engine.update(ts, self.tracks, self.tracker.ended)
+        update = self.engine.update(ts, self.tracks, self.tracker.ended)
+        self.congestion.update(ts, detections, [e.bbox for e in self.engine.open.values()])
+        return update
 
     def _view_changed(self, similarity: float) -> bool:
         """Update the paused state; True on the frame the camera pauses or resumes."""

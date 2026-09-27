@@ -6,11 +6,16 @@ has moved). Format:
 
     {"camera_id": "...", "name": "8th Ave @ 33rd St", "frame_size": [352, 240],
      "traffic": "away",   # optional: traffic drives away from (default) or toward the camera
-     "zones": [{"name": "parking_left", "type": "curb", "polygon": [[x, y], ...]}]}
+     "zones": [{"name": "parking_left", "type": "curb", "polygon": [[x, y], ...]}],
+     "approaches": [{"name": "8_ave", "direction": "northbound", "polygon": [[x, y], ...]}]}
 
 A vehicle's zone is looked up at the bottom-center of its box (where it touches
 the road); with these camera angles the box center often sits over the next lane.
 Where zones overlap, the more specific one wins (see ZONE_PRIORITY).
+
+Approaches (optional) are for congestion (events/congestion.py): every travel lane
+of one approach out to the far visible queue, drawn separately from the blockage
+zones (which only cover the near lanes). Without them, the road zones are used.
 
     python -m events.masks overlay <camera_id> [--frame f.jpg ...] [--out overlay.png]
     python -m events.masks list
@@ -40,8 +45,11 @@ ZONE_COLORS = {
     LaneZone.TRAVEL: (60, 220, 90),          # green: travel lanes
     LaneZone.BOX: (255, 60, 200),            # magenta: intersection box
     LaneZone.BUS_STOP: (255, 230, 0),        # yellow
-    LaneZone.IGNORE: (120, 120, 120),        # grey
+    LaneZone.    IGNORE: (120, 120, 120),        # grey
 }
+APPROACH_COLOR = (0, 230, 230)               # cyan outline: congestion approaches
+
+DIRECTIONS = ("northbound", "southbound", "eastbound", "westbound")
 
 Point = tuple[float, float]
 
@@ -75,12 +83,23 @@ class Zone:
 
 
 @dataclass(frozen=True)
+class Approach:
+    name: str
+    polygon: tuple[Point, ...]
+    direction: str | None = None  # one of DIRECTIONS, for placing the queue on the map
+
+    def contains(self, x: float, y: float) -> bool:
+        return point_in_polygon(x, y, self.polygon)
+
+
+@dataclass(frozen=True)
 class CameraMask:
     camera_id: str
     name: str
     frame_size: tuple[int, int]
     zones: tuple[Zone, ...]
     traffic: str = "away"  # "away" (up the image) or "toward" the camera: which way is "ahead"
+    approaches: tuple[Approach, ...] = ()
 
     def zone_at(self, x: float, y: float) -> Zone | None:
         hits = [z for z in self.zones if z.contains(x, y)]
@@ -97,9 +116,12 @@ class CameraMask:
         zones = tuple(Zone(z["name"], LaneZone(z["type"]),
                            tuple((float(x), float(y)) for x, y in z["polygon"]))
                       for z in d["zones"])
+        approaches = tuple(Approach(a["name"], tuple((float(x), float(y)) for x, y in a["polygon"]),
+                                    a.get("direction"))
+                           for a in d.get("approaches") or [])
         w, h = d["frame_size"]
         return cls(d["camera_id"], d.get("name", ""), (int(w), int(h)), zones,
-                   d.get("traffic", "away"))
+                   d.get("traffic", "away"), approaches)
 
 
 def validate_mask(d: dict) -> list[str]:
@@ -129,19 +151,45 @@ def validate_mask(d: dict) -> list[str]:
             errors.append(f"{name}: a polygon needs at least 3 points")
         if any(not (0 <= x <= w and 0 <= y <= h) for x, y in poly):
             errors.append(f"{name}: points must be inside the {w}x{h} frame")
+    approaches = d.get("approaches") or []
+    names = [a.get("name", "") for a in approaches]
+    if len(names) != len(set(names)):
+        errors.append("approach names must be unique")
+    for a in approaches:
+        name = a.get("name") or "?"
+        if not a.get("name"):
+            errors.append("every approach needs a name")
+        if a.get("direction") not in (None, *DIRECTIONS):
+            errors.append(f"approach {name}: direction must be one of {', '.join(DIRECTIONS)}")
+        poly = a.get("polygon") or []
+        if len(poly) < 3:
+            errors.append(f"approach {name}: a polygon needs at least 3 points")
+        if any(not (0 <= x <= w and 0 <= y <= h) for x, y in poly):
+            errors.append(f"approach {name}: points must be inside the {w}x{h} frame")
     return errors
+
+
+def _polygon_json(poly) -> str:
+    return json.dumps([[round(x), round(y)] for x, y in poly])
 
 
 def dump_mask(d: dict) -> str:
     """Mask JSON with one line per polygon, so diffs of hand edits stay readable."""
     zones = ",\n".join(
         "    {" + f'"name": {json.dumps(z["name"])}, "type": {json.dumps(z["type"])},\n'
-        + '     "polygon": ' + json.dumps([[round(x), round(y)] for x, y in z["polygon"]])
-        + "}"
+        + '     "polygon": ' + _polygon_json(z["polygon"]) + "}"
         for z in d["zones"])
     head = {k: d[k] for k in ("camera_id", "name", "frame_size", "traffic") if k in d}
     lines = ",\n".join(f"  {json.dumps(k)}: {json.dumps(v)}" for k, v in head.items())
-    return "{\n" + lines + ',\n  "zones": [\n' + zones + "\n  ]\n}\n"
+    out = "{\n" + lines + ',\n  "zones": [\n' + zones + "\n  ]"
+    if d.get("approaches"):
+        approaches = ",\n".join(
+            "    {" + f'"name": {json.dumps(a["name"])}'
+            + (f', "direction": {json.dumps(a["direction"])}' if a.get("direction") else "")
+            + ',\n     "polygon": ' + _polygon_json(a["polygon"]) + "}"
+            for a in d["approaches"])
+        out += ',\n  "approaches": [\n' + approaches + "\n  ]"
+    return out + "\n}\n"
 
 
 def mask_path(camera_id: str, masks_dir: Path = MASKS_DIR) -> Path:
@@ -173,6 +221,10 @@ def draw_mask(image: Image.Image, mask: CameraMask, alpha: int = 90) -> Image.Im
         xs, ys = zip(*zone.polygon, strict=True)
         cx, cy = sum(xs) / len(xs), sum(ys) / len(ys)
         draw.text((cx - 12, cy - 5), zone.name, fill=(255, 255, 255, 255))
+    for a in mask.approaches:
+        draw.polygon(a.polygon, outline=(*APPROACH_COLOR, 255), width=2)
+        x, y = min(a.polygon, key=lambda p: p[1])
+        draw.text((x + 2, y + 2), a.name, fill=(*APPROACH_COLOR, 255))
     return out.convert("RGB")
 
 
