@@ -124,27 +124,27 @@ function paintOverlays(map: MLMap, c: MapColors) {
 }
 
 /** Small top-down car glyph, pointing east; rotated per feature on the map. */
-/** Camera glyph (body, lens, viewfinder), white on transparent: an SDF icon, coloured by the
- * layer like the camera dot under it. */
+/** Video-camera glyph (rounded body + lens wedge, like the FaceTime logo), white on
+ * transparent: an SDF icon, coloured by the layer like the camera dot under it. */
 function cameraImage(): ImageData | null {
   const c = document.createElement("canvas");
-  c.width = 30; c.height = 24;
+  c.width = 32; c.height = 22;
   const ctx = c.getContext("2d");
   if (!ctx) return null;
   ctx.fillStyle = "white";
   ctx.beginPath();
-  ctx.roundRect(3, 7, 24, 15, 3);        // body
-  ctx.roundRect(10, 3, 10, 6, 2);        // viewfinder hump
+  ctx.roundRect(2, 3, 20, 16, 4); // body
   ctx.fill();
-  ctx.globalCompositeOperation = "destination-out";
-  ctx.beginPath();
-  ctx.arc(15, 14.5, 4.6, 0, Math.PI * 2); // lens
+  ctx.beginPath();                // lens wedge, opening to the right
+  ctx.moveTo(23, 9);
+  ctx.lineTo(29, 4.5);
+  ctx.quadraticCurveTo(30.5, 4, 30.5, 5.5);
+  ctx.lineTo(30.5, 16.5);
+  ctx.quadraticCurveTo(30.5, 18, 29, 17.5);
+  ctx.lineTo(23, 13);
+  ctx.closePath();
   ctx.fill();
-  ctx.globalCompositeOperation = "source-over";
-  ctx.beginPath();
-  ctx.arc(15, 14.5, 2.4, 0, Math.PI * 2);
-  ctx.fill();
-  return ctx.getImageData(0, 0, 30, 24);
+  return ctx.getImageData(0, 0, 32, 22);
 }
 
 function carImage(color: string): ImageData | null {
