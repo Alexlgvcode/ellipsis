@@ -141,6 +141,46 @@ def test_thresholds_come_from_the_rules():
     assert run(standing(3 * CYCLE), rules=rules)[-1].level is SLOW
 
 
+def some_moving(frames, movers_of_5=3):
+    """`movers_of_5` of every 5 cars keep moving, the rest stay."""
+    return [[(x1, y1 + 16, x2, y2 + 16) if n % 5 < movers_of_5 and i % 2 else (x1, y1, x2, y2)
+             for n, (x1, y1, x2, y2) in enumerate(queue())] for i in range(frames)]
+
+
+def test_a_jam_stays_congested_while_it_only_partly_eases():
+    # hysteresis: ~40% stuck enters slow, not congested, but doesn't end a jam already on
+    frames = standing(3 * CYCLE) + some_moving(3 * CYCLE)
+    assert run(frames)[-1].level is CONGESTED
+    assert levels(run(frames)) == {FREE, CONGESTED}          # no flicker through slow
+    rules = copy.deepcopy(load_rules())
+    rules["congestion"]["exit_floor_drop"] = 0
+    assert run(frames, rules=rules)[-1].level is SLOW
+    assert run(some_moving(3 * CYCLE))[-1].level is SLOW       # from free it's only slow
+
+
+def test_min_vehicles_counts_a_queue_of_small_far_cars():
+    small = [(70 + 46 * lane, 10 + 14 * row, 90 + 46 * lane, 20 + 14 * row)
+             for lane in range(5) for row in range(3)]           # covers ~4% of the approach
+    assert levels(run([small] * (3 * CYCLE))) == {FREE}
+    rules = copy.deepcopy(load_rules())
+    rules["congestion"]["min_vehicles"] = 10
+    assert run([small] * (3 * CYCLE), rules=rules)[-1].level is CONGESTED
+
+
+def test_far_split_judges_the_far_part_of_the_approach_on_its_own():
+    top = [b for b in queue() if b[3] < 120]                      # a queue up the street
+    near = [(70 + 46 * lane, 170, 110 + 46 * lane, 200) for lane in range(5)]  # moving on
+    frames = [top + [(x1, y1 + 30 * (i % 2), x2, y2 + 30 * (i % 2)) for x1, y1, x2, y2 in near]
+              for i in range(3 * CYCLE)]
+    rules = copy.deepcopy(load_rules())
+    rules["congestion"]["far_split"] = 0.5
+    monitor = CongestionMonitor(MASK, rules)
+    for i, boxes in enumerate(frames):
+        readings = monitor.update(T0 + i * STEP, [Detection(tuple(map(float, b)), VehicleClass.CAR,
+                                                            0.8) for b in boxes])
+    assert {r.approach: r.level for r in readings} == {"avenue_far": CONGESTED, "avenue": FREE}
+
+
 def test_mask_without_approaches_uses_the_road_zones():
     mask = CameraMask.from_dict(json.loads((FIXTURES / "masks" / "engine_test.json").read_text()))
     monitor = CongestionMonitor(mask, load_rules())

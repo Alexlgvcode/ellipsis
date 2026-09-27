@@ -20,6 +20,11 @@ CAM = "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae"      # 7 Ave @ 36 St (has a lane ma
 OTHER = "0dc7c2b4-614d-46a3-9610-3ba09f3f1284"    # masked too
 UNMASKED = "no-mask-0000"
 TRUCK = (191.0, 79.0, 226.0, 129.0)               # double parked by the planters (see #16)
+# a car driving up the middle lane past the truck, a new spot every frame (rules.yaml `flow`:
+# without traffic moving past it, a stopped truck is part of a jam, not a blockage)
+PASSING = [(135.0, 200.0, 175.0, 230.0), (142.0, 170.0, 176.0, 195.0),
+           (150.0, 145.0, 178.0, 165.0), (156.0, 124.0, 180.0, 140.0),
+           (162.0, 102.0, 182.0, 115.0)]
 T0 = datetime(2026, 9, 26, 18, 22, tzinfo=timezone.utc)
 
 
@@ -64,7 +69,10 @@ class ListSink(EventSink):
 def truck_detector(calls):
     def detect(paths):
         calls.append(list(paths))
-        return [[Detection(TRUCK, VehicleClass.BUS, 0.8)] for _ in paths]
+        n = sum(len(c) for c in calls)
+        return [[Detection(TRUCK, VehicleClass.BUS, 0.8),
+                 Detection(PASSING[(n + i) % len(PASSING)], VehicleClass.CAR, 0.8)]
+                for i in range(len(paths))]
     return detect
 
 

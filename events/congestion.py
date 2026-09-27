@@ -3,7 +3,10 @@
 A stopped vehicle means a blockage only if the traffic around it moves; when nobody moves
 it's a jam, which operators want to see as such. One monitor per camera, fed the
 detections of every frame (not tracks: creeping cars 5 s apart break IoU tracking).
-For each approach (the mask's `approaches`, or all road zones when it has none):
+For each approach (the mask's `approaches`, or all road zones when it has none), split in
+a far and a near part when `far_split` > 0 (the far part is the top `far_split` of the
+approach's height, reported as "<name>_far"), so a queue up the street isn't averaged away by
+an empty stop line:
 
     vehicles    detections whose box bottom-center is in the approach, leaving out curb
                 zones (parked cars) and vehicles that have an open blockage event
@@ -15,8 +18,10 @@ For each approach (the mask's `approaches`, or all road zones when it has none):
 Frames go into `bin_s` bins over the last `window_s` (two signal cycles):
 
     floor       the lowest stuck share of any bin (a bin with no vehicles counts as 0)
-    congested   floor >= congested_floor and mean occupancy >= min_occupancy
-    slow        floor >= slow_floor and mean occupancy >= min_occupancy
+    busy        mean occupancy >= min_occupancy, or mean vehicles per frame >= min_vehicles
+                (far cars are tiny at 352x240: a packed far queue covers little area)
+    congested   floor >= congested_floor and busy
+    slow        floor >= slow_floor and busy
     score       floor x min(1, occupancy / full_occupancy): the heatmap intensity
 
 A red light stops everyone for less than a cycle, so within every window there's a bin
@@ -100,9 +105,13 @@ class CongestionMonitor:
         self.slow_floor = c["slow_floor"]
         self.congested_floor = c["congested_floor"]
         self.min_occupancy = c["min_occupancy"]
+        self.min_vehicles = c.get("min_vehicles", 0)
+        self.far_split = c.get("far_split", 0.0)
+        self.exit_floor_drop = c.get("exit_floor_drop", 0.0)
+        self.exit_occupancy = c.get("exit_occupancy", self.min_occupancy)
         self.full_occupancy = c["full_occupancy"]
         self.cell_px = c["cell_px"]
-        self.approaches = [self._state(a) for a in mask.approaches] or [self._state(None)]
+        self.approaches = [s for a in (mask.approaches or [None]) for s in self._states(a)]
         self._prev: tuple[datetime, list[BBox]] | None = None
         self.readings: list[CongestionReading] = []
 
@@ -135,21 +144,32 @@ class CongestionMonitor:
 
     # --- helpers -------------------------------------------------------------------------
 
-    def _state(self, approach: Approach | None) -> _ApproachState:
+    def _states(self, approach: Approach | None) -> list[_ApproachState]:
         if approach is None:
-            def contains(x, y):
+            def inside(x, y):
                 zone = self.mask.zone_at(x, y)
                 return zone is not None and zone.type in ROAD_ZONES
         else:
-            def contains(x, y):
+            def inside(x, y):
                 zone = self.mask.zone_at(x, y)
                 return approach.contains(x, y) and (zone is None or zone.type is not LaneZone.CURB)
+        name = approach.name if approach else ROAD
         w, h = self.mask.frame_size
         step = self.cell_px
         cells = [(x, y) for y in np.arange(step / 2, h, step) for x in np.arange(step / 2, w, step)
-                 if contains(x, y)]
-        return _ApproachState(approach.name if approach else ROAD,
-                              np.array(cells, dtype=float).reshape(-1, 2), contains)
+                 if inside(x, y)]
+        if not self.far_split or not cells:
+            return [self._state(name, cells, inside)]
+        ys = [y for _, y in cells]
+        split = min(ys) + self.far_split * (max(ys) - min(ys))
+        return [self._state(f"{name}_far", [c for c in cells if c[1] < split],
+                            lambda x, y: y < split and inside(x, y)),
+                self._state(name, [c for c in cells if c[1] >= split],
+                            lambda x, y: y >= split and inside(x, y))]
+
+    @staticmethod
+    def _state(name: str, cells: list, contains) -> _ApproachState:
+        return _ApproachState(name, np.array(cells, dtype=float).reshape(-1, 2), contains)
 
     def _occupancy(self, a: _ApproachState, boxes: Sequence[BBox]) -> float:
         if not len(a.cells):
@@ -171,15 +191,23 @@ class CongestionMonitor:
         vehicles = sum(f.vehicles for f in a.frames)
         stuck_share = sum(f.stuck for f in a.frames) / vehicles if vehicles else 0.0
         occupancy = sum(f.occupancy for f in a.frames) / len(a.frames) if a.frames else 0.0
+        per_frame = vehicles / len(a.frames) if a.frames else 0.0
+        # hysteresis: a level is kept until traffic clearly recovers (lower thresholds to
+        # leave it than to enter it), so one jam doesn't flicker congested / slow / free
+        held = a.level is not CongestionLevel.FREE
+        drop = self.exit_floor_drop if held else 0.0
+        busy = occupancy >= (self.exit_occupancy if held else self.min_occupancy) or \
+            bool(self.min_vehicles) and per_frame >= self.min_vehicles
         full = bool(a.frames) and \
             (ts - a.frames[0].ts).total_seconds() >= self.window_s - self.bin_s
         shares = [s / n if n else 0.0 for n, s, frames in bins if frames]
         floor = min(shares) if full and shares else 0.0
         level = CongestionLevel.FREE
-        if occupancy >= self.min_occupancy:
-            if floor >= self.congested_floor:
+        if busy:
+            congested = self.congested_floor - (drop if a.level is CongestionLevel.CONGESTED else 0)
+            if floor >= congested:
                 level = CongestionLevel.CONGESTED
-            elif floor >= self.slow_floor:
+            elif floor >= self.slow_floor - drop:
                 level = CongestionLevel.SLOW
         if level is not a.level or a.since is None:
             a.level, a.since = level, ts

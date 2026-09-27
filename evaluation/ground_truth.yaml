@@ -619,6 +619,87 @@ congestion_windows:
     start: 2026-09-26T20:12:16Z
     end: 2026-09-26T20:32:16Z
     note: "session 2"
+  # first pass (issue #47): frames every 20 s by eye; night tags are lower confidence, to confirm
+  - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "free: moderate traffic, police stop by the planters"
+  - camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "free: taxi-stand line sits by the approach edge (the monitor's 20 s 'slow' at 18:25:30)"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-26T18:22:09Z
+    end: 2026-09-26T18:29:06Z
+    note: "free: nearly empty"
+  - camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: busy, red-light queues clear every cycle"
+  - camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: busy, red-light queues at the stop line clear every cycle"
+  - camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: cross traffic and light 7 Ave queue"
+  - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: flowing"
+  - camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free except cg_002 (low confidence)"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: light"
+  - camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: red-light queues between the parked cars clear each cycle"
+  - camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    start: 2026-09-26T20:12:16Z
+    end: 2026-09-26T20:32:16Z
+    note: "free: nearly empty"
+  - camera: 0dc7c2b4-614d-46a3-9610-3ba09f3f1284   # 6 Ave @ 30 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "free (LOW confidence: night, rain; mostly parked cars both curbs, some moving traffic)"
+  - camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "slow 01:15-01:31: cg_004 (low-medium confidence, night)"
+  - camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "congested all window: cg_005 (medium confidence, night)"
+  - camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "slow all window: cg_006 (low-medium confidence, night)"
+  - camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "slow 01:17:30-01:22:00 (cg_003, low confidence), free after"
+  - camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "busy but moving; slow 01:28:40-01:31:20 (cg_007, low confidence)"
+  - camera: 6a85384f-d82e-4bff-b5f1-15c22cca70e6   # 8th Ave @ 33rd St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "free: red-light queues clear; a white truck stands in the right lane from ~01:18:35 (check for #16 blockages)"
+  - camera: 83655dbc-7902-4fdb-926c-15fee4396b83   # Broadway @ 38 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "free: light, parked cars both sides"
+  - camera: 8ee72946-49e0-4f49-991d-4f52b1206ed7   # Broadway @ 6 Ave / 33 St
+    start: 2026-09-27T01:15:21Z
+    end: 2026-09-27T01:35:20Z
+    note: "free: light"
 
 congestion:
   - id: cg_001
@@ -629,3 +710,44 @@ congestion:
     end_clipped: true
     level: congested
     note: "every lane stopped for the whole recording (the jam behind no_007/008/013/014; Alex)"
+  - id: cg_002
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-26T20:25:30Z
+    end: 2026-09-26T20:27:30Z
+    level: slow
+    note: "first pass, LOW confidence: cabs fill the near lanes while gt_006/gt_010 block the lane"
+  - id: cg_003
+    camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
+    start: 2026-09-27T01:17:30Z
+    end: 2026-09-27T01:22:00Z
+    level: slow
+    note: "first pass, LOW confidence (night, rain): every lane packed up to the camera, cars still moving"
+  - id: cg_004
+    camera: f06979b2-3497-4330-9882-a06c8a442b7c   # 6 Ave @ 34 St
+    start: 2026-09-27T01:15:21Z   # clipped
+    end: 2026-09-27T01:31:40Z
+    start_clipped: true
+    level: slow
+    note: "first pass, low-medium confidence (night): far block packed with brake lights; the stop line clears on green"
+  - id: cg_005
+    camera: 1e60ade7-c760-48cf-acd9-d9d6cbfa9420   # 7 Ave @ 32 St
+    start: 2026-09-27T01:15:21Z   # clipped
+    end: 2026-09-27T01:35:19Z   # clipped
+    start_clipped: true
+    end_clipped: true
+    level: slow
+    note: "first pass, medium confidence (night): far block packed with brake lights all window; the stop line clears on green (01:25:42), so slow, not congested"
+  - id: cg_006
+    camera: ee1b1d85-e8ce-485f-a539-12962933eb9f   # 7 Ave @ 34 St
+    start: 2026-09-27T01:15:21Z   # clipped
+    end: 2026-09-27T01:35:19Z   # clipped
+    start_clipped: true
+    end_clipped: true
+    level: slow
+    note: "first pass, low-medium confidence (night): 7 Ave approach full in every frame while 34 St cross traffic moves"
+  - id: cg_007
+    camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
+    start: 2026-09-27T01:28:40Z
+    end: 2026-09-27T01:31:20Z
+    level: slow
+    note: "first pass, LOW confidence (night): near lanes packed with brake lights"

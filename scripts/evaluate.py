@@ -279,8 +279,9 @@ def write_congestion_review(caches: list[dict], rules: dict, names: dict[str, st
         if not samples:
             continue
         start, end = samples[0].ts, samples[-1].ts
-        lines += [f"  - camera: {cam}   # {name}", f"    start: {start:%Y-%m-%dT%H:%M:%SZ}",
-                  f"    end: {end:%Y-%m-%dT%H:%M:%SZ}", '    note: ""']
+        # the window as cached (not its first/last frame), so the tagged window finds its cache
+        lines += [f"  - camera: {cam}   # {name}", f"    start: {cache['start'][:19]}Z",
+                  f"    end: {cache['end'][:19]}Z", '    note: ""']
         for n, r in enumerate(level_runs(samples, "slow"), 1):
             level = max((s.level for s in samples if r.start <= s.ts <= r.end), key=LEVELS.index)
             tags += [f"  - id: cg_{start:%m%d%H%M}_{cam[:4]}_{n:02d}   # proposed by the monitor",

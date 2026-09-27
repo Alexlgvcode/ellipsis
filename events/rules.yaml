@@ -51,7 +51,10 @@ flow:                    # a stopped vehicle is a blockage only if traffic kept 
                          # gt_004 at 3+/min: few cars pass close to a small box)
 
 congestion:              # per-camera free / slow / congested state (events/congestion.py)
-  min_conf: 0.35         # detections counted as vehicles
+  min_conf: 0.35         # detections counted as vehicles. On the 21 tagged windows (evaluation/,
+                         # issue #47) 0.25 / 0.15 catch 3-5 of 7 slow intervals instead of 1, but
+                         # red-light queues at busy junctions then read slow too (77-600 false
+                         # frames of 3465, most runs false): the night queue is barely detected
   stuck_iou: 0.5         # a vehicle overlapping a box of the previous frame this much hasn't moved
   bin_s: 30              # the stuck share is measured per bin...
   window_s: 180          # ...and a jam is when no bin of the last 2 signal cycles clears
@@ -61,6 +64,15 @@ congestion:              # per-camera free / slow / congested state (events/cong
   min_occupancy: 0.15    # share of the approach covered by vehicles, below which it's free
   full_occupancy: 0.4    # occupancy at which the score reaches the floor
   cell_px: 4             # grid used to measure occupancy
+  min_vehicles: 0        # also busy at this many vehicles per frame (far cars cover little area);
+                         # 0 = off. 2-4 lifted recall like a lower min_conf, with as many false runs
+  far_split: 0           # > 0: judge the top this share of each approach separately ("<name>_far");
+                         # 0 = off. 0.5 alone: +1 slow interval, 29 false runs of 31
+  exit_floor_drop: 0.2   # hysteresis: a level is left only when the floor drops this much below the
+                         # threshold that entered it. The 6 Ave @ 30 St jam: 9 congested runs
+                         # (flickering with slow) -> 1; free frames read busy 5 -> 7 of 3465
+  exit_occupancy: 0.15   # ...and when occupancy drops below this (lower = hold longer; 0.07-0.1
+                         # added false frames at night)
 
 queue:                   # only the front vehicle of a queue in a travel lane is an event;
   max_gap_frac: 0.6      # stopped vehicles closer than this x the vehicle's height behind it
