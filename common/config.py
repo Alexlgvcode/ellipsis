@@ -48,6 +48,11 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = Field(None, alias="ANTHROPIC_API_KEY")
     summary_model: str = Field("claude-opus-5", alias="LW_SUMMARY_MODEL")
 
+    # Spoken alerts (ElevenLabs, optional)
+    elevenlabs_api_key: str | None = Field(None, alias="ELEVENLABS_API_KEY")
+    voice_id: str = Field("JBFqnCBsd6RMkjVDRZzb", alias="LW_VOICE_ID")
+    voice_model: str = Field("eleven_multilingual_v2", alias="LW_VOICE_MODEL")
+
     socrata_app_token: str | None = Field(None, alias="SOCRATA_APP_TOKEN")
 
     @field_validator("data_dir")

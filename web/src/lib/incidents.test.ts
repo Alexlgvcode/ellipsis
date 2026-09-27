@@ -85,6 +85,11 @@ describe("rail", () => {
   });
 });
 
+it("keeps the seed-averaged queue precise for charts (the card rounds it)", () => {
+  const sim = { delay_default: 92.1, delay_new: 90.9, queue_default: 20 / 3, queue_new: 6 };
+  expect(simulationOf({ event_id: "x", intersections: [], sim }).sim!.queueBefore).toBeCloseTo(6.667, 3);
+});
+
 it("knows which incidents have an alert frame", () => {
   const [withFrame] = toIncidents([ev({ snapshot_path: "data/snapshots/x.jpg" })], CAMERAS, {}, NOW, false);
   const [without] = toIncidents([ev()], CAMERAS, {}, NOW, false);

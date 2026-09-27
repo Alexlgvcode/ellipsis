@@ -41,3 +41,14 @@ def _no_real_claude_calls(monkeypatch):
     import api.summarize
 
     monkeypatch.setattr(api.summarize, "_client", lambda api_key: None)
+
+
+@pytest.fixture(autouse=True)
+def _no_real_elevenlabs_calls(monkeypatch):
+    """Same for spoken alerts: tests see no ELEVENLABS_API_KEY unless they set one."""
+    from types import SimpleNamespace
+
+    import api.voice
+
+    monkeypatch.setattr(api.voice, "get_settings", lambda: SimpleNamespace(
+        elevenlabs_api_key=None, voice_id="v", voice_model="m"))

@@ -31,7 +31,7 @@ export function LiveCameraFeed({ camera: cam, incident, now }: { camera: CameraV
 
   const offline = cam.state === "offline" || failed || !cam.imageUrl;
   const liveSrc = cam.imageUrl ? `${cam.imageUrl}${cam.imageUrl.includes("?") ? "&" : "?"}t=${bucket}` : "";
-  const src = view === "live" || !incident ? liveSrc : snapshotUrl(incident.id);
+  const src = view === "live" || !incident ? liveSrc : snapshotUrl(incident.id, incident.snapshotPath);
 
   return (
     <section className="sec" aria-label="Camera feed">

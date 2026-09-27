@@ -43,8 +43,8 @@ export function QueueChart({ sim }: { sim: Simulation }) {
         <path d={path("recommended")} fill="none" stroke="var(--text)" strokeWidth="2" />
       </svg>
       <figcaption>
-        <span><i className="swatch dash" /> Default · {sim.queueBefore} vehicles</span>
-        <span><i className="swatch rec" /> Recommended · {sim.queueAfter} vehicles</span>
+        <span><i className="swatch dash" /> Default · {Math.round(sim.queueBefore)} vehicles</span>
+        <span><i className="swatch rec" /> Recommended · {Math.round(sim.queueAfter)} vehicles</span>
       </figcaption>
     </figure>
   );

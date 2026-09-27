@@ -79,6 +79,7 @@ export interface Incident {
   bbox: [number, number, number, number];
   /** The API has the frame from when the alert fired. */
   hasSnapshot: boolean;
+  snapshotPath: string | null;
   camera: CameraView;
   response: { state: "none" | "running" | "done"; changes: SignalChangeView[]; sim: Simulation | null };
   decision: FeedbackAction | null;
@@ -165,6 +166,7 @@ export function toIncidents(
       laneZone: e.lane_zone,
       bbox: e.bbox,
       hasSnapshot: Boolean(e.snapshot_path),
+      snapshotPath: e.snapshot_path ?? null,
       camera: cameraView(cam),
       response: simulationOf(recs[e.id]),
       decision: feedback[e.id] ?? null,
