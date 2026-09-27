@@ -41,7 +41,10 @@ class Settings(BaseSettings):
     # where real events come from, shown on the dashboard: "live" cameras or a "replay"
     data_source: Literal["live", "replay"] = Field("live", alias="LW_DATA_SOURCE")
 
-    # Summaries
+    # Summaries: Gemini (default) or Claude writes the incident notes
+    summary_provider: Literal["gemini", "claude"] = Field("gemini", alias="LW_SUMMARY_PROVIDER")
+    gemini_api_key: str | None = Field(None, alias="GEMINI_API_KEY")
+    gemini_model: str = Field("gemini-3.8-flash", alias="LW_GEMINI_MODEL")
     anthropic_api_key: str | None = Field(None, alias="ANTHROPIC_API_KEY")
     summary_model: str = Field("claude-opus-5", alias="LW_SUMMARY_MODEL")
 
