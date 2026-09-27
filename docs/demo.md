@@ -159,6 +159,17 @@ Full register: `sim/network/README.md` and `sim/sources/sources.yaml`.
 validated against real controller data before anyone acts on them, and the tool is built
 so an operator makes that call.
 
+## Public demo site
+
+**http://ellipsisnyc.tech** (`https://` once GitHub's certificate is issued) is the dashboard
+built with `npm run build:demo`, with no API behind it:
+- by default it shows the mock-mode incidents above (`data/mock/`, SAMPLE DATA, with the heatmap)
+- **`?replay`** plays the recorded 7 Ave @ 36 St window in real time (REPLAY), with spoken
+  alerts (the speaker icon) and incident notes
+
+Every push to `main` that touches `web/` redeploys it (`.github/workflows/pages.yml`).
+Rebuilding `data/mock/` updates it on the next deploy.
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -167,5 +178,7 @@ so an operator makes that call.
 | No alerts after 1:30 | Was the API started with `LW_MOCK_MODE=false`, and did replay print `OPEN` lines? Rerun the check above |
 | Alert shows but no recommendation | Is the worker terminal running? Scoring takes about 25 s per event. Is SUMO installed (`pip install -e ".[sim]"`)? |
 | Card has no incident note | Set `GEMINI_API_KEY` in `.env` and restart the worker. Without a key, the demo works without notes |
+| Notes stopped appearing | Gemini's free tier allows 20 requests a day **per model**, and each alert uses one. Set `LW_GEMINI_MODEL=gemini-3.7-flash` (a separate quota) or turn on billing in Google AI Studio before the pitch |
+| Map is blank for the first ~10 s | Tiles are loading. Open the dashboard before presenting so it's warm |
 | Mock incidents show up | Delete `data/lanewatch.db` and restart the API with `LW_MOCK_MODE=false` |
 | Map is blank | No internet for map tiles: play the backup video |
