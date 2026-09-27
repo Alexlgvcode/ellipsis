@@ -106,6 +106,15 @@ def test_mock_mode_serves_the_mocks(mock_client):
     assert rec["sim"]["delay_new"] > 0 and rec["intersections"]
 
 
+def test_mock_mode_serves_the_mock_notes(mock_client):
+    notes = json.loads((REPO_ROOT / "data" / "mock" / "summaries.json").read_text())
+    served = {n["event_id"]: n for n in mock_client.get("/summaries").json()}
+    assert set(served) == {n["event_id"] for n in notes}
+    first = notes[0]
+    assert served[first["event_id"]] == {"event_id": first["event_id"], "text": first["text"],
+                                         "model": first["model"]}
+
+
 def test_mock_mode_off_starts_empty(client):
     assert client.get("/events").json() == []
 
@@ -206,6 +215,27 @@ def test_feedback_survives_an_api_restart(make_client):
     again = make_client(mock_mode=True)  # re-seeding the mocks keeps the decisions
     got = {f["event_id"]: f["action"] for f in again.get("/feedback").json()}
     assert got == decisions
+
+
+def test_mocks_from_an_older_data_mock_are_removed(make_client, sample_event):
+    # a database from before data/mock/ was rebuilt: an old mock (snapshot under data/mock/,
+    # id no longer in events.json) with a decision, next to a real replay event
+    old = {**sample_event, "id": "evt_mock_001", "snapshot_path": "data/mock/snapshots/old.jpg"}
+    real = {**sample_event, "id": "evt_real", "snapshot_path": "data/snapshots/cam/evt_real.jpg"}
+    first = make_client(mock_mode=False)
+    for e in (old, real):
+        first.post("/events", json=e)
+    first.post("/events/evt_mock_001/feedback", json={"action": "accept"})
+    first.__exit__(None, None, None)
+
+    mock = make_client(mock_mode=True)
+    ids = {e["id"] for e in mock.get("/events").json()}
+    assert ids == set(MOCK_IDS) | {"evt_real"}            # the old mock is gone, not the real one
+    assert mock.get("/events/evt_mock_001/feedback").status_code == 404
+    mock.__exit__(None, None, None)
+
+    live = make_client(mock_mode=False)
+    assert [e["id"] for e in live.get("/events").json()] == ["evt_real"]
 
 
 def test_turning_mock_mode_off_removes_mock_feedback(make_client):

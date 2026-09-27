@@ -4,6 +4,7 @@
     python scripts/build_mock.py --no-sim     # recommendations without simulation numbers
     python scripts/build_mock.py --rescore    # run SUMO again even for unchanged incidents
     python scripts/build_mock.py --check      # fail if events.json / congestion.json are stale
+    python scripts/build_mock.py --renote     # ask for every incident note again
 
 Every mock incident is a hand-checked blockage from evaluation/ground_truth.yaml (MOCK_IDS):
 the event is what the pipeline raised for it on the cached detections (evaluation/detections/:
@@ -11,7 +12,10 @@ its id, box, lane zone and confidence), with the tagged start and end; the snaps
 recorded frame from when the alert fired; the recommendation is the worker's SUMO scoring
 (signals.retime.recommend) over the whole stop, capped like the worker at 5 min. Congestion
 is one reading per masked camera: the tagged level where #47's tags have one, else free, with
-the congestion monitor's own occupancy and stuck share over that stretch.
+the congestion monitor's own occupancy and stuck share over that stretch. The incident notes
+(summaries.json) are written once by the configured model (api/summarize.py, needs its key)
+from each incident's facts, and kept on later runs unless the incident or its recommendation
+changed, so mock mode and the demo site show them without calling the model.
 
 Nothing in data/mock/ is edited by hand: the README's incident table is written here too.
 """
@@ -202,6 +206,35 @@ def build_recommendations(events: list[Event], simulate: bool,
     return out
 
 
+def build_notes(events: list[Event], recs: list[Recommendation], renote: bool) -> list[dict]:
+    """One note per incident from the configured model, kept while its facts don't change."""
+    from api.summarize import build_prompt, model_name, summarize
+
+    names = {c["id"]: c["name"] for c in json.loads(get_settings().cameras_path.read_text())}
+    by_event = {r.event_id: r for r in recs}
+    path = MOCK_DIR / "summaries.json"
+    old = {n["event_id"]: n for n in json.loads(path.read_text())} if path.exists() else {}
+    out = []
+    for n, event in enumerate(events, 1):
+        rec, name = by_event.get(event.id), names.get(event.camera_id)
+        facts = build_prompt(event, rec, name)
+        prev = old.get(event.id)
+        if prev and prev.get("facts") == facts and not renote:
+            out.append(prev)
+            continue
+        print(f"  [{n}/{len(events)}] note for {event.id}...", flush=True)
+        text = summarize(event, rec, name)
+        if text:
+            out.append({"event_id": event.id, "text": text, "model": model_name(get_settings()),
+                        "facts": facts})
+        elif prev:
+            print("    no new note (no key, or the model declined): kept the old one")
+            out.append(prev)
+        else:
+            print("    no note (no key, or the model declined)")
+    return out
+
+
 def _read_json(path: Path, default):
     return [Event(**e) for e in json.loads(path.read_text())] if path.exists() else default
 
@@ -211,7 +244,7 @@ def _dump(models) -> str:
 
 
 def write_readme(events: list[tuple[Event, datetime, Truth, bool]], congestion: list[Congestion],
-                 recs: dict[str, Recommendation]) -> None:
+                 recs: dict[str, Recommendation], notes: list[dict]) -> None:
     names = {c["id"]: c["name"] for c in json.loads(get_settings().cameras_path.read_text())}
     rows = []
     for e, _alert, t, found in events:
@@ -244,7 +277,10 @@ Real, hand-checked blockages from `evaluation/ground_truth.yaml` (#16, #63), tim
 - **Not from the pipeline:** an incident marked *missed* wasn't alerted on by the engine; its
   event is built from the tag with confidence {MISSED_CONFIDENCE}.
 - Left out: `gt_003` (police stop) and `gt_005` (bus lane), which are debatable as blockages.
-- Decisions and incident notes start empty: they come from the operator and the worker.
+- Incident notes (`summaries.json`): {len(notes)} of {len(events)}, written once by
+  {", ".join(sorted({n["model"] for n in notes})) or "no model"} from each incident's facts
+  (`facts`, the same prompt the worker sends), so they load without calling the model.
+- Operator decisions start empty.
 
 ## Congestion
 
@@ -260,6 +296,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--no-sim", action="store_true", help="recommendations without SUMO")
     ap.add_argument("--rescore", action="store_true", help="run SUMO for every incident again")
+    ap.add_argument("--renote", action="store_true", help="ask for every incident note again")
     ap.add_argument("--check", action="store_true",
                     help="only check that events.json and congestion.json are up to date")
     args = ap.parse_args(argv)
@@ -286,7 +323,9 @@ def main(argv: list[str] | None = None) -> int:
     (MOCK_DIR / "events.json").write_text(new_events)
     (MOCK_DIR / "recommendations.json").write_text(_dump(recs))
     (MOCK_DIR / "congestion.json").write_text(new_congestion)
-    write_readme(events, congestion, {r.event_id: r for r in recs})
+    notes = build_notes([e for e, *_ in events], recs, renote=args.renote)
+    (MOCK_DIR / "summaries.json").write_text(json.dumps(notes, indent=2) + "\n")
+    write_readme(events, congestion, {r.event_id: r for r in recs}, notes)
     print(f"wrote {MOCK_DIR.relative_to(REPO_ROOT)}/: events, snapshots, recommendations, "
           "congestion, README")
     return 0

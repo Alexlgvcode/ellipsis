@@ -1,0 +1,44 @@
+[
+  {
+    "event_id": "evt_b0cbb042_20260926182209_8",
+    "text": "A double-parked vehicle has been blocking the curb-adjacent lane at 7 Avenue and 36 Street for at least 417 seconds, with an 88% detection confidence. The system recommends making the green light 6.8 seconds shorter at 7 Avenue and 37 Street. The simulation shows this timing change would reduce delay per vehicle from 124.4 seconds to 119.4 seconds and decrease the longest queue from 9 vehicles to 8.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a double-parked vehicle\nCamera: 7 Ave @ 36 St\nStopped for at least: 417 s (still counting)\nLane: curb adjacent\nDetection confidence: 88%\nRecommended change: the signal at 7 Ave @ 37 St, green 6.8 s shorter\nSimulated delay per vehicle: 124.4 s now, 119.4 s with the change\nSimulated longest queue: 9 vehicles now, 8 with the change"
+  },
+  {
+    "event_id": "evt_b0cbb042_20260926182209_7",
+    "text": "A double-parked vehicle has been blocking the curb-adjacent lane at 7 Avenue and 36 Street for at least 417 seconds. The system recommends making the green signal at 7 Avenue and 37 Street 6.8 seconds shorter. In the simulation, this timing change reduces delay per vehicle from 124.4 seconds to 119.4 seconds and shortens the maximum queue from 9 vehicles to 8.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a double-parked vehicle\nCamera: 7 Ave @ 36 St\nStopped for at least: 417 s (still counting)\nLane: curb adjacent\nDetection confidence: 79%\nRecommended change: the signal at 7 Ave @ 37 St, green 6.8 s shorter\nSimulated delay per vehicle: 124.4 s now, 119.4 s with the change\nSimulated longest queue: 9 vehicles now, 8 with the change"
+  },
+  {
+    "event_id": "evt_ec9ffb62_20260926182256_10",
+    "text": "A vehicle has been stopped in a travel lane at 8th Avenue and 31st Street for at least 96 seconds. The system recommends extending the green signal at the intersection by 9 seconds. However, the simulation shows virtually no benefit from the timing change, as average delay per vehicle slightly increases from 65.0 seconds to 65.1 seconds, while the longest queue decreases from 2 vehicles to 1.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a vehicle stopped in a travel lane\nCamera: 8th Ave @ 31st St\nStopped for at least: 96 s (still counting)\nLane: travel\nDetection confidence: 52%\nRecommended change: the signal at 8 Ave @ 31 St, green 9 s longer\nSimulated delay per vehicle: 65.0 s now, 65.1 s with the change\nSimulated longest queue: 2 vehicles now, 1 with the change"
+  },
+  {
+    "event_id": "evt_83655dbc_20260926201217_8",
+    "text": "A double-parked vehicle has been blocking the curb-adjacent lane at Broadway and 38th Street for at least 90 seconds. The system recommends making the green light at Broadway and 39th Street 10.9 seconds shorter. However, the simulation shows no benefit from this change, as the longest queue remains at two vehicles and delay per vehicle slightly increases from 68.6 seconds to 68.7 seconds.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a double-parked vehicle\nCamera: Broadway @ 38 St\nStopped for at least: 90 s (still counting)\nLane: curb adjacent\nDetection confidence: 70%\nRecommended change: the signal at Broadway @ 39 St, green 10.9 s shorter\nSimulated delay per vehicle: 68.6 s now, 68.7 s with the change\nSimulated longest queue: 2 vehicles now, 2 with the change"
+  },
+  {
+    "event_id": "evt_ec9ffb62_20260926202237_162",
+    "text": "A vehicle has been stopped in a travel lane at 8th Avenue and 31st Street for at least 332 seconds. The system recommends extending the green signal at 8th Avenue and 31st Street by 9 seconds. However, the simulation indicates this change would make conditions worse, increasing the delay per vehicle from 78.2 seconds to 80.1 seconds while keeping the longest queue unchanged at 4 vehicles.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a vehicle stopped in a travel lane\nCamera: 8th Ave @ 31st St\nStopped for at least: 332 s (still counting)\nLane: travel\nDetection confidence: 68%\nRecommended change: the signal at 8 Ave @ 31 St, green 9 s longer\nSimulated delay per vehicle: 78.2 s now, 80.1 s with the change\nSimulated longest queue: 4 vehicles now, 4 with the change"
+  },
+  {
+    "event_id": "evt_ec9ffb62_20260926202451_193",
+    "text": "A vehicle has been stopped in a travel lane at 8th Avenue and 31st Street for at least 89 seconds. The system recommends extending the green signal at the intersection by 9 seconds. However, the simulation shows little benefit from this change, reducing delay per vehicle from 64.5 seconds to 63.9 seconds and lowering the longest queue from two vehicles to one.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a vehicle stopped in a travel lane\nCamera: 8th Ave @ 31st St\nStopped for at least: 89 s (still counting)\nLane: travel\nDetection confidence: 77%\nRecommended change: the signal at 8 Ave @ 31 St, green 9 s longer\nSimulated delay per vehicle: 64.5 s now, 63.9 s with the change\nSimulated longest queue: 2 vehicles now, 1 with the change"
+  },
+  {
+    "event_id": "evt_8ee72946_20260926225126_106",
+    "text": "A vehicle has been blocking the intersection box at Broadway and 6th Avenue / 33rd Street for at least 35 seconds. The system recommends adjusting the signal timing at 6th Avenue and 33rd Street by making the green 4.5 seconds shorter and 10 seconds longer. Simulation of this change shows very little benefit, reducing average delay per vehicle by only 1.5 seconds, from 108.3 seconds to 106.8 seconds, and the longest queue from 8 vehicles to 7.",
+    "model": "gemini-3.7-flash",
+    "facts": "Incident: a vehicle blocking the intersection box\nCamera: Broadway @ 6 Ave / 33 St\nStopped for at least: 35 s (still counting)\nLane: box\nDetection confidence: 69%\nRecommended change: the signal at 6 Ave @ 33 St, green 4.5 s shorter\nRecommended change: the signal at 6 Ave @ 33 St, green 10 s longer\nSimulated delay per vehicle: 108.3 s now, 106.8 s with the change\nSimulated longest queue: 8 vehicles now, 7 with the change"
+  }
+]
