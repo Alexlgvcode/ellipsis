@@ -10,6 +10,7 @@ import App from "./App";
 let apiDown = false;
 let feedbackFails = false;
 let saved: { event_id: string; action: string }[] = [];
+let notes: { event_id: string; text: string }[] = [];
 function mockApi() {
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
     if (apiDown) throw new TypeError("Failed to fetch");
@@ -24,6 +25,7 @@ function mockApi() {
     const body =
       path === "/health" ? { status: "ok", mock_mode: true }
       : path === "/feedback" ? saved
+      : path === "/summaries" ? notes
       : path === "/cameras" ? CAMERAS
       : path.startsWith("/events") ? EVENTS
       : path.startsWith("/recommendations/") ? RECS[decodeURIComponent(path.split("/")[2])] : undefined;
@@ -33,7 +35,7 @@ function mockApi() {
 
 beforeEach(() => {
   Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
-  apiDown = false; feedbackFails = false; saved = []; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
+  apiDown = false; feedbackFails = false; saved = []; notes = []; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 const loaded = async () => { await screen.findByText("Active incidents"); };
@@ -105,6 +107,17 @@ it("records the operator's decision; an accepted alert shows as applied (sim)", 
   expect(saved).toEqual([{ event_id: "evt_mock_001", action: "false_positive" }]);
   expect(within(insp).getByRole("status")).toHaveTextContent("False positive");
   expect(screen.getByText("2", { selector: ".rail-title .count" })).toBeInTheDocument();
+});
+
+it("shows the Claude incident note on the card only when one exists", async () => {
+  notes = [{ event_id: "evt_mock_001", text: "A van is double parked on 8th Ave." }];
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  const note = screen.getByRole("region", { name: "Incident note" });
+  expect(within(note).getByText("A van is double parked on 8th Ave.")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /Blocking the box/ }));
+  expect(screen.queryByRole("region", { name: "Incident note" })).toBeNull();
 });
 
 it("shows decisions already saved in the API, e.g. after a reload", async () => {

@@ -80,6 +80,8 @@ export interface Incident {
   camera: { id: string; code: string; name: string; state: CameraState; imageUrl: string | null };
   response: { state: "none" | "running" | "done"; changes: SignalChangeView[]; sim: Simulation | null };
   decision: FeedbackAction | null;
+  /** Claude incident note, if one was written. */
+  note: string | null;
 }
 
 /** "8th Ave @ 33rd St" -> "CAM-8AV-033"; falls back to the id prefix. */
@@ -128,7 +130,7 @@ export function simulationOf(rec: Recommendation | null | undefined): Incident["
 
 export function toIncidents(
   events: Event[], cameras: Camera[], recs: Record<string, Recommendation | null>, nowMs: number, mockMode: boolean,
-  feedback: Record<string, FeedbackAction> = {},
+  feedback: Record<string, FeedbackAction> = {}, notes: Record<string, string> = {},
 ): Incident[] {
   const byId = new Map(cameras.map((c) => [c.id, c]));
   return events.flatMap((e) => {
@@ -156,6 +158,7 @@ export function toIncidents(
       },
       response: simulationOf(recs[e.id]),
       decision: feedback[e.id] ?? null,
+      note: notes[e.id] ?? null,
     }];
   });
 }

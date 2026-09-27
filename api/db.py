@@ -8,7 +8,7 @@ from pathlib import Path
 from sqlalchemy.engine import Engine
 from sqlmodel import Session, SQLModel, create_engine
 
-from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow
+from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow, SummaryRow
 from common.config import REPO_ROOT
 from common.schemas import Camera, Event, Recommendation
 
@@ -56,14 +56,15 @@ def seed_mocks(session: Session, mock_dir: Path) -> int:
 
 
 def remove_mocks(session: Session, mock_dir: Path) -> int:
-    """Delete the data/mock/ events (and their recommendations and feedback), so a database used in
-    mock mode earlier only shows real events once mock mode is off."""
+    """Delete the data/mock/ events (and their recommendations, feedback and notes), so a
+    database used in mock mode earlier only shows real events once mock mode is off."""
     events_path = mock_dir / "events.json"
     if not events_path.exists():
         return 0
     removed = 0
     for e in json.loads(events_path.read_text()):
-        for child in (session.get(RecommendationRow, e["id"]), session.get(FeedbackRow, e["id"])):
+        children = (RecommendationRow, FeedbackRow, SummaryRow)
+        for child in (session.get(model, e["id"]) for model in children):
             if child:
                 session.delete(child)
         row = session.get(EventRow, e["id"])

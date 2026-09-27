@@ -53,6 +53,14 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         </div>
       </section>
 
+      {i.note && (
+        <section className="sec" aria-label="Incident note">
+          <h3>Incident note</h3>
+          <p className="note">{i.note}</p>
+          <p className="note-src">Written by Claude from the detection and simulation data</p>
+        </section>
+      )}
+
       {/* 2. Live camera feed */}
       <LiveCameraFeed incident={i} now={now} />
 

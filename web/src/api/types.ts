@@ -54,6 +54,13 @@ export interface Feedback {
   note?: string | null;
 }
 
+/** Incident note written by Claude (api/summarize.py). API-only, not in common/schemas.py. */
+export interface Summary {
+  event_id: string;
+  text: string;
+  model?: string | null;
+}
+
 export interface Health {
   status: string;
   mock_mode?: boolean;

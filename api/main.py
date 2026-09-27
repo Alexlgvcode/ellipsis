@@ -1,4 +1,4 @@
-"""FastAPI app: cameras, events, recommendations, snapshots, operator feedback.
+"""FastAPI app: cameras, events, recommendations, snapshots, operator feedback, notes.
 
     make api              # http://localhost:8000/docs
 
@@ -18,11 +18,11 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.responses import FileResponse, RedirectResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
 from api.db import init_db, make_engine, remove_mocks, seed_cameras, seed_mocks
-from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow
+from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow, SummaryRow
 from common.config import REPO_ROOT, Settings, get_settings
 from common.schemas import (
     Camera,
@@ -39,6 +39,19 @@ class FeedbackIn(BaseModel):
 
     action: FeedbackAction
     note: str | None = None
+
+
+class Summary(BaseModel):
+    """An incident note from api/summarize.py. API-only, not part of the wire contract."""
+
+    event_id: str
+    text: str = Field(min_length=1)
+    model: str | None = None
+
+
+class SummaryIn(BaseModel):
+    text: str = Field(min_length=1)
+    model: str | None = None
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -158,6 +171,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def list_feedback(session: SessionDep) -> list[Feedback]:
         """Every decision, so the dashboard needs one request per poll."""
         return [row.to_model() for row in session.exec(select(FeedbackRow))]
+
+    @app.post("/events/{event_id}/summary", status_code=status.HTTP_201_CREATED)
+    def post_summary(event_id: str, body: SummaryIn, session: SessionDep) -> Summary:
+        """Store (or replace) the event's incident note."""
+        event_or_404(session, event_id)
+        summary = Summary(event_id=event_id, **body.model_dump())
+        session.merge(SummaryRow(event_id=event_id, payload=summary.model_dump()))
+        session.commit()
+        return summary
+
+    @app.get("/events/{event_id}/summary")
+    def get_summary(event_id: str, session: SessionDep) -> Summary:
+        row = session.get(SummaryRow, event_id)
+        if row is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"no note for event {event_id}")
+        return Summary(**row.payload)
+
+    @app.get("/summaries")
+    def list_summaries(session: SessionDep) -> list[Summary]:
+        """Every note, so the dashboard needs one request per poll."""
+        return [Summary(**row.payload) for row in session.exec(select(SummaryRow))]
 
     return app
 

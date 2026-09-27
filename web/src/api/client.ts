@@ -1,4 +1,4 @@
-import type { Camera, Event, Feedback, FeedbackAction, Health, Recommendation } from "./types";
+import type { Camera, Event, Feedback, FeedbackAction, Health, Recommendation, Summary } from "./types";
 
 /** All requests go through the Vite proxy (/api -> LW_API_URL). */
 export const API_BASE = "/api";
@@ -24,15 +24,18 @@ export interface Snapshot {
   recommendations: Record<string, Recommendation | null>;
   /** Operator decision per event id. */
   feedback: Record<string, FeedbackAction>;
+  /** Claude incident note per event id, when one was written. */
+  notes: Record<string, string>;
   fetchedAt: number;
 }
 
 export async function fetchSnapshot(): Promise<Snapshot> {
-  const [health, cameras, events, fb] = await Promise.all([
+  const [health, cameras, events, fb, sums] = await Promise.all([
     get<Health>("/health"),
     get<Camera[]>("/cameras"),
     get<Event[]>("/events?limit=100"),
     get<Feedback[]>("/feedback", true),
+    get<Summary[]>("/summaries", true),
   ]);
   const recs = await Promise.all(
     (events ?? []).map((e) => get<Recommendation>(`/recommendations/${encodeURIComponent(e.id)}`, true)),
@@ -40,7 +43,10 @@ export async function fetchSnapshot(): Promise<Snapshot> {
   const recommendations: Record<string, Recommendation | null> = {};
   (events ?? []).forEach((e, i) => (recommendations[e.id] = recs[i]));
   const feedback = Object.fromEntries((fb ?? []).map((f) => [f.event_id, f.action]));
-  return { health: health!, cameras: cameras ?? [], events: events ?? [], recommendations, feedback, fetchedAt: Date.now() };
+  const notes = Object.fromEntries((sums ?? []).map((s) => [s.event_id, s.text]));
+  return {
+    health: health!, cameras: cameras ?? [], events: events ?? [], recommendations, feedback, notes, fetchedAt: Date.now(),
+  };
 }
 
 /** Record the operator's decision on an alert. The latest one replaces the earlier. */

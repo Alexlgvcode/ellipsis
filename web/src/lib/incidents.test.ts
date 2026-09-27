@@ -85,6 +85,11 @@ describe("rail", () => {
   });
 });
 
+it("carries the Claude incident note when there is one", () => {
+  const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, {}, { evt_mock_001: "A van is double parked." });
+  expect(list.map((i) => i.note)).toEqual(["A van is double parked.", null, null]);
+});
+
 describe("operator decisions", () => {
   const list = toIncidents(EVENTS, CAMERAS, RECS, NOW, true, { evt_mock_001: "accept", evt_mock_003: "false_positive" });
 

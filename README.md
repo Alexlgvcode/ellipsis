@@ -94,6 +94,9 @@ Defined in [common/schemas.py](common/schemas.py).
 | POST | `/events/{id}/feedback` | `{"action": "accept" \| "reject" \| "false_positive", "note": ...}`; the latest decision replaces the earlier one; 404 if the event is unknown, 422 for any other action |
 | GET | `/events/{id}/feedback` | 404 if no decision yet |
 | GET | `/feedback` | Every decision, one request per dashboard poll |
+| POST | `/events/{id}/summary` | Store the Claude incident note: `{"text": ..., "model": ...}` |
+| GET | `/events/{id}/summary` | 404 if none |
+| GET | `/summaries` | Every note, one request per dashboard poll |
 
 With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events and
 recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to
@@ -110,6 +113,11 @@ python scripts/replay.py --camera "7 Ave @ 36 St" --start 18:22 --end 18:30 --as
 
 The dashboard (`make web`) polls the API. The alert opens after about 60 s of the
 vehicle sitting still, and the delay and queue appear once the worker finishes.
+
+With `ANTHROPIC_API_KEY` set (and `pip install -e ".[llm]"`), the worker also asks Claude
+for a one-paragraph incident note after scoring each event; the dashboard shows it on the
+incident card. `python -m api.summarize --post` writes notes for events that have none,
+e.g. the mock ones. Without a key nothing changes.
 
 Live mode runs the same pipeline on the masked cameras as their frames arrive (every 2 s),
 in place of the replay line above. It needs the vision extra (`pip install -e ".[vision]"`):

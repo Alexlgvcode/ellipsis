@@ -32,3 +32,12 @@ def sample_event() -> dict:
         "confidence": 0.82,
         "snapshot_path": None,
     }
+
+
+@pytest.fixture(autouse=True)
+def _no_real_claude_calls(monkeypatch):
+    """Tests never reach the Anthropic API, even with ANTHROPIC_API_KEY in a local .env:
+    code that would build a real client gets None (tests pass a fake client instead)."""
+    import api.summarize
+
+    monkeypatch.setattr(api.summarize, "_client", lambda api_key: None)

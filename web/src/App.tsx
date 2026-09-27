@@ -43,7 +43,7 @@ export default function App() {
   const mock = Boolean(snap?.health.mock_mode);
   const incidents = useMemo(
     () => (snap ? toIncidents(snap.events, snap.cameras, snap.recommendations, snap.fetchedAt, mock,
-      { ...snap.feedback, ...decided }) : []),
+      { ...snap.feedback, ...decided }, snap.notes) : []),
     [snap, mock, decided],
   );
   const seenRef = useRef<FirstSeen>({});

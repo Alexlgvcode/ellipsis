@@ -62,6 +62,15 @@ class RecommendationRow(SQLModel, table=True):
         return Recommendation(**self.payload)
 
 
+class SummaryRow(SQLModel, table=True):
+    """The incident note written by api/summarize.py (payload: event_id, text, model)."""
+
+    __tablename__ = "summaries"
+
+    event_id: str = Field(primary_key=True, foreign_key="events.id")
+    payload: dict = Field(sa_column=Column(JSON, nullable=False))
+
+
 class FeedbackRow(SQLModel, table=True):
     """The operator's latest decision on an event; a new one replaces the old."""
 
