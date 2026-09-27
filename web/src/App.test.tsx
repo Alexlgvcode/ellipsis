@@ -137,6 +137,15 @@ it("opens a card on the alert frame, explains low confidence, and keeps the deci
   expect(screen.getByRole("complementary", { name: "Base versus sim summary" })).toBeInTheDocument();
 });
 
+it("sample incidents keep their recorded duration: the clock doesn't count up", async () => {
+  render(<App />);
+  await loaded();
+  const clocks = () => screen.getAllByRole("button", { name: /elapsed/ }).map((r) => r.getAttribute("aria-label"));
+  const before = clocks();
+  await act(async () => { vi.advanceTimersByTime(10_000); });
+  expect(clocks()).toEqual(before);
+});
+
 it("lets keyboard users skip the map to the incident list", async () => {
   render(<App />);
   await loaded();
