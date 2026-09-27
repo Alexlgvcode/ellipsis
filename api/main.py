@@ -100,7 +100,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get("/health")
     def health() -> dict:
-        return {"status": "ok", "mock_mode": settings.mock_mode}
+        return {"status": "ok", "mock_mode": settings.mock_mode, "source": settings.data_source}
 
     @app.get("/cameras")
     def list_cameras(session: SessionDep) -> list[Camera]:

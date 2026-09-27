@@ -40,6 +40,19 @@ def test_health(client):
     assert resp.json()["status"] == "ok"
 
 
+def test_health_reports_the_data_source(tmp_path):
+    def health(**env):
+        settings = Settings(LW_DATABASE_URL=f"sqlite:///{tmp_path / 'h.db'}", LW_MOCK_MODE=False,
+                            **env)
+        with TestClient(create_app(settings)) as c:
+            return c.get("/health").json()["source"]
+
+    assert health() == "live"
+    assert health(LW_DATA_SOURCE="replay") == "replay"
+    with pytest.raises(ValueError):
+        Settings(LW_DATA_SOURCE="tape")
+
+
 def test_root_redirects_to_docs(client):
     resp = client.get("/", follow_redirects=False)
     assert resp.status_code in (302, 307)

@@ -10,6 +10,12 @@ from the all-red when the signal has a single green.
 
 Returns a SimResult (mean delay and max queue over seeds) plus throughput and
 the time for the approach queue to fall back to its pre-stop level.
+
+Delay is measured where the incident and the change act: the mean time loss of vehicles
+whose route crosses the blocked edge or any approach of the retimed signals, cross
+streets included, so a change that helps the avenue by starving a side street shows it.
+Plans A and B watch the same edges. (A Midtown-wide mean dilutes one blocked lane among
+thousands of trips; it's kept as `network_delay_s`.)
 """
 
 from __future__ import annotations
@@ -46,11 +52,12 @@ class Blockage:
 
 @dataclass(frozen=True)
 class RunMetrics:
-    delay_s: float
+    delay_s: float                   # mean time loss, vehicles through the watched area
     queue_veh: int
     throughput: int
     clear_s: float | None
     queue_series: tuple[float, ...] = ()
+    network_delay_s: float | None = None  # mean time loss, every finished trip
 
 
 @dataclass(frozen=True)
@@ -203,13 +210,23 @@ def _release_lane(traci, lane_id: str, saved: dict[int, list[str]]) -> None:
         traci.lane.setChangePermissions(lane_id, classes, direction)
 
 
+def _watched_edges(traci, lane: str | None, watch_tls: tuple[str, ...]) -> set[str]:
+    edges = {split_lane(lane)[0]} if lane else set()
+    for tls in watch_tls:
+        edges |= {split_lane(ln)[0] for ln in traci.trafficlight.getControlledLanes(tls)}
+    return edges
+
+
 def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
              end_s: float, net: str = NET, routes: str = ROUTES,
-             approach_lane: str | None = None) -> RunMetrics:
+             approach_lane: str | None = None,
+             watch_tls: tuple[str, ...] | None = None) -> RunMetrics:
     """One headless TraCI run. `changes` empty means plan A.
 
     `approach_lane` is the lane whose queue is measured when there is no blockage,
-    so an empty run can be compared with a blocked one.
+    so an empty run can be compared with a blocked one. Delay covers vehicles through
+    the blocked edge and the approaches of `watch_tls` (default: the signals in
+    `changes`; pass the same tuple for plans A and B).
     """
     import traci
     from traci.exceptions import TraCIException
@@ -230,6 +247,12 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
         if changes:
             _apply_changes(traci, changes)
         lane = blockage.lane_id if blockage else approach_lane
+        if watch_tls is None:
+            watch_tls = tuple(sorted({c.id for c in changes}))
+        watched = _watched_edges(traci, lane, watch_tls)
+        local: set[str] = set()      # vehicles whose route crosses a watched edge
+        seen: set[str] = set()
+        local_done: list[float] = []
         placed = blockage is None
         held: dict[int, list[str]] | None = None
         loss: dict[str, float] = {}
@@ -257,9 +280,15 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
             for vid in present:
                 if vid == "blocker":
                     continue
+                if vid not in seen:
+                    seen.add(vid)
+                    if watched.intersection(traci.vehicle.getRoute(vid)):
+                        local.add(vid)
                 loss[vid] = traci.vehicle.getTimeLoss(vid)
             for vid in [vid for vid in loss if vid not in present]:
                 finished.append(loss.pop(vid))
+                if vid in local:
+                    local_done.append(finished[-1])
             if not lane:
                 continue
             halting = _approach_halting(traci, lane)
@@ -274,37 +303,44 @@ def run_once(seed: int, blockage: Blockage | None, changes: list[SignalChange],
         if blockage and not placed:
             raise RuntimeError(f"could not insert the blocker on {blockage.lane_id}")
         return RunMetrics(
-            delay_s=_mean(finished),
+            delay_s=_mean(local_done),
             queue_veh=max_queue,
             throughput=len(finished),
             clear_s=clear_s,
             queue_series=tuple(queue_series),
+            network_delay_s=_mean(finished),
         )
     finally:
         traci.close()
 
 
 def _job(payload: tuple) -> RunMetrics:
-    seed, blockage, changes, end_s, net, routes = payload
+    seed, blockage, changes, end_s, net, routes, watch_tls = payload
     return run_once(seed, blockage, [SignalChange(**row) for row in changes],
-                    end_s, net, routes)
+                    end_s, net, routes, watch_tls=watch_tls)
+
+
+def run_candidates(blockage: Blockage, plans: list[list[SignalChange]],
+                   seeds: tuple[int, ...] = DEFAULT_SEEDS, end_s: float = DEFAULT_END_S,
+                   net: str = NET, routes: str = ROUTES) -> list[ScenarioReport]:
+    """Plan A once per seed and each candidate plan B, all in parallel; one report per
+    candidate. Every run watches the signals of every candidate, so they compare fairly."""
+    watch = tuple(sorted({c.id for plan in plans for c in plan}))
+    variants = [[]] + [[c.model_dump() for c in plan] for plan in plans]
+    jobs = [(seed, blockage, v, end_s, net, routes, watch) for seed in seeds for v in variants]
+    workers = min(len(jobs), os.cpu_count() or 1)
+    with ProcessPoolExecutor(max_workers=workers) as pool:
+        results = list(pool.map(_job, jobs))
+    n = len(variants)
+    plan_a = results[0::n]
+    return [aggregate(plan_a, results[k::n], seeds) for k in range(1, n)]
 
 
 def run_scenario(blockage: Blockage, changes: list[SignalChange],
                  seeds: tuple[int, ...] = DEFAULT_SEEDS, end_s: float = DEFAULT_END_S,
                  net: str = NET, routes: str = ROUTES) -> ScenarioReport:
     """A and B for each seed, in parallel. A and B of a seed share that seed."""
-    dumped = [c.model_dump() for c in changes]
-    jobs = []
-    for seed in seeds:
-        jobs.append((seed, blockage, [], end_s, net, routes))
-        jobs.append((seed, blockage, dumped, end_s, net, routes))
-    workers = min(len(jobs), os.cpu_count() or 1)
-    with ProcessPoolExecutor(max_workers=workers) as pool:
-        results = list(pool.map(_job, jobs))
-    plan_a = [results[i] for i in range(0, len(results), 2)]
-    plan_b = [results[i] for i in range(1, len(results), 2)]
-    return aggregate(plan_a, plan_b, seeds)
+    return run_candidates(blockage, [changes], seeds, end_s, net, routes)[0]
 
 
 def demo(*, full: bool = False) -> int:

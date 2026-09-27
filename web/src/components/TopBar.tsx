@@ -1,7 +1,7 @@
 import { BrandMark } from "./BrandMark";
 import { nyTime } from "../lib/format";
 
-export type FeedState = "live" | "sample" | "offline";
+export type FeedState = "live" | "replay" | "sample" | "offline";
 
 interface Props {
   openIncidents: number;
@@ -11,7 +11,7 @@ interface Props {
   now: number;
 }
 
-const FEED_TEXT: Record<FeedState, string> = { live: "LIVE", sample: "SAMPLE DATA", offline: "OFFLINE" };
+const FEED_TEXT: Record<FeedState, string> = { live: "LIVE", replay: "REPLAY", sample: "SAMPLE DATA", offline: "OFFLINE" };
 
 /** Brand left, geography centred and quiet, operational state compact on the right. */
 export function TopBar({ openIncidents, camerasOnline, camerasTotal, feed, now }: Props) {

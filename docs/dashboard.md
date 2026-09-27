@@ -62,7 +62,8 @@ Rail lines are muted to 30% opacity, with the dash layers hidden.
 ## What's real and what isn't yet
 
 - **Traffic impact** shows the simulated baseline: delay per vehicle, queue in vehicles, and queue
-  length at 7.5 m per vehicle. The API has no added-delay, lane-capacity or downstream-speed fields
+  length at 7.5 m per vehicle. Delay counts the vehicles whose route crosses the blocked street or
+  the retimed signals' approaches (cross streets included), not all of Midtown (#51). The API has no added-delay, lane-capacity or downstream-speed fields
   yet, so those §19 rows are left out rather than invented.
 - **Simulation playback** eases the queue between the recorded baseline and recommended maximum
   queues. Car positions and the close-ups are illustrative and labelled so. Replace them with

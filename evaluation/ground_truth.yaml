@@ -8,7 +8,8 @@
 # Times are UTC. bbox is [x1, y1, x2, y2] in 352x240 frame pixels, roughly where the
 # vehicle stood. start/end marked clipped were cut off by the recording, so they're
 # excluded from time-to-alert. category lets the report show results with and without
-# debatable groups (bus_lane, police, camera_moved).
+# debatable groups (bus_lane, police, camera_moved). demo: true marks the incidents the
+# demo replays (docs/demo.md); tests/test_demo_incidents.py checks they still alert.
 #
 # Verdict rule: does it block traffic? Parked (even illegally) out of the flow = not a blockage.
 #
@@ -76,6 +77,7 @@ blockages:
     end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
     bbox: [191, 79, 226, 129]
     note: "white delivery box truck by the planters (near); detector calls it 'bus'"
+    demo: true
   - id: gt_002
     camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
     type: double_parked
@@ -83,6 +85,7 @@ blockages:
     end: 2026-09-26T18:29:06Z   # clipped: still there when recording stopped
     bbox: [188, 67, 208, 95]
     note: "white delivery box truck by the planters (far)"
+    demo: true
   - id: gt_003
     camera: b0cbb042-de0a-449f-b5d1-49f68a9bf2ae   # 7 Ave @ 36 St
     type: double_parked
@@ -135,6 +138,7 @@ blockages:
     end: 2026-09-26T18:24:27Z
     bbox: [221, 158, 266, 182]
     note: "taxi stopped in the lane, blocking the road (found by the missed-blockage review)"
+    demo: true
   - id: gt_010
     camera: ec9ffb62-e3bf-4352-8bcf-7c9adf5fbe9c   # 8th Ave @ 31st St
     type: stopped_in_lane
