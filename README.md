@@ -96,6 +96,18 @@ With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events an
 recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to
 start fresh.
 
+For a replay on the dashboard, start the API with mock mode off so those sample
+incidents are removed, then run the worker that scores each new event:
+
+```bash
+LW_MOCK_MODE=false make api
+make recommend-worker
+python scripts/replay.py --camera "7 Ave @ 36 St" --start 18:22 --end 18:30 --as-live --speed 1
+```
+
+The dashboard (`make web`) polls the API. The alert opens after about 60 s of the
+vehicle sitting still, and the delay and queue appear once the worker finishes.
+
 ## Data sources
 
 - Cameras: `https://webcams.nyctmc.org/api/cameras/` (public, undocumented; IDs can change)
