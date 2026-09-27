@@ -11,8 +11,8 @@ import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from common.schemas import VehicleClass
-from events.congestion import ROAD, CongestionLevel, CongestionMonitor
+from common.schemas import CongestionLevel, VehicleClass
+from events.congestion import ROAD, CongestionMonitor
 from events.engine import EventEngine
 from events.masks import CameraMask, dump_mask, validate_mask
 from events.pipeline import CameraPipeline

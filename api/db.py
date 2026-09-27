@@ -8,9 +8,16 @@ from pathlib import Path
 from sqlalchemy.engine import Engine
 from sqlmodel import Session, SQLModel, create_engine
 
-from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow, SummaryRow
+from api.models import (
+    CameraRow,
+    CongestionRow,
+    EventRow,
+    FeedbackRow,
+    RecommendationRow,
+    SummaryRow,
+)
 from common.config import REPO_ROOT
-from common.schemas import Camera, Event, Recommendation
+from common.schemas import Camera, Congestion, Event, Recommendation
 
 
 def make_engine(url: str) -> Engine:
@@ -40,7 +47,7 @@ def seed_cameras(session: Session, cameras_path: Path) -> int:
 
 
 def seed_mocks(session: Session, mock_dir: Path) -> int:
-    """Upsert data/mock/ events and recommendations. Re-running resets them."""
+    """Upsert data/mock/ events, recommendations and congestion. Re-running resets them."""
     events_path = mock_dir / "events.json"
     recs_path = mock_dir / "recommendations.json"
     if not events_path.exists():
@@ -52,12 +59,24 @@ def seed_mocks(session: Session, mock_dir: Path) -> int:
     if recs_path.exists():
         for r in json.loads(recs_path.read_text()):
             session.merge(RecommendationRow.from_model(Recommendation(**r)))
+    for c in _mock_congestion(mock_dir):
+        session.merge(CongestionRow.from_model(c))
     return len(events)
 
 
+def _mock_congestion(mock_dir: Path) -> list[Congestion]:
+    path = mock_dir / "congestion.json"
+    return [Congestion(**c) for c in json.loads(path.read_text())] if path.exists() else []
+
+
 def remove_mocks(session: Session, mock_dir: Path) -> int:
-    """Delete the data/mock/ events (and their recommendations, feedback and notes), so a
-    database used in mock mode earlier only shows real events once mock mode is off."""
+    """Delete the data/mock/ events (and their recommendations, feedback and notes) and
+    congestion, so a database used in mock mode earlier only shows real data once mock mode
+    is off."""
+    for c in _mock_congestion(mock_dir):
+        row = session.get(CongestionRow, CongestionRow.from_model(c).id)
+        if row:
+            session.delete(row)
     events_path = mock_dir / "events.json"
     if not events_path.exists():
         return 0

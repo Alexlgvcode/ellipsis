@@ -14,6 +14,7 @@ The websocket feed comes in a later issue.
 # SessionDep annotation at runtime, and it's local to create_app().
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
@@ -22,10 +23,19 @@ from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
 from api.db import init_db, make_engine, remove_mocks, seed_cameras, seed_mocks
-from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow, SummaryRow
+from api.models import (
+    CameraRow,
+    CongestionRow,
+    EventRow,
+    FeedbackRow,
+    RecommendationRow,
+    SummaryRow,
+    utc_iso,
+)
 from common.config import REPO_ROOT, Settings, get_settings
 from common.schemas import (
     Camera,
+    Congestion,
     Event,
     EventType,
     Feedback,
@@ -122,6 +132,39 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         session.merge(EventRow.from_model(event))
         session.commit()
         return event
+
+    @app.post("/congestion", status_code=status.HTTP_201_CREATED)
+    def post_congestion(reading: Congestion, session: SessionDep) -> Congestion:
+        """A camera approach's congestion reading (same camera, approach and ts = update)."""
+        session.merge(CongestionRow.from_model(reading))
+        session.commit()
+        return reading
+
+    @app.get("/congestion")
+    def latest_congestion(session: SessionDep, since: datetime | None = None) -> list[Congestion]:
+        """The latest reading of every camera approach (free ones included, so a cleared jam
+        shows as cleared). `since`: leave out approaches with no reading since then."""
+        query = select(CongestionRow).order_by(CongestionRow.ts.desc())
+        if since:
+            query = query.where(CongestionRow.ts >= utc_iso(since))
+        latest: dict[tuple[str, str], Congestion] = {}
+        for row in session.exec(query):
+            latest.setdefault((row.camera_id, row.approach), row.to_model())
+        return list(latest.values())
+
+    @app.get("/cameras/{camera_id}/congestion")
+    def camera_congestion(
+        camera_id: str,
+        session: SessionDep,
+        since: datetime | None = None,
+        limit: Annotated[int, Query(ge=1, le=1000)] = 100,
+    ) -> list[Congestion]:
+        """One camera's readings, newest first."""
+        query = select(CongestionRow).where(CongestionRow.camera_id == camera_id)
+        if since:
+            query = query.where(CongestionRow.ts >= utc_iso(since))
+        query = query.order_by(CongestionRow.ts.desc()).limit(limit)
+        return [row.to_model() for row in session.exec(query)]
 
     @app.get("/events/{event_id}/snapshot", response_class=FileResponse)
     def get_snapshot(event_id: str, session: SessionDep) -> FileResponse:

@@ -61,6 +61,20 @@ export interface Summary {
   model?: string | null;
 }
 
+export type CongestionLevel = "free" | "slow" | "congested";
+
+export interface Congestion {
+  camera_id: string;
+  approach: string;
+  direction?: string | null; // northbound / southbound / eastbound / westbound
+  ts: string;
+  level: CongestionLevel;
+  score: number;             // 0-1 intensity
+  occupancy: number;
+  stuck_share: number;
+  since_ts: string;
+}
+
 export interface Health {
   status: string;
   mock_mode?: boolean;

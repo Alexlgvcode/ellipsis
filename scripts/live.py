@@ -93,7 +93,7 @@ class LiveRunner:
             else:
                 with Image.open(r.path) as img:
                     update = pipe.step(ts, img, dets[r.path])
-            self.publisher.publish(r.camera_id, r.path, ts, update)
+            self.publisher.publish(r.camera_id, r.path, ts, update, pipe.congestion.readings)
 
 
 def masked(cameras: Sequence[Camera]) -> dict[str, CameraPipeline]:

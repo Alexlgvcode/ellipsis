@@ -171,3 +171,39 @@ def test_as_live_shifts_posted_times_but_not_ids(api, tmp_path):
     assert live.start_ts - original.start_ts == timedelta(hours=2)
     posted = client.get("/events").json()                # same event, updated in place
     assert len(posted) == 1 and posted[0]["start_ts"].startswith(f"{live.start_ts:%Y-%m-%dT%H}")
+
+
+class CongestionSink(replay_mod.EventSink):
+    def __init__(self):
+        super().__init__(None)
+        self.readings = []
+
+    def post_congestion(self, reading):
+        self.readings.append(reading)
+        return True
+
+
+def test_congestion_is_posted_on_level_changes_and_as_a_heartbeat(tmp_path):
+    from datetime import datetime, timedelta, timezone
+
+    from common.schemas import Congestion, CongestionLevel
+    from events.engine import EngineUpdate
+
+    t0 = datetime(2026, 9, 27, 1, 15, tzinfo=timezone.utc)
+    shift = timedelta(hours=2)
+    sink = CongestionSink()
+    pub = replay_mod.Publisher(sink, tmp_path, log=lambda _: None, time_shift=shift)
+    levels = ["free"] * 3 + ["congested"] * 30 + ["free"] * 3   # a frame every 5 s
+    for i, level in enumerate(levels):
+        ts = t0 + timedelta(seconds=5 * i)
+        r = Congestion(camera_id=CAM, approach="7_ave", ts=ts, level=level, score=0.5,
+                       occupancy=0.3, stuck_share=0.7, since_ts=t0)
+        pub.publish(CAM, None, ts, EngineUpdate(), [r])
+    posted = [(r.level, (r.ts - shift - t0).total_seconds()) for r in sink.readings]
+    free, congested = CongestionLevel.FREE, CongestionLevel.CONGESTED
+    # first reading, the change, a heartbeat a minute into the jam, then the change back
+    assert posted == [(free, 0), (congested, 15), (congested, 75), (congested, 135), (free, 165)]
+    assert sink.readings[0].since_ts == t0 + shift                   # --as-live shift applied
+    # a reading left over from an earlier frame isn't posted again
+    pub.publish(CAM, None, t0 + timedelta(minutes=10), EngineUpdate(), [sink.readings[-1]])
+    assert len(sink.readings) == 5

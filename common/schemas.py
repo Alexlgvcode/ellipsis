@@ -64,6 +64,27 @@ class Event(BaseModel):
     snapshot_path: str | None = None
 
 
+class CongestionLevel(str, Enum):
+    FREE = "free"
+    SLOW = "slow"            # packed but moving
+    CONGESTED = "congested"  # a jam: the queue doesn't clear on green
+
+
+class Congestion(BaseModel):
+    """Traffic on one camera approach (events/congestion.py), posted when its level changes
+    and every minute or so while it isn't free."""
+
+    camera_id: str
+    approach: str                    # the lane mask's approach ("road" if it has none)
+    direction: str | None = None     # northbound / southbound / eastbound / westbound
+    ts: datetime                     # the frame this reading is from
+    level: CongestionLevel
+    score: float = Field(ge=0, le=1)        # intensity, e.g. for a heatmap
+    occupancy: float = Field(ge=0, le=1)    # share of the approach covered by vehicles
+    stuck_share: float = Field(ge=0, le=1)  # share of its vehicles that didn't move
+    since_ts: datetime               # when this level started
+
+
 class SignalChange(BaseModel):
     id: str            # SUMO traffic light id / intersection id
     phase: int         # phase index in the TLS program

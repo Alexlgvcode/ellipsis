@@ -39,11 +39,10 @@ from collections import deque
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from datetime import datetime
-from enum import Enum
 
 import numpy as np
 
-from common.schemas import BBox, LaneZone
+from common.schemas import BBox, Congestion, CongestionLevel, LaneZone
 from events.masks import Approach, CameraMask, ground_point
 from events.rules import load_rules
 from vision.detect import Detection
@@ -52,24 +51,6 @@ from vision.track import iou
 ROAD_ZONES = {LaneZone.CURB_ADJACENT, LaneZone.TRAVEL, LaneZone.BOX, LaneZone.BUS_STOP}
 ROAD = "road"  # the approach used when a mask has no `approaches`
 EXCLUDE_IOU = 0.5  # a detection this close to an open blockage's box is that vehicle
-
-
-class CongestionLevel(str, Enum):
-    FREE = "free"
-    SLOW = "slow"
-    CONGESTED = "congested"
-
-
-@dataclass(frozen=True)
-class CongestionReading:
-    camera_id: str
-    approach: str
-    ts: datetime
-    level: CongestionLevel
-    score: float        # 0-1 intensity
-    occupancy: float    # mean share of the approach covered by vehicles over the window
-    stuck_share: float  # share of the window's vehicles that hadn't moved since the last frame
-    since_ts: datetime  # when this level started
 
 
 @dataclass(frozen=True)
@@ -84,6 +65,7 @@ class _Frame:
 class _ApproachState:
     name: str
     cells: np.ndarray  # (n, 2) centers of the grid cells the approach covers
+    direction: str | None
     contains: object   # (x, y) -> bool: is a vehicle standing here in the approach?
     frames: deque[_Frame] = field(default_factory=deque)
     level: CongestionLevel = CongestionLevel.FREE
@@ -113,10 +95,10 @@ class CongestionMonitor:
         self.cell_px = c["cell_px"]
         self.approaches = [s for a in (mask.approaches or [None]) for s in self._states(a)]
         self._prev: tuple[datetime, list[BBox]] | None = None
-        self.readings: list[CongestionReading] = []
+        self.readings: list[Congestion] = []
 
     def update(self, ts: datetime, detections: Sequence[Detection],
-               exclude: Sequence[BBox] = ()) -> list[CongestionReading]:
+               exclude: Sequence[BBox] = ()) -> list[Congestion]:
         """One reading per approach. `exclude`: boxes of vehicles with open blockage events."""
         boxes = [d.bbox for d in detections if d.conf >= self.min_conf]
         prev = self._prev
@@ -154,22 +136,24 @@ class CongestionMonitor:
                 zone = self.mask.zone_at(x, y)
                 return approach.contains(x, y) and (zone is None or zone.type is not LaneZone.CURB)
         name = approach.name if approach else ROAD
+        direction = approach.direction if approach else None
         w, h = self.mask.frame_size
         step = self.cell_px
         cells = [(x, y) for y in np.arange(step / 2, h, step) for x in np.arange(step / 2, w, step)
                  if inside(x, y)]
         if not self.far_split or not cells:
-            return [self._state(name, cells, inside)]
+            return [self._state(name, direction, cells, inside)]
         ys = [y for _, y in cells]
         split = min(ys) + self.far_split * (max(ys) - min(ys))
-        return [self._state(f"{name}_far", [c for c in cells if c[1] < split],
+        return [self._state(f"{name}_far", direction, [c for c in cells if c[1] < split],
                             lambda x, y: y < split and inside(x, y)),
-                self._state(name, [c for c in cells if c[1] >= split],
+                self._state(name, direction, [c for c in cells if c[1] >= split],
                             lambda x, y: y >= split and inside(x, y))]
 
     @staticmethod
-    def _state(name: str, cells: list, contains) -> _ApproachState:
-        return _ApproachState(name, np.array(cells, dtype=float).reshape(-1, 2), contains)
+    def _state(name: str, direction: str | None, cells: list, contains) -> _ApproachState:
+        return _ApproachState(name, np.array(cells, dtype=float).reshape(-1, 2), direction,
+                              contains)
 
     def _occupancy(self, a: _ApproachState, boxes: Sequence[BBox]) -> float:
         if not len(a.cells):
@@ -180,7 +164,7 @@ class CongestionMonitor:
             covered |= (xs >= x1) & (xs <= x2) & (ys >= (y1 + y2) / 2) & (ys <= y2)
         return float(covered.mean())
 
-    def _reading(self, a: _ApproachState, ts: datetime) -> CongestionReading:
+    def _reading(self, a: _ApproachState, ts: datetime) -> Congestion:
         n_bins = math.ceil(self.window_s / self.bin_s)
         bins = [[0, 0, 0] for _ in range(n_bins)]  # vehicles, stuck, frames
         for f in a.frames:
@@ -212,5 +196,7 @@ class CongestionMonitor:
         if level is not a.level or a.since is None:
             a.level, a.since = level, ts
         score = floor * min(1.0, occupancy / self.full_occupancy) if self.full_occupancy else floor
-        return CongestionReading(self.mask.camera_id, a.name, ts, level, round(score, 3),
-                                 round(occupancy, 3), round(stuck_share, 3), a.since)
+        return Congestion(camera_id=self.mask.camera_id, approach=a.name, direction=a.direction,
+                          ts=ts, level=level, score=round(min(1.0, score), 3),
+                          occupancy=round(min(1.0, occupancy), 3),
+                          stuck_share=round(min(1.0, stuck_share), 3), since_ts=a.since)
