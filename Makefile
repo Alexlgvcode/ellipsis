@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api web-install web web-test lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime
+.PHONY: install install-all api web-install web web-test lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime recommend-worker
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -41,3 +41,6 @@ sim-scenario:       ## 8th Ave blockage: plan A vs empty, then A vs B
 
 sim-retime:         ## mock events -> real sim numbers, POST if the API is up
 	$(PY) -m signals.retime --post
+
+recommend-worker:   ## score new API events (run with LW_MOCK_MODE=false)
+	$(PY) -m signals.worker
