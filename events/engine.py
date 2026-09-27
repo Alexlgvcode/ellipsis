@@ -280,7 +280,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     engine = pipe.engine
     frames = sorted(find_frames(args.frames_dir), key=frame_timestamp)[: args.limit]
-    detections = Detector().detect(frames)
+    detections = Detector(conf=rules["tracking"]["keep_conf"]).detect(frames)
 
     final: dict[str, Event] = {}
     gif_frames: list = []

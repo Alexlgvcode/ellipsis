@@ -32,6 +32,11 @@ stationary:
 
 tracking:
   match_iou: 0.3   # min overlap to link a box to an existing track (frames are 2-5 s apart)
+  start_conf: 0.35 # detections at least this confident start and continue tracks
+  keep_conf: 0.35  # set lower to let weaker detections continue (never start) a track, at an
+  keep_iou: 0.5    # overlap >= keep_iou. Off (= start_conf): tried 0.15-0.25 on evaluation/, it
+                   # keeps the flickering tow truck tracked but also keeps queued cars "well
+                   # seen", so precision fell 82% -> 36-45% with no recall gain
   max_gap_s: 30    # a track unseen for longer ends, even if fewer than track_lost_frames were
                    # missed (recording gaps, restarts): nobody saw the vehicle stay put
 
