@@ -3,7 +3,10 @@ import { useEffect } from "react";
 import { LiveCameraFeed } from "./LiveCameraFeed";
 import { QueueChart, savedLabel } from "./QueueChart";
 import { clock, nyTime, pct } from "../lib/format";
-import { STATUS_LABEL, ZONE_LABEL, elapsed, queueMeters, type FirstSeen, type Incident } from "../lib/incidents";
+import type { FeedbackAction } from "../api/types";
+import {
+  STATUS_LABEL, ZONE_LABEL, decisionLabel, elapsed, queueMeters, type FirstSeen, type Incident,
+} from "../lib/incidents";
 
 interface Props {
   incident: Incident;
@@ -11,9 +14,14 @@ interface Props {
   now: number;
   onClose: () => void;
   onOpenSimulation: () => void;
+  onDecide: (action: FeedbackAction) => void;
+  saving: boolean;
+  decideError: string | null;
 }
 
-export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimulation }: Props) {
+const DECISIONS: [FeedbackAction, string][] = [["accept", "Accept"], ["reject", "Reject"], ["false_positive", "False positive"]];
+
+export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimulation, onDecide, saving, decideError }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -85,7 +93,23 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         )}
       </section>
 
-      {/* 5. Detection details */}
+      {/* 5. Operator decision */}
+      <section className="sec">
+        <h3>Operator decision</h3>
+        {i.decision
+          ? <p className={`decision ${i.decision}`} role="status">{decisionLabel(i.decision, i.response.state !== "none")}</p>
+          : <p className="decision" role="status">No decision yet</p>}
+        <div className="decide" role="group" aria-label="Decide on this alert">
+          {DECISIONS.map(([action, label]) => (
+            <button key={action} aria-pressed={i.decision === action} disabled={saving} onClick={() => onDecide(action)}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {decideError && <p className="decide-err" role="alert">{decideError}</p>}
+      </section>
+
+      {/* 6. Detection details */}
       <details className="sec">
         <summary>Detection details <ChevronRight size={16} aria-hidden="true" /></summary>
         <dl className="kv">
@@ -98,13 +122,14 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
         </dl>
       </details>
 
-      {/* 6. Timeline */}
+      {/* 7. Timeline */}
       <details className="sec">
         <summary>Timeline <ChevronRight size={16} aria-hidden="true" /></summary>
         <ol className="timeline">
           <li><span className="mono">{nyTime(i.startedAt, true)}</span><span>Vehicle stopped</span></li>
           <li><span className="mono">{nyTime(Date.parse(i.startedAt) + i.thresholdS * 1000, true)}</span><span>Passed {i.thresholdS}s threshold, incident opened</span></li>
           {i.response.state !== "none" && <li><span className="mono">—</span><span>Signal scenario {i.response.state === "done" ? "calculated" : "running"}</span></li>}
+          {i.decision && <li><span className="mono">—</span><span>Operator: {decisionLabel(i.decision, i.response.state !== "none")}</span></li>}
           <li><span className="mono">{nyTime(now, true)}</span><span>{i.status === "resolved" ? "Resolved" : "Still stopped"}</span></li>
         </ol>
       </details>

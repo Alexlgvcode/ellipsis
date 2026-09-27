@@ -91,6 +91,9 @@ Defined in [common/schemas.py](common/schemas.py).
 | GET | `/events/{id}/snapshot` | JPEG of the raw frame; draw `bbox` on top of it yourself |
 | POST | `/recommendations` | Create, or update by `event_id` (e.g. to add `sim` later); 404 if the event is unknown |
 | GET | `/recommendations/{event_id}` | 404 if none yet |
+| POST | `/events/{id}/feedback` | `{"action": "accept" \| "reject" \| "false_positive", "note": ...}`; the latest decision replaces the earlier one; 404 if the event is unknown, 422 for any other action |
+| GET | `/events/{id}/feedback` | 404 if no decision yet |
+| GET | `/feedback` | Every decision, one request per dashboard poll |
 
 With `LW_MOCK_MODE=true` (the default), the API loads the `data/mock/` events and
 recommendations at startup. The database is SQLite at `data/lanewatch.db`; delete it to

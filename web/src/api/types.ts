@@ -46,6 +46,14 @@ export interface Recommendation {
   sim: SimResult | null;
 }
 
+export type FeedbackAction = "accept" | "reject" | "false_positive";
+
+export interface Feedback {
+  event_id: string;
+  action: FeedbackAction;
+  note?: string | null;
+}
+
 export interface Health {
   status: string;
   mock_mode?: boolean;

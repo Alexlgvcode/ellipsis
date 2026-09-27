@@ -1,4 +1,4 @@
-"""FastAPI app: cameras, events, recommendations, snapshots.
+"""FastAPI app: cameras, events, recommendations, snapshots, operator feedback.
 
     make api              # http://localhost:8000/docs
 
@@ -7,7 +7,7 @@ startup, so the dashboard has data before the pipeline runs; with it false they
 are removed again, leaving only real events (e.g. from scripts/replay.py).
 POSTs work in both modes.
 
-Operator feedback (F11) and the websocket feed come in later issues.
+The websocket feed comes in a later issue.
 """
 
 # No `from __future__ import annotations` here: FastAPI must resolve the
@@ -18,12 +18,27 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.responses import FileResponse, RedirectResponse
+from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from api.db import init_db, make_engine, remove_mocks, seed_cameras, seed_mocks
-from api.models import CameraRow, EventRow, RecommendationRow
+from api.models import CameraRow, EventRow, FeedbackRow, RecommendationRow
 from common.config import REPO_ROOT, Settings, get_settings
-from common.schemas import Camera, Event, EventType, Recommendation
+from common.schemas import (
+    Camera,
+    Event,
+    EventType,
+    Feedback,
+    FeedbackAction,
+    Recommendation,
+)
+
+
+class FeedbackIn(BaseModel):
+    """POST /events/{id}/feedback body; the event id comes from the path."""
+
+    action: FeedbackAction
+    note: str | None = None
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -122,6 +137,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status.HTTP_404_NOT_FOUND,
                                 f"no recommendation for event {event_id}")
         return row.to_model()
+
+    @app.post("/events/{event_id}/feedback", status_code=status.HTTP_201_CREATED)
+    def post_feedback(event_id: str, body: FeedbackIn, session: SessionDep) -> Feedback:
+        """Accept, reject or mark the alert a false positive. The latest decision wins."""
+        event_or_404(session, event_id)
+        fb = Feedback(event_id=event_id, action=body.action, note=body.note)
+        session.merge(FeedbackRow.from_model(fb))
+        session.commit()
+        return fb
+
+    @app.get("/events/{event_id}/feedback")
+    def get_feedback(event_id: str, session: SessionDep) -> Feedback:
+        row = session.get(FeedbackRow, event_id)
+        if row is None:
+            raise HTTPException(status.HTTP_404_NOT_FOUND, f"no feedback for event {event_id}")
+        return row.to_model()
+
+    @app.get("/feedback")
+    def list_feedback(session: SessionDep) -> list[Feedback]:
+        """Every decision, so the dashboard needs one request per poll."""
+        return [row.to_model() for row in session.exec(select(FeedbackRow))]
 
     return app
 

@@ -1,4 +1,4 @@
-import type { Camera, Event, EventType, LaneZone, Recommendation } from "../api/types";
+import type { Camera, Event, EventType, FeedbackAction, LaneZone, Recommendation } from "../api/types";
 import { ACTIVE_WINDOW_S, CRITICAL_RATIO, DWELL_S, METERS_PER_VEHICLE, REVIEW_BELOW } from "./rules";
 
 export type IncidentStatus = "needs_review" | "confirmed" | "critical" | "resolved";
@@ -34,6 +34,12 @@ export const STATUS_LABEL: Record<IncidentStatus, string> = {
   critical: "Critical",
   resolved: "Resolved",
 };
+
+/** An accepted recommendation is applied in the simulation only, never to real signals. */
+export function decisionLabel(action: FeedbackAction, hasResponse: boolean): string {
+  if (action === "accept") return hasResponse ? "Applied (sim)" : "Accepted";
+  return action === "reject" ? "Rejected" : "False positive";
+}
 
 const STATUS_RANK: Record<IncidentStatus, number> = { critical: 0, confirmed: 1, needs_review: 2, resolved: 3 };
 
@@ -73,6 +79,7 @@ export interface Incident {
   bbox: [number, number, number, number];
   camera: { id: string; code: string; name: string; state: CameraState; imageUrl: string | null };
   response: { state: "none" | "running" | "done"; changes: SignalChangeView[]; sim: Simulation | null };
+  decision: FeedbackAction | null;
 }
 
 /** "8th Ave @ 33rd St" -> "CAM-8AV-033"; falls back to the id prefix. */
@@ -121,6 +128,7 @@ export function simulationOf(rec: Recommendation | null | undefined): Incident["
 
 export function toIncidents(
   events: Event[], cameras: Camera[], recs: Record<string, Recommendation | null>, nowMs: number, mockMode: boolean,
+  feedback: Record<string, FeedbackAction> = {},
 ): Incident[] {
   const byId = new Map(cameras.map((c) => [c.id, c]));
   return events.flatMap((e) => {
@@ -147,6 +155,7 @@ export function toIncidents(
         state: cam.is_online ? "live" : "offline", imageUrl: cam.image_url || null,
       },
       response: simulationOf(recs[e.id]),
+      decision: feedback[e.id] ?? null,
     }];
   });
 }
@@ -167,7 +176,8 @@ export function sortIncidents(list: Incident[], sort: RailSort): Incident[] {
 }
 
 export function counts(list: Incident[]) {
-  const open = list.filter((i) => i.status !== "resolved");
+  // a false positive is dismissed: it stays in the list but isn't an open incident
+  const open = list.filter((i) => i.status !== "resolved" && i.decision !== "false_positive");
   return {
     open: open.length,
     critical: open.filter((i) => i.status === "critical").length,

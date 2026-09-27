@@ -8,12 +8,22 @@ vi.mock("./components/MapShell", () => ({ MapShell: () => <div data-testid="map"
 import App from "./App";
 
 let apiDown = false;
+let feedbackFails = false;
+let saved: { event_id: string; action: string }[] = [];
 function mockApi() {
-  vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
     if (apiDown) throw new TypeError("Failed to fetch");
     const path = url.replace(/^\/api/, "");
+    const fb = /^\/events\/([^/]+)\/feedback$/.exec(path);
+    if (fb && init?.method === "POST") {
+      if (feedbackFails) return new Response("", { status: 500 });
+      const row = { event_id: decodeURIComponent(fb[1]), ...JSON.parse(String(init.body)) };
+      saved = [...saved.filter((f) => f.event_id !== row.event_id), row];
+      return new Response(JSON.stringify(row), { status: 201 });
+    }
     const body =
       path === "/health" ? { status: "ok", mock_mode: true }
+      : path === "/feedback" ? saved
       : path === "/cameras" ? CAMERAS
       : path.startsWith("/events") ? EVENTS
       : path.startsWith("/recommendations/") ? RECS[decodeURIComponent(path.split("/")[2])] : undefined;
@@ -23,7 +33,7 @@ function mockApi() {
 
 beforeEach(() => {
   Object.defineProperty(window, "innerWidth", { configurable: true, value: 1440 });
-  apiDown = false; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
+  apiDown = false; feedbackFails = false; saved = []; mockApi(); vi.useFakeTimers({ shouldAdvanceTime: true }); });
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 const loaded = async () => { await screen.findByText("Active incidents"); };
@@ -75,6 +85,43 @@ it("each demo incident says which side is faster, and by how much, on the card",
   expect(within(summary).getByText("19%")).toBeInTheDocument();
   expect(within(summary).getByText("Improved northbound flow on 8 Ave")).toBeInTheDocument();
   expect(within(summary).getByRole("button", { name: "Base" })).toBeEnabled();
+});
+
+it("records the operator's decision; an accepted alert shows as applied (sim)", async () => {
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  const insp = screen.getByRole("complementary", { name: "Incident at 8th Ave @ 33rd St" });
+  const group = within(insp).getByRole("group", { name: "Decide on this alert" });
+  expect(within(insp).getByText("No decision yet")).toBeInTheDocument();
+
+  await act(async () => { fireEvent.click(within(group).getByRole("button", { name: "Accept" })); });
+  expect(saved).toEqual([{ event_id: "evt_mock_001", action: "accept" }]);
+  expect(within(insp).getByRole("status")).toHaveTextContent("Applied (sim)");
+  expect(within(group).getByRole("button", { name: "Accept" })).toHaveAttribute("aria-pressed", "true");
+  expect(screen.getByRole("button", { name: /8th Ave @ 33rd St, Double parked, Applied \(sim\)/ })).toBeInTheDocument();
+
+  await act(async () => { fireEvent.click(within(group).getByRole("button", { name: "False positive" })); });
+  expect(saved).toEqual([{ event_id: "evt_mock_001", action: "false_positive" }]);
+  expect(within(insp).getByRole("status")).toHaveTextContent("False positive");
+  expect(screen.getByText("2", { selector: ".rail-title .count" })).toBeInTheDocument();
+});
+
+it("shows decisions already saved in the API, e.g. after a reload", async () => {
+  saved = [{ event_id: "evt_mock_002", action: "reject" }];
+  render(<App />);
+  await loaded();
+  expect(screen.getByRole("button", { name: /7 Ave @ 34 St, Stopped in lane, Rejected/ })).toBeInTheDocument();
+});
+
+it("says so when a decision can't be saved, and keeps the old one", async () => {
+  feedbackFails = true;
+  render(<App />);
+  await loaded();
+  fireEvent.click(screen.getByRole("button", { name: /8th Ave @ 33rd St/ }));
+  await act(async () => { fireEvent.click(screen.getByRole("button", { name: "Reject" })); });
+  expect(screen.getByRole("alert")).toHaveTextContent(/Couldn't save the decision/);
+  expect(screen.getByText("No decision yet")).toBeInTheDocument();
 });
 
 it("keeps the last known state and shows a thin banner when the API drops", async () => {
