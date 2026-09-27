@@ -2,6 +2,8 @@ name: Demo site
 
 # Builds the dashboard in demo mode (VITE_DEMO=1: plays web/public/demo/timeline.json, no API)
 # and publishes it to GitHub Pages. Custom domain: web/public/CNAME.
+# With the repository variable LIVE_API set (e.g. https://api.ellipsisnyc.tech, deploy/README.md)
+# the site reads that live API first and plays the recording only when it can't be reached.
 # One-time setup by a repo admin: Settings -> Pages -> Source: GitHub Actions.
 
 on:
@@ -34,6 +36,8 @@ jobs:
           cache-dependency-path: web/package-lock.json
       - run: npm ci
       - run: npm run build:demo
+        env:
+          VITE_LIVE_API: ${{ vars.LIVE_API }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web/dist

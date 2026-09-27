@@ -84,3 +84,15 @@ def test_voice_endpoint_generates_once_then_serves_the_cache(client, monkeypatch
         assert resp.headers["content-type"] == "audio/mpeg"
     assert len(calls) == 1 and calls[0].startswith("Double-parked vehicle")
     assert (data / "voice" / "evt_1.mp3").read_bytes() == MP3
+
+
+def test_voice_endpoint_stops_at_the_daily_cap(tmp_path, monkeypatch):
+    settings = Settings(LW_DATABASE_URL=f"sqlite:///{tmp_path / 'api.db'}", LW_MOCK_MODE=False,
+                        LW_DATA_DIR=str(tmp_path / "data"), LW_VOICE_PER_DAY=1)
+    monkeypatch.setattr(voice, "speak", lambda text, client=None: MP3)
+    with TestClient(create_app(settings)) as c:
+        for i in (1, 2):
+            c.post("/events", json=event(id=f"evt_{i}").model_dump(mode="json"))
+        assert c.get("/events/evt_1/voice").status_code == 200
+        assert c.get("/events/evt_2/voice").status_code == 404   # today's one is used
+        assert c.get("/events/evt_1/voice").status_code == 200   # cached ones still play

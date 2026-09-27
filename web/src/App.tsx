@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { fetchSnapshot, postFeedback, voiceUrl } from "./api/client";
+import { currentSource, fetchSnapshot, liveUnreachable, postFeedback, voiceUrl } from "./api/client";
 import type { FeedbackAction } from "./api/types";
 import { BrandLoader } from "./components/BrandMark";
 import { CameraInspector } from "./components/CameraInspector";
@@ -9,7 +9,7 @@ import { IncidentRail } from "./components/IncidentRail";
 import type { Layers } from "./components/MapControls";
 import { MapShell, type SimOverlay } from "./components/MapShell";
 import { SimulationMode } from "./components/SimulationMode";
-import { StatusBanner } from "./components/StatusBanner";
+import { RecordingBanner, StatusBanner } from "./components/StatusBanner";
 import { TopBar, type FeedState } from "./components/TopBar";
 import { useNow } from "./hooks/useNow";
 import { usePolling } from "./hooks/usePolling";
@@ -98,6 +98,8 @@ export default function App() {
   if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
 
   const offline = Boolean(poll.error);
+  // the public site tried the live backend and is playing the recording instead
+  const recording = !offline && liveUnreachable;
   // Sample data is a recording whose frames the live feed can't match; a synced replay shows
   // each camera's recorded stills for the same moment; live mode shows the real feeds.
   const feedMode: FeedMode = mock ? "recorded"
@@ -110,11 +112,12 @@ export default function App() {
   const narrow = typeof window !== "undefined" && window.innerWidth < 1100;
 
   return (
-    <div className={`app${offline ? " has-banner" : ""}${collapsed ? " rail-collapsed" : ""}${(selected || openCam) && !simIncident ? " has-inspector" : ""}`}>
+    <div className={`app${offline || recording ? " has-banner" : ""}${collapsed ? " rail-collapsed" : ""}${(selected || openCam) && !simIncident ? " has-inspector" : ""}`}>
       <a className="skip-link" href="#incidents">Skip to incidents</a>
       <TopBar openIncidents={counts(incidents).open} camerasOnline={cams.filter((c) => c.is_online).length}
         camerasTotal={cams.length} feed={feed} now={now} sound={sound} onSound={setSound} />
       {offline && <StatusBanner lastOkAt={poll.lastOkAt} />}
+      {recording && <RecordingBanner />}
 
       <MapShell
         incidents={onMap} cameras={cams} selectedId={selectedId} onSelect={setSelectedId}
@@ -128,7 +131,8 @@ export default function App() {
       {!simIncident && (
         <IncidentRail incidents={incidents} selectedId={selectedId} onSelect={setSelectedId}
           filter={filter} onFilter={setFilter} sort={sort} onSort={setSort}
-          collapsed={collapsed} onCollapse={setCollapsed} seen={seen} now={now} />
+          collapsed={collapsed} onCollapse={setCollapsed} seen={seen} now={now}
+          replayHref={currentSource() === "hosted" ? "?replay" : undefined} />
       )}
 
       {selected && !simIncident && (

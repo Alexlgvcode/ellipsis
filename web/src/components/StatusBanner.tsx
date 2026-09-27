@@ -10,3 +10,12 @@ export function StatusBanner({ lastOkAt }: { lastOkAt: number | null }) {
     </div>
   );
 }
+
+/** The public site plays a recording when the live backend can't be reached; say so. */
+export function RecordingBanner() {
+  return (
+    <div className="banner info" role="status">
+      The live feed isn't reachable right now, so this is a recording run through the same pipeline.
+    </div>
+  );
+}

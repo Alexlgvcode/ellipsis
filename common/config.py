@@ -40,6 +40,11 @@ class Settings(BaseSettings):
     mock_mode: bool = Field(True, alias="LW_MOCK_MODE")
     # where real events come from, shown on the dashboard: "live" cameras or a "replay"
     data_source: Literal["live", "replay"] = Field("live", alias="LW_DATA_SOURCE")
+    # sites that may read the API from a browser, comma separated (the hosted dashboard)
+    cors_origins: str = Field("", alias="LW_CORS_ORIGINS")
+    # paid calls per UTC day on a server left running; 0 = no limit
+    notes_per_day: int = Field(0, alias="LW_NOTES_PER_DAY")
+    voice_per_day: int = Field(0, alias="LW_VOICE_PER_DAY")
 
     # Summaries: Gemini (default) or Claude writes the incident notes
     summary_provider: Literal["gemini", "claude"] = Field("gemini", alias="LW_SUMMARY_PROVIDER")

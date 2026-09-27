@@ -1,0 +1,48 @@
+# The live backend for https://ellipsisnyc.tech (see deploy/README.md).
+#   docker compose up -d --build
+# Only Caddy is reachable from outside, and it passes reads only; the pipeline and the
+# worker write to the API on the internal network.
+
+x-app: &app
+  image: ellipsis
+  pull_policy: never  # built by the api service
+  restart: unless-stopped
+  env_file: .env
+  environment:
+    LW_MOCK_MODE: "false"
+    LW_DATA_SOURCE: live
+    LW_DEVICE: cpu
+    LW_DATABASE_URL: sqlite:////app/data/db/lanewatch.db
+
+services:
+  api:
+    <<: *app
+    build: { context: .., dockerfile: deploy/Dockerfile }
+    pull_policy: build
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --proxy-headers
+    volumes: [db:/app/data/db, snapshots:/app/data/snapshots, voice:/app/data/voice]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      start_period: 20s
+
+  live:
+    <<: *app
+    command: python -m scripts.live --api http://api:8000 --keep-minutes 30
+    volumes: [snapshots:/app/data/snapshots, frames:/app/data/frames]
+    depends_on: { api: { condition: service_healthy } }
+
+  worker:
+    <<: *app
+    command: python -m signals.worker --api http://api:8000
+    depends_on: { api: { condition: service_healthy } }
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    env_file: .env
+    volumes: [./Caddyfile:/etc/caddy/Caddyfile:ro, caddy:/data]
+    depends_on: { api: { condition: service_healthy } }
+
+volumes: { db: {}, snapshots: {}, voice: {}, frames: {}, caddy: {} }

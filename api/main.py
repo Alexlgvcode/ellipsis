@@ -18,6 +18,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select
@@ -34,6 +35,7 @@ from api.models import (
     utc_iso,
 )
 from common.config import REPO_ROOT, Settings, get_settings
+from common.quota import DailyCap
 from common.schemas import (
     Camera,
     Congestion,
@@ -82,6 +84,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
 
     app = FastAPI(title="Lane Watch", lifespan=lifespan)
+    origins = [o.strip() for o in settings.cors_origins.split(",") if o.strip()]
+    if origins:  # the hosted dashboard reads from another origin; it never writes
+        app.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET"])
+    voice_cap = DailyCap(settings.voice_per_day)
 
     def get_session() -> Iterator[Session]:
         with Session(engine) as session:
@@ -185,6 +191,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         event = event_or_404(session, event_id).to_model()
         path = settings.data_dir / "voice" / f"{event_id}.mp3"
         if not path.is_file():
+            if not voice_cap.take():
+                raise HTTPException(status.HTTP_404_NOT_FOUND, "no spoken alerts left today")
             cam = session.get(CameraRow, event.camera_id)
             audio = voice.speak(voice.alert_text(event, cam.to_model().name if cam else None))
             if audio is None:

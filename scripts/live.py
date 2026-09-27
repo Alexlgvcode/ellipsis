@@ -6,7 +6,8 @@
 
 camera stills every ~2 s (ingest.poller) -> detector -> tracker -> event engine
 -> POST /events, exactly as in replay (scripts/replay.py), but on frames as they arrive.
-Frames are still written to data/frames/, so a live session doubles as a recording.
+Frames are still written to data/frames/, so a live session doubles as a recording;
+on a server left running, --keep-minutes deletes them once they're that old.
 
 Skipped: cameras without a lane mask, cameras the camera list marks offline (the poller
 never polls them), and error images or timeouts. A duplicate or frozen frame isn't sent
@@ -26,6 +27,7 @@ import asyncio
 import logging
 import signal
 import sys
+import time
 from collections.abc import Callable, Iterable, Sequence
 from datetime import datetime, timezone
 from pathlib import Path
@@ -96,6 +98,21 @@ class LiveRunner:
             self.publisher.publish(r.camera_id, r.path, ts, update, pipe.congestion.readings)
 
 
+def prune_frames(frames_dir: Path, keep_s: float, now: float | None = None) -> int:
+    """Delete frames older than `keep_s` seconds, and the day folders that empties.
+    Returns how many frames."""
+    cutoff = (time.time() if now is None else now) - keep_s
+    removed = 0
+    for path in frames_dir.glob("*/*/*"):
+        if path.is_file() and path.stat().st_mtime < cutoff:
+            path.unlink(missing_ok=True)
+            removed += 1
+    for day in frames_dir.glob("*/*"):
+        if day.is_dir() and not any(day.iterdir()):
+            day.rmdir()
+    return removed
+
+
 def masked(cameras: Sequence[Camera]) -> dict[str, CameraPipeline]:
     """A pipeline for each camera that has a lane mask."""
     pipes = {c.id: CameraPipeline.for_camera(c.id) for c in cameras}
@@ -138,6 +155,8 @@ def main(argv: Iterable[str] | None = None) -> int:
     ap.add_argument("--api", default="http://127.0.0.1:8000")
     ap.add_argument("--no-post", action="store_true", help="don't post to the API")
     ap.add_argument("--weights", default=None)
+    ap.add_argument("--keep-minutes", type=float, default=0,
+                    help="delete recorded frames older than this (default: keep them all)")
     ap.add_argument("-v", "--verbose", action="store_true", help="debug logging")
     args = ap.parse_args(list(argv) if argv is not None else None)
 
@@ -178,8 +197,20 @@ def main(argv: Iterable[str] | None = None) -> int:
         loop = asyncio.get_running_loop()
         for sig in (signal.SIGINT, signal.SIGTERM):
             loop.add_signal_handler(sig, stop.set)
+
+        async def prune() -> None:
+            while not stop.is_set():
+                n = await asyncio.to_thread(prune_frames, settings.frames_dir,
+                                            args.keep_minutes * 60)
+                if n:
+                    log.info("deleted %d frames older than %g min", n, args.keep_minutes)
+                await asyncio.sleep(60)
+
+        pruning = asyncio.create_task(prune()) if args.keep_minutes > 0 else None
         await run_live(cameras, runner, settings.frames_dir, args.interval, stop,
                        reload_cameras=lambda: load_cameras(refresh=True))
+        if pruning:
+            pruning.cancel()
 
     asyncio.run(run())
     failed = publisher.sink.failures

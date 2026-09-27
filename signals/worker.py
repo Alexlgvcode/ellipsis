@@ -20,6 +20,8 @@ from collections.abc import Callable
 import httpx
 
 from api.summarize import post_summary
+from common.config import get_settings
+from common.quota import DailyCap
 from common.schemas import Event, EventType, Recommendation
 from signals.mapping import load_mapping
 from signals.retime import recommend
@@ -38,6 +40,17 @@ def default_note(client: httpx.Client, event: Event, rec: Recommendation,
     except httpx.HTTPError as exc:  # a note is optional; the recommendation is posted
         print(f"note for {event.id} not stored: {exc}")
         return None
+
+
+def capped(note: Note, cap: DailyCap) -> Note:
+    """`note`, until today's allowance (LW_NOTES_PER_DAY) is used up; then cards go without."""
+    def wrapped(client: httpx.Client, event: Event, rec: Recommendation,
+                camera_name: str | None) -> object:
+        if not cap.take():
+            print(f"no note for {event.id}: today's {cap.limit} notes are used")
+            return None
+        return note(client, event, rec, camera_name)
+    return wrapped
 
 
 def default_score(event: Event, mapping: dict) -> Recommendation:
@@ -82,6 +95,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--interval", type=float, default=POLL_S)
     args = parser.parse_args(argv)
     mapping = load_mapping()
+    note = capped(default_note, DailyCap(get_settings().notes_per_day))
     with httpx.Client(base_url=args.api, timeout=120.0) as client:
         try:
             client.get("/health").raise_for_status()
@@ -90,7 +104,7 @@ def main(argv: list[str] | None = None) -> int:
             return 1
         while True:
             try:
-                pass_once(client, mapping)
+                pass_once(client, mapping, note=note)
             except httpx.HTTPError as exc:
                 print(f"poll failed: {exc}")
             if args.once:
