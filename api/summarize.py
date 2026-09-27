@@ -16,20 +16,20 @@ to add any. CI never calls the API: tests pass a fake client.
 from __future__ import annotations
 
 import argparse
+import json
 import logging
-from datetime import timezone
+import re
+from functools import lru_cache
 from typing import Any
-from zoneinfo import ZoneInfo
 
 import httpx
 
-from common.config import get_settings
+from common.config import REPO_ROOT, get_settings
 from common.schemas import Event, EventType, Recommendation
 
 log = logging.getLogger(__name__)
 
 API = "http://127.0.0.1:8000"
-NY = ZoneInfo("America/New_York")
 MAX_TOKENS = 2000
 # Route a safety decline to a fallback model inside the same call (Claude API only).
 FALLBACK_BETA = "server-side-fallback-2026-07-01"
@@ -53,15 +53,29 @@ WHAT = {
 }
 
 
+@lru_cache
+def _signal_names() -> dict[str, str]:
+    path = REPO_ROOT / "sim" / "network" / "tls_nodes.json"
+    try:
+        return {n["id"]: n["name"] for n in json.loads(path.read_text())["nodes"]}
+    except (OSError, KeyError, ValueError):
+        return {}
+
+
+def signal_name(tls_id: str) -> str:
+    """'cluster_101695…_#1more' -> '7 Ave @ 37 St': SUMO clusters join their nodes' ids."""
+    names = _signal_names()
+    parts = re.split(r"[_#]", tls_id)
+    return next((names[p] for p in [tls_id, *parts] if p in names), "a nearby signal")
+
+
 def build_prompt(event: Event, rec: Recommendation | None = None,
                  camera_name: str | None = None) -> str:
-    """The facts for one incident, as the user message."""
-    start = event.start_ts
-    start = start.replace(tzinfo=timezone.utc) if start.tzinfo is None else start
+    """The facts for one incident, as the user message. No clock time: the duration says
+    it, and a replayed incident's recorded time would contradict the dashboard."""
     lines = [
         f"Incident: {WHAT[event.type]}",
         f"Camera: {camera_name or event.camera_id}",
-        f"Stopped since: {start.astimezone(NY):%-I:%M %p} New York time",
         f"Stopped for at least: {round(event.duration_s)} s (still counting)",
         f"Lane: {event.lane_zone.value.replace('_', ' ')}",
         f"Detection confidence: {event.confidence:.0%}",
@@ -69,7 +83,7 @@ def build_prompt(event: Event, rec: Recommendation | None = None,
     if rec and rec.intersections:
         for c in rec.intersections:
             verb = "longer" if c.change_s > 0 else "shorter"
-            lines.append(f"Recommended change: signal {c.id}, phase {c.phase} green "
+            lines.append(f"Recommended change: the signal at {signal_name(c.id)}, green "
                          f"{abs(c.change_s):g} s {verb}")
         if rec.sim:
             s = rec.sim

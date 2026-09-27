@@ -15,6 +15,8 @@ export interface Timeline {
   updates: { t: number; event: Event }[];
   congestion: { t: number; reading: Congestion }[];
   recommendations: Record<string, { t: number; rec: Recommendation }>;
+  /** The incident note the worker writes after scoring (absent in older recordings). */
+  notes?: Record<string, { t: number; text: string }>;
   voice: Record<string, string>;
 }
 
@@ -56,9 +58,12 @@ export class DemoPlayer {
       .map((ev) => ({ ...ev, start_ts: shift(ev.start_ts, ms) }))
       .sort((a, b) => Date.parse(b.start_ts) - Date.parse(a.start_ts));
     const recommendations: Record<string, Recommendation | null> = {};
+    const notes: Record<string, string> = {};
     for (const ev of events) {
       const r = this.timeline.recommendations[ev.id];
       recommendations[ev.id] = r && r.t <= e ? r.rec : null;
+      const n = this.timeline.notes?.[ev.id];
+      if (n && n.t <= e) notes[ev.id] = n.text;
     }
     const congestion = new Map<string, Congestion>();
     for (const c of this.timeline.congestion) {
@@ -69,7 +74,7 @@ export class DemoPlayer {
     }
     return {
       health: { status: "ok", mock_mode: false, source: "replay" },
-      cameras: this.timeline.cameras, events, recommendations, feedback: { ...this.feedback }, notes: {},
+      cameras: this.timeline.cameras, events, recommendations, feedback: { ...this.feedback }, notes,
       congestion: [...congestion.values()], fetchedAt: this.now(),
     };
   }

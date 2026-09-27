@@ -16,6 +16,7 @@ const TIMELINE: Timeline = {
   congestion: [{ t: 50, reading: { camera_id: CAMERAS[0].id, approach: "7_ave", ts: at(50), level: "slow",
     score: 0.2, occupancy: 0.3, stuck_share: 0.4, since_ts: at(40) } }],
   recommendations: { a: { t: 99, rec } },
+  notes: { a: { t: 99, text: "A truck is double parked." } },
   voice: { a: "voice/a.mp3" },
 };
 
@@ -46,8 +47,10 @@ it("serves each event's latest state so far, shifted to the time the page opened
 it("shows a recommendation only once the worker would have scored it", () => {
   const { player, go } = playerAt(80);
   expect(player.snapshot().recommendations.a).toBeNull();
+  expect(player.snapshot().notes).toEqual({});
   go(100);
   expect(player.snapshot().recommendations.a).toEqual(rec);
+  expect(player.snapshot().notes).toEqual({ a: "A truck is double parked." });
 });
 
 it("carries congestion, decisions and spoken alerts, and starts over after the loop pause", () => {

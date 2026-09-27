@@ -77,12 +77,23 @@ def test_prompt_has_the_event_and_the_simulated_change():
     prompt = summ.build_prompt(event(), rec(), camera_name="7 Ave @ 36 St")
     assert "a double-parked vehicle" in prompt
     assert "Camera: 7 Ave @ 36 St" in prompt
-    assert "2:21 PM New York time" in prompt              # 18:21 UTC is 14:21 EDT
+    assert "PM" not in prompt and "New York time" not in prompt   # no clock time (replays)
     assert "at least: 521 s" in prompt
     assert "Lane: curb adjacent" in prompt and "69%" in prompt
-    assert "phase 1 green 6.8 s shorter" in prompt
+    assert "green 6.8 s shorter" in prompt
     assert "48.3 s now, 39.1 s with the change" in prompt
     assert "21 vehicles now, 13 with the change" in prompt
+
+
+def test_signals_are_named_by_intersection_not_sumo_id():
+    assert summ.signal_name("cluster_10169532572_10169532573_10169532574_10169532575_#1more") \
+        == "7 Ave @ 36 St"
+    assert summ.signal_name("no_such_signal") == "a nearby signal"
+    change = Recommendation(**{**rec().model_dump(), "intersections": [
+        {"id": "cluster_10169532572_10169532573_10169532574_10169532575_#1more",
+         "phase": 1, "change_s": 9}]})
+    prompt = summ.build_prompt(event(), change)
+    assert "the signal at 7 Ave @ 36 St, green 9 s longer" in prompt and "cluster_" not in prompt
 
 
 def test_prompt_without_a_recommendation_or_sim_yet():

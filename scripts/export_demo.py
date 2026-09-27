@@ -11,6 +11,7 @@ over time instead of posting it:
                     each alert's SUMO recommendation (scored as the worker does, when the
                     alert opens) and when it would appear, the cameras
     snapshots/      the frame from when each alert opened
+    notes           an AI incident note per alert (api/summarize.py), when a key is set
     voice/          a spoken alert per event (ElevenLabs), when ELEVENLABS_API_KEY is set
 
 The dashboard built with VITE_DEMO=1 plays the timeline back in real time from the moment
@@ -22,6 +23,7 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -34,6 +36,41 @@ from vision.track import frame_timestamp
 OUT = REPO_ROOT / "web" / "public" / "demo"
 CAMERAS = ("7 Ave @ 36 St", "8th Ave @ 31st St")
 WORKER_DELAY_S = 25.0  # the worker's SUMO scoring time: the card shows "running" until then
+
+
+def note_with_retry(event: Event, rec, camera_name: str | None, tries: int = 4) -> str | None:
+    """The incident note, retrying a few times: busy models answer 503 at peak times."""
+    from api.summarize import summarize
+
+    for attempt in range(tries):
+        text = summarize(event, rec, camera_name)
+        if text:
+            return text
+        time.sleep(5 * (attempt + 1))
+    return None
+
+
+def fill_notes(out: Path) -> int:
+    """--notes-only: add the notes missing from an existing timeline (no YOLO or SUMO)."""
+    from common.schemas import Recommendation
+
+    path = out / "timeline.json"
+    timeline = json.loads(path.read_text())
+    names = {c["id"]: c["name"] for c in timeline["cameras"]}
+    notes = timeline.setdefault("notes", {})
+    first: dict[str, dict] = {}
+    for u in sorted(timeline["updates"], key=lambda u: u["t"]):
+        first.setdefault(u["event"]["id"], u["event"])
+    for eid, r in timeline["recommendations"].items():
+        if eid in notes:
+            continue
+        e = Event(**first[eid])
+        text = note_with_retry(e, Recommendation(**r["rec"]), names.get(e.camera_id))
+        if text:
+            notes[eid] = {"t": r["t"], "text": text}
+        print(f"{eid}: {'note written' if text else 'still no note'}")
+    path.write_text(json.dumps(timeline, separators=(",", ":")))
+    return 0 if len(notes) == len(timeline["recommendations"]) else 1
 
 
 class RecordingSink(EventSink):
@@ -63,7 +100,11 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--end", default="18:31:00", help="UTC")
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--no-sim", action="store_true", help="skip SUMO (recommendations empty)")
+    ap.add_argument("--notes-only", action="store_true",
+                    help="only add missing incident notes to an existing timeline")
     args = ap.parse_args(argv)
+    if args.notes_only:
+        return fill_notes(args.out)
 
     if args.out.exists():
         shutil.rmtree(args.out)
@@ -97,7 +138,9 @@ def main(argv: list[str] | None = None) -> int:
     for at, e in sink.events:
         first.setdefault(e.id, (rel(at), e))
 
-    recs = {}
+    recs, notes = {}, {}
+    cameras = json.loads(settings.cameras_path.read_text())
+    names = {c["id"]: c["name"] for c in cameras}
     if not args.no_sim:
         from signals.mapping import load_mapping
         from signals.retime import recommend
@@ -108,10 +151,12 @@ def main(argv: list[str] | None = None) -> int:
                 continue
             rec = recommend(e, mapping, simulate=True)   # as the worker: at first sight
             recs[eid] = {"t": round(t + WORKER_DELAY_S, 1), "rec": rec.model_dump(mode="json")}
+            # the worker writes the incident note right after scoring (GEMINI_API_KEY)
+            text = note_with_retry(e, rec, names.get(e.camera_id))
+            if text:
+                notes[eid] = {"t": recs[eid]["t"], "text": text}
             print(f"scored {eid}: delay {rec.sim.delay_default:.1f} -> {rec.sim.delay_new:.1f}")
 
-    cameras = json.loads(settings.cameras_path.read_text())
-    names = {c["id"]: c["name"] for c in cameras}
     voice_files = {}
     from api import voice
 
@@ -132,11 +177,13 @@ def main(argv: list[str] | None = None) -> int:
         "congestion": [{"t": rel(c.ts), "reading": c.model_dump(mode="json")}
                        for c in sink.congestion],
         "recommendations": recs,
+        "notes": notes,
         "voice": voice_files,
     }
     (args.out / "timeline.json").write_text(json.dumps(timeline, separators=(",", ":")))
     print(f"\n{len(first)} events, {len(updates)} updates, {len(sink.congestion)} congestion "
-          f"readings, {len(recs)} recommendations, {len(voice_files)} spoken alerts "
+          f"readings, {len(recs)} recommendations, {len(notes)} notes, "
+          f"{len(voice_files)} spoken alerts "
           f"-> {args.out.relative_to(REPO_ROOT)}")
     return 0
 
