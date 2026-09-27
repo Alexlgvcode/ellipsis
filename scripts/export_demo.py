@@ -33,6 +33,8 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from PIL import Image
+
 from common.config import REPO_ROOT, get_settings
 from common.schemas import Congestion, Event, EventType
 from events.masks import MASKS_DIR
@@ -42,6 +44,8 @@ from vision.track import frame_timestamp
 
 OUT = REPO_ROOT / "web" / "public" / "demo"
 WORKER_DELAY_S = 25.0  # the worker's SUMO scoring time: the card shows "running" until then
+FRAME_EVERY_S = 8.0    # the site's "live" view: NYC DOT stills refresh about this often
+FRAME_QUALITY = 60     # WebP: ~17 KB per 352x240 frame
 
 
 def note_with_retry(event: Event, rec, camera_name: str | None, tries: int = 4) -> str | None:
@@ -120,6 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     sink = RecordingSink()
     detect = _detector(None)
     starts = []
+    recorded: dict[str, list] = {}  # camera -> the frames its "live" view shows
     frames_dir = (args.frames or settings.frames_dir).expanduser()
     masked = sorted(p.stem for p in MASKS_DIR.glob("*.json"))
     for name in args.camera or masked:
@@ -130,12 +135,29 @@ def main(argv: list[str] | None = None) -> int:
             print(f"skipping {name}: no lane mask or no frames in the window")
             continue
         starts.append(frame_timestamp(frames[0]))
+        recorded[camera_id] = frames
         print(f"{name}: {len(frames)} frames")
         replay(frames, pipe, detect, sink, args.out / "snapshots", speed=0)
     if not starts:
         return 1
     t0 = min(starts)
     rel = lambda ts: round((ts - t0).total_seconds(), 1)  # noqa: E731
+
+    # each camera's recorded stills, so its "live" view shows the same moment as the alerts
+    frame_times: dict[str, list[int]] = {}
+    for camera_id, frames in recorded.items():
+        kept, last = [], None
+        for path in frames:
+            t = int(rel(frame_timestamp(path)))
+            if last is not None and t - last < FRAME_EVERY_S:
+                continue
+            dest = args.out / "frames" / camera_id / f"{t}.webp"
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            with Image.open(path) as img:
+                img.save(dest, "WEBP", quality=FRAME_QUALITY, method=6)
+            kept.append(t)
+            last = t
+        frame_times[camera_id] = kept
 
     # the API's view of each event over time: its latest state at every post
     updates = [{"t": rel(at), "event": e.model_dump(mode="json")} for at, e in sink.events]
@@ -189,6 +211,11 @@ def main(argv: list[str] | None = None) -> int:
         "recommendations": recs,
         "notes": notes,
         "voice": voice_files,
+        "frames": frame_times,
+        # open a few seconds after the first alert, so a visitor sees one at once; loop straight
+        # back, every camera still in step
+        "start_at_s": round(min((u["t"] for u in updates), default=0.0) + 5, 1),
+        "loop_pause_s": 5,
     }
     (args.out / "timeline.json").write_text(json.dumps(timeline, separators=(",", ":")))
     print(f"\n{len(first)} events, {len(updates)} updates, {len(sink.congestion)} congestion "

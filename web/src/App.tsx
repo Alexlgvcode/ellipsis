@@ -4,6 +4,7 @@ import type { FeedbackAction } from "./api/types";
 import { BrandLoader } from "./components/BrandMark";
 import { CameraInspector } from "./components/CameraInspector";
 import { IncidentInspector } from "./components/IncidentInspector";
+import type { FeedMode } from "./components/LiveCameraFeed";
 import { IncidentRail } from "./components/IncidentRail";
 import type { Layers } from "./components/MapControls";
 import { MapShell, type SimOverlay } from "./components/MapShell";
@@ -97,8 +98,10 @@ export default function App() {
   if (!snap && !poll.error) return <BrandLoader fullscreen text="Loading live traffic state…" />;
 
   const offline = Boolean(poll.error);
-  // Sample data and replays are recordings: their alert frames aren't the camera's live view.
-  const recorded = mock || snap?.health.source === "replay";
+  // Sample data is a recording whose frames the live feed can't match; a synced replay shows
+  // each camera's recorded stills for the same moment; live mode shows the real feeds.
+  const feedMode: FeedMode = mock ? "recorded"
+    : snap?.health.source === "replay" ? (snap.health.synced ? "replay" : "recorded") : "live";
   // Resolved incidents leave the map (the one open in the card stays until it's closed).
   const onMap = incidents.filter((i) => i.status !== "resolved" || i.id === selectedId);
   const feed: FeedState = offline ? "offline" : mock ? "sample" : snap?.health.source === "replay" ? "replay" : "live";
@@ -129,14 +132,14 @@ export default function App() {
       )}
 
       {selected && !simIncident && (
-        <IncidentInspector incident={selected} seen={seen} now={now} recorded={recorded}
+        <IncidentInspector incident={selected} seen={seen} now={now} feedMode={feedMode}
           onClose={() => setSelectedId(null)} onOpenSimulation={() => setSimId(selected.id)}
           onDecide={(a) => onDecide(selected.id, a)} saving={saving}
           decideError={decideError?.id === selected.id ? decideError.msg : null} />
       )}
 
       {openCam && !simIncident && (
-        <CameraInspector camera={openCam} now={now} onClose={() => setCameraId(null)} />
+        <CameraInspector camera={openCam} now={now} onClose={() => setCameraId(null)} feedMode={feedMode} />
       )}
 
       {simIncident && (

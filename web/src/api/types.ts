@@ -80,4 +80,6 @@ export interface Health {
   mock_mode?: boolean;
   /** Where real events come from: live cameras or a recorded replay (LW_DATA_SOURCE). */
   source?: "live" | "replay";
+  /** A replay whose camera views show its own recorded stills, in step with the alerts. */
+  synced?: boolean;
 }

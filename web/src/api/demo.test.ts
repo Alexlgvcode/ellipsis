@@ -84,3 +84,18 @@ it("serves the sample incidents all at once, like the API's mock mode", async ()
   player.decide("b", "false_positive");
   expect(player.snapshot().feedback).toEqual({ b: "false_positive" });
 });
+
+it("a synced replay shows each recorded camera's still for the same moment, and only those cameras", () => {
+  let clock = 1_000_000;
+  const synced: Timeline = { ...TIMELINE, frames: { [CAMERAS[0].id]: [0, 8, 16, 60] }, start_at_s: 10, loop_pause_s: 5 };
+  const player = new DemoPlayer(synced, () => clock);          // opens at 10 s
+  expect(player.frameUrl(CAMERAS[0].id)).toMatch(new RegExp(`demo/frames/${CAMERAS[0].id}/8\\.webp$`));
+  clock += 50_000;                                              // 60 s in
+  expect(player.frameUrl(CAMERAS[0].id)).toMatch(/\/60\.webp$/);
+  expect(player.frameUrl(CAMERAS[1].id)).toBeNull();            // not recorded
+  const snap = player.snapshot();
+  expect(snap.health).toEqual({ status: "ok", mock_mode: false, source: "replay", synced: true });
+  expect(snap.cameras.map((c) => c.id)).toEqual([CAMERAS[0].id]);
+  clock += (300 + 5 - 60 + 1) * 1000;                           // past the end and the pause
+  expect(player.frameUrl(CAMERAS[0].id)).toMatch(/\/8\.webp$/);    // looped back to 10 s
+});
