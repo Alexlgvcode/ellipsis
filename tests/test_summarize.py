@@ -113,20 +113,18 @@ def test_each_provider_gets_its_own_sdk_client(monkeypatch):
 
 
 def test_gemini_gets_the_facts_the_system_prompt_and_the_model():
-    pytest.importorskip("google.genai")
     fake = FakeGemini(text=f"  {NOTE}\n")
     assert summ.summarize(event(), rec(), "7 Ave @ 36 St", client=fake) == NOTE
     (call,) = fake.calls
     assert call["model"] == "gemini-test"
     assert "7 Ave @ 36 St" in call["contents"] and "48.3 s now" in call["contents"]
-    assert call["config"].system_instruction == summ.SYSTEM
-    assert call["config"].max_output_tokens == summ.MAX_TOKENS
+    assert call["config"] == {"system_instruction": summ.SYSTEM,
+                              "max_output_tokens": summ.MAX_TOKENS}
 
 
 @pytest.mark.parametrize("fake", [FakeGemini(text=None), FakeGemini(text="  "),
                                   FakeGemini(error=RuntimeError("quota"))])
 def test_gemini_blocks_empty_answers_and_errors_give_no_note(fake):
-    pytest.importorskip("google.genai")
     assert summ.summarize(event(), rec(), client=fake) is None
 
 

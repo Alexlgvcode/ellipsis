@@ -127,13 +127,11 @@ def _ask_claude(client: Any, model: str, prompt: str) -> str | None:
 
 
 def _ask_gemini(client: Any, model: str, prompt: str) -> str | None:
-    from google.genai import types
-
+    # a GenerateContentConfigDict: no SDK import needed beyond the client itself
     response = client.models.generate_content(
         model=model,
         contents=prompt,
-        config=types.GenerateContentConfig(system_instruction=SYSTEM,
-                                           max_output_tokens=MAX_TOKENS),
+        config={"system_instruction": SYSTEM, "max_output_tokens": MAX_TOKENS},
     )
     return response.text  # None when the response was blocked
 
