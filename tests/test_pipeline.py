@@ -2,8 +2,13 @@
 
 from datetime import datetime, timedelta, timezone
 
+from PIL import Image
+
 from common.schemas import EventType, VehicleClass
+from events.masks import MASKS_DIR, load_masks
 from events.pipeline import CameraPipeline
+from events.rules import load_rules
+from events.view import best_similarity, load_references, reference_paths, view_similarity
 from vision.detect import Detection
 
 CAM = "b0cbb042-de0a-449f-b5d1-49f68a9bf2ae"   # 7 Ave @ 36 St
@@ -50,3 +55,21 @@ def test_one_odd_frame_does_not_pause():
     pipe = CameraPipeline.for_camera(CAM)
     feed(pipe, [0.8, 0.1, 0.8, 0.1, 0.1, 0.8, 0.8])
     assert not pipe.paused
+
+
+def test_night_frame_matches_the_night_reference_but_another_view_matches_none():
+    refs = load_references(CAM)
+    assert [p.name for p in reference_paths(CAM)] == [f"{CAM}.jpg", f"{CAM}.night.jpg"]
+    night = Image.open(MASKS_DIR / f"{CAM}.night.jpg")
+    min_view = load_rules()["view"]["min_similarity"]
+    assert view_similarity(refs[0], night) < min_view  # the daytime frame alone would pause it
+    assert best_similarity(refs, night) > 0.9
+    for other in load_masks():
+        if other != CAM:  # a different camera's view stands in for a moved one
+            for suffix in (".jpg", ".night.jpg"):
+                assert best_similarity(refs, Image.open(MASKS_DIR / f"{other}{suffix}")) < min_view
+
+
+def test_every_committed_mask_has_a_night_reference():
+    for cam in load_masks():
+        assert (MASKS_DIR / f"{cam}.night.jpg").exists(), cam

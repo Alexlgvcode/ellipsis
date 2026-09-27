@@ -24,9 +24,8 @@ from PIL import Image
 
 from events.congestion import CongestionMonitor
 from events.engine import EngineUpdate, EventEngine
-from events.masks import MASKS_DIR
 from events.rules import load_rules
-from events.view import edge_signature, view_similarity
+from events.view import best_similarity, load_references
 from ingest.health import is_frozen, thumbnail
 from vision.detect import Detection
 from vision.track import CameraTracker, Track
@@ -47,8 +46,7 @@ class CameraPipeline:
         self.resume_after = view.get("resume_after_frames", 3)
         self.paused = False
         self._view_streak = 0  # frames in a row on the other side of the threshold
-        ref = MASKS_DIR / f"{engine.mask.camera_id}.jpg"
-        self._reference = edge_signature(Image.open(ref)) if ref.exists() else None
+        self._references = load_references(engine.mask.camera_id)
 
     @classmethod
     def for_camera(cls, camera_id: str, rules: dict | None = None) -> CameraPipeline | None:
@@ -65,8 +63,8 @@ class CameraPipeline:
              view: float | None = None) -> EngineUpdate:
         """`frozen` and `view` (similarity to the reference frame) can be given instead of
         computed from `image`, e.g. from evaluation/detections/."""
-        if view is None and image is not None and self._reference is not None:
-            view = view_similarity(self._reference, image)
+        if view is None and image is not None and self._references:
+            view = best_similarity(self._references, image)
         if view is not None and self._view_changed(view):
             self.tracks = []
             self.congestion.reset()
