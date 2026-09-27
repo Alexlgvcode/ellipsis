@@ -29,7 +29,7 @@ cameras -> ingest (poll, dedupe, health) -> vision (YOLO + IoU tracker)
 | `api/` | Product lead | FastAPI backend, websocket feed, summaries |
 | `web/` | Product lead | ellipsis dashboard (React + MapLibre), see [docs/dashboard.md](docs/dashboard.md) |
 | `data/` | — | Frames, labels, open data (gitignored, kept local) |
-| `scripts/` | — | Recording, 311 matching, replay |
+| `scripts/` | — | Recording, 311 matching, replay, live mode |
 
 ## Setup
 
@@ -110,6 +110,18 @@ python scripts/replay.py --camera "7 Ave @ 36 St" --start 18:22 --end 18:30 --as
 
 The dashboard (`make web`) polls the API. The alert opens after about 60 s of the
 vehicle sitting still, and the delay and queue appear once the worker finishes.
+
+Live mode runs the same pipeline on the masked cameras as their frames arrive (every 2 s),
+in place of the replay line above. It needs the vision extra (`pip install -e ".[vision]"`):
+
+```bash
+make live                                   # all masked cameras
+python -m scripts.live --camera "7 Ave @ 36 St" --camera "Broadway @ 38 St"
+```
+
+Offline cameras aren't polled. A frozen feed isn't sent to the detector and raises a
+`frozen_feed` alert after 30 s. Frames are also saved to `data/frames/`, so a live session
+doubles as a recording.
 
 ## Data sources
 
