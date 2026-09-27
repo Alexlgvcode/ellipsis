@@ -89,11 +89,56 @@ export class DemoPlayer {
   }
 }
 
-let player: Promise<DemoPlayer> | null = null;
+export interface SampleData {
+  cameras: Camera[];
+  events: Event[];
+  recommendations: Recommendation[];
+  congestion: Congestion[];
+}
 
-export function demoPlayer(): Promise<DemoPlayer> {
-  player ??= fetch(`${DEMO_BASE}timeline.json`)
-    .then((r) => { if (!r.ok) throw new Error(`demo timeline missing (${r.status})`); return r.json(); })
-    .then((t: Timeline) => new DemoPlayer(t));
+/**
+ * The API's mock mode, without the API: the real incidents in data/mock/ (scripts/build_mock.py),
+ * all at once, with their recommendations and the congestion heatmap. The site's default view.
+ */
+export class SamplePlayer {
+  private feedback: Record<string, FeedbackAction> = {};
+
+  constructor(private data: SampleData, private now: () => number = Date.now) {}
+
+  snapshot(): Snapshot {
+    const events = this.data.events.map((e) => ({
+      ...e,  // data/mock/snapshots/x.jpg -> demo/sample/snapshots/x.jpg
+      snapshot_path: e.snapshot_path ? `sample/snapshots/${e.snapshot_path.split("/").pop()}` : null,
+    }));
+    const recommendations: Record<string, Recommendation | null> = {};
+    for (const e of events) recommendations[e.id] = this.data.recommendations.find((r) => r.event_id === e.id) ?? null;
+    return {
+      health: { status: "ok", mock_mode: true }, cameras: this.data.cameras, events, recommendations,
+      feedback: { ...this.feedback }, notes: {}, congestion: this.data.congestion, fetchedAt: this.now(),
+    };
+  }
+
+  decide(eventId: string, action: FeedbackAction): void {
+    this.feedback[eventId] = action;
+  }
+
+  voice(): string | null {
+    return null;
+  }
+}
+
+type Player = DemoPlayer | SamplePlayer;
+let player: Promise<Player> | null = null;
+
+const json = <T,>(path: string): Promise<T> =>
+  fetch(`${DEMO_BASE}${path}`).then((r) => { if (!r.ok) throw new Error(`demo data missing: ${path}`); return r.json(); });
+
+/** `?replay` plays the recorded incidents in real time; otherwise the sample incidents. */
+export function demoPlayer(search: string = typeof location === "undefined" ? "" : location.search): Promise<Player> {
+  player ??= new URLSearchParams(search).has("replay")
+    ? json<Timeline>("timeline.json").then((t) => new DemoPlayer(t))
+    : Promise.all(["cameras", "events", "recommendations", "congestion"].map((f) => json(`sample/${f}.json`)))
+      .then(([cameras, events, recommendations, congestion]) => new SamplePlayer(
+        { cameras, events, recommendations, congestion } as SampleData));
   return player;
 }

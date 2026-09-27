@@ -66,3 +66,21 @@ it("carries congestion, decisions and spoken alerts, and starts over after the l
   expect(again.events).toEqual([]);          // back to the start
   expect(again.feedback).toEqual({});
 });
+
+it("serves the sample incidents all at once, like the API's mock mode", async () => {
+  const { SamplePlayer } = await import("./demo");
+  const data = {
+    cameras: CAMERAS,
+    events: [ev({ id: "a", snapshot_path: "data/mock/snapshots/a.jpg" }), ev({ id: "b" })],
+    recommendations: [{ ...rec, event_id: "a" }],
+    congestion: TIMELINE.congestion.map((c) => c.reading),
+  };
+  const player = new SamplePlayer(data, () => 5);
+  const snap = player.snapshot();
+  expect(snap.health).toEqual({ status: "ok", mock_mode: true });
+  expect(snap.events.map((e) => [e.id, e.snapshot_path])).toEqual([["a", "sample/snapshots/a.jpg"], ["b", null]]);
+  expect(snap.recommendations).toEqual({ a: { ...rec, event_id: "a" }, b: null });
+  expect(snap.congestion).toHaveLength(1);
+  player.decide("b", "false_positive");
+  expect(player.snapshot().feedback).toEqual({ b: "false_positive" });
+});
