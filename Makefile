@@ -1,7 +1,7 @@
 PY ?= python3
 PORT ?= 8000
 
-.PHONY: install install-all api web-install web web-test lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime recommend-worker
+.PHONY: install install-all api web-install web web-test lint sim-network sim-routes sim-validate sim-gui sim-scenario sim-retime recommend-worker live
 
 install:            ## core deps (ingest + api)
 	$(PY) -m pip install -e ".[dev]"
@@ -44,3 +44,6 @@ sim-retime:         ## mock events -> real sim numbers, POST if the API is up
 
 recommend-worker:   ## score new API events (run with LW_MOCK_MODE=false)
 	$(PY) -m signals.worker
+
+live:               ## live cameras -> pipeline -> API every 2 s (run with LW_MOCK_MODE=false)
+	$(PY) -m scripts.live
