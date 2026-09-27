@@ -80,11 +80,21 @@ export interface Incident {
   /** The API has the frame from when the alert fired. */
   hasSnapshot: boolean;
   snapshotPath: string | null;
-  camera: { id: string; code: string; name: string; state: CameraState; imageUrl: string | null };
+  camera: CameraView;
   response: { state: "none" | "running" | "done"; changes: SignalChangeView[]; sim: Simulation | null };
   decision: FeedbackAction | null;
   /** Claude incident note, if one was written. */
   note: string | null;
+}
+
+/** A camera as the panels show it. */
+export interface CameraView { id: string; code: string; name: string; state: CameraState; imageUrl: string | null }
+
+export function cameraView(cam: Camera): CameraView {
+  return {
+    id: cam.id, code: cameraCode(cam.name, cam.id), name: cam.name,
+    state: cam.is_online ? "live" : "offline", imageUrl: cam.image_url || null,
+  };
 }
 
 /** "8th Ave @ 33rd St" -> "CAM-8AV-033"; falls back to the id prefix. */
@@ -157,10 +167,7 @@ export function toIncidents(
       bbox: e.bbox,
       hasSnapshot: Boolean(e.snapshot_path),
       snapshotPath: e.snapshot_path ?? null,
-      camera: {
-        id: cam.id, code: cameraCode(cam.name, cam.id), name: cam.name,
-        state: cam.is_online ? "live" : "offline", imageUrl: cam.image_url || null,
-      },
+      camera: cameraView(cam),
       response: simulationOf(recs[e.id]),
       decision: feedback[e.id] ?? null,
       note: notes[e.id] ?? null,

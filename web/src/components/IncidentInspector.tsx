@@ -65,7 +65,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
       )}
 
       {/* 2. Live camera feed */}
-      <LiveCameraFeed incident={i} now={now} />
+      <LiveCameraFeed camera={i.camera} incident={i} now={now} />
 
       {/* 3. Traffic impact */}
       <section className="sec">
