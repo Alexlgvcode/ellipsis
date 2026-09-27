@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { snapshotUrl } from "../api/client";
+import { cameraFrameUrl, snapshotUrl } from "../api/client";
 import { age, clock, nyTime } from "../lib/format";
 import type { CameraView, Incident } from "../lib/incidents";
 
@@ -15,9 +15,17 @@ type View = "live" | "alert";
  * the frame the detector flagged, with a thin box on the vehicle only; without one (a camera
  * opened from the map) it's the live view alone.
  */
-export function LiveCameraFeed({ camera: cam, incident, now, recorded = false }: {
-  camera: CameraView; incident?: Incident; now: number; recorded?: boolean;
+/**
+ * `live`: the camera's real feed. `recorded`: the incident is from a recording (sample data)
+ * whose frame the live feed can't match, so only its frame is shown. `replay`: a synced replay,
+ * whose camera view is the recorded still for the same moment, so both views agree.
+ */
+export type FeedMode = "live" | "recorded" | "replay";
+
+export function LiveCameraFeed({ camera: cam, incident, now, mode = "live" }: {
+  camera: CameraView; incident?: Incident; now: number; mode?: FeedMode;
 }) {
+  const recorded = mode === "recorded";
   // The alert frame is the evidence to review; the live view is one click away. A recorded
   // incident (sample data, replay) shows only its frame: the camera's live view is a different
   // moment and would contradict it. Its live feed is on the camera's own panel.
@@ -34,14 +42,14 @@ export function LiveCameraFeed({ camera: cam, incident, now, recorded = false }:
     return () => clearInterval(id);
   }, []);
 
-  const offline = cam.state === "offline" || failed || !cam.imageUrl;
-  const liveSrc = cam.imageUrl ? `${cam.imageUrl}${cam.imageUrl.includes("?") ? "&" : "?"}t=${bucket}` : "";
+  const liveSrc = cameraFrameUrl(cam.id, cam.imageUrl, bucket);
+  const offline = cam.state === "offline" || failed || !liveSrc;
   const src = view === "live" || !incident ? liveSrc : snapshotUrl(incident.id, incident.snapshotPath);
 
   return (
     <section className="sec" aria-label="Camera feed">
       <div className="inc-hd" style={{ marginBottom: 8 }}>
-        <h3 style={{ margin: 0 }}>{view === "live" ? "Live camera" : recorded ? "Recorded frame" : "At alert"}</h3>
+        <h3 style={{ margin: 0 }}>{view === "live" ? (mode === "replay" ? "Camera (replay)" : "Live camera") : recorded ? "Recorded frame" : "At alert"}</h3>
         {liveToggle && (
           <div className="seg" role="group" aria-label="Camera view">
             <button aria-pressed={view === "live"} onClick={() => setView("live")}>Live</button>
@@ -68,7 +76,8 @@ export function LiveCameraFeed({ camera: cam, incident, now, recorded = false }:
           offline ? (
             <span><span className="offline-tag">{cam.code} OFFLINE</span>{loadedAt && <> · Last frame {nyTime(loadedAt, true)}</>}</span>
           ) : (
-            <span>{cam.code} · Live camera · {loadedAt ? `updated ${age((now - loadedAt) / 1000)} ago` : "loading…"}</span>
+            <span>{cam.code} · {mode === "replay" ? "Recorded stills, in step with the alerts"
+              : <>Live camera · {loadedAt ? `updated ${age((now - loadedAt) / 1000)} ago` : "loading…"}</>}</span>
           )
         ) : (
           <span>{cam.code} · {recorded ? "From the recording, not the live feed" : "Alert frame"}</span>

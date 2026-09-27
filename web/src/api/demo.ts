@@ -18,6 +18,11 @@ export interface Timeline {
   /** The incident note the worker writes after scoring (absent in older recordings). */
   notes?: Record<string, { t: number; text: string }>;
   voice: Record<string, string>;
+  /** Each camera's recorded stills (seconds from t0): its "live" view during the replay. */
+  frames?: Record<string, number[]>;
+  /** Where playback opens, and the pause before it loops (defaults below). */
+  start_at_s?: number;
+  loop_pause_s?: number;
 }
 
 /** Open a little before the first alert, so visitors don't wait a whole dwell time. */
@@ -33,20 +38,35 @@ export class DemoPlayer {
   private startedAt: number;
   private feedback: Record<string, FeedbackAction> = {};
 
+  private startAt: number;
+  private loopPause: number;
+
   constructor(private timeline: Timeline, private now: () => number = Date.now) {
     this.timeline = { ...timeline, updates: [...timeline.updates].sort((a, b) => a.t - b.t) };
-    this.startedAt = now() - START_AT_S * 1000;
+    this.startAt = timeline.start_at_s ?? START_AT_S;
+    this.loopPause = timeline.loop_pause_s ?? LOOP_PAUSE_S;
+    this.startedAt = now() - this.startAt * 1000;
   }
 
   /** Seconds into the recording, restarting (and forgetting decisions) after each loop. */
   elapsed(): number {
     let e = (this.now() - this.startedAt) / 1000;
-    if (e > this.timeline.duration_s + LOOP_PAUSE_S) {
-      this.startedAt = this.now() - START_AT_S * 1000;
+    if (e > this.timeline.duration_s + this.loopPause) {
+      this.startedAt = this.now() - this.startAt * 1000;
       this.feedback = {};
-      e = START_AT_S;
+      e = this.startAt;
     }
     return e;
+  }
+
+  /** The still a camera showed at this point of the replay; null for a camera not recorded. */
+  frameUrl(cameraId: string): string | null {
+    const times = this.timeline.frames?.[cameraId];
+    if (!times?.length) return null;
+    const e = this.elapsed();
+    let lo = 0, hi = times.length - 1;
+    while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (times[mid] <= e) lo = mid; else hi = mid - 1; }
+    return `${DEMO_BASE}frames/${cameraId}/${times[lo]}.webp`;
   }
 
   snapshot(): Snapshot {
@@ -72,9 +92,11 @@ export class DemoPlayer {
         congestion.set(`${r.camera_id}/${r.approach}`, { ...r, ts: shift(r.ts, ms), since_ts: shift(r.since_ts, ms) });
       }
     }
+    const frames = this.timeline.frames;
     return {
-      health: { status: "ok", mock_mode: false, source: "replay" },
-      cameras: this.timeline.cameras, events, recommendations, feedback: { ...this.feedback }, notes,
+      health: { status: "ok", mock_mode: false, source: "replay", ...(frames ? { synced: true } : {}) },
+      // a synced replay covers the cameras it recorded; the rest aren't part of this recording
+      cameras: frames ? this.timeline.cameras.filter((c) => frames[c.id]) : this.timeline.cameras, events, recommendations, feedback: { ...this.feedback }, notes,
       congestion: [...congestion.values()], fetchedAt: this.now(),
     };
   }
@@ -125,20 +147,35 @@ export class SamplePlayer {
   voice(): string | null {
     return null;
   }
+
+  frameUrl(): undefined {
+    return undefined;  // sample data: cameras show their real live feed
+  }
 }
 
 type Player = DemoPlayer | SamplePlayer;
 let player: Promise<Player> | null = null;
+let loaded: Player | null = null;
+
+/**
+ * A camera's view in the demo right now: the replay's recorded still (in step with the
+ * alerts), null for a camera the replay didn't record, or undefined to use its real feed.
+ */
+export function demoFrameUrl(cameraId: string): string | null | undefined {
+  return loaded ? loaded.frameUrl(cameraId) : undefined;
+}
 
 const json = <T,>(path: string): Promise<T> =>
   fetch(`${DEMO_BASE}${path}`).then((r) => { if (!r.ok) throw new Error(`demo data missing: ${path}`); return r.json(); });
 
-/** `?replay` plays the recorded incidents in real time; otherwise the sample incidents. */
+/** By default the recorded window plays in real time, every camera in step; `?sample` shows
+ * the sample incidents (data/mock/) all at once instead. */
 export function demoPlayer(search: string = typeof location === "undefined" ? "" : location.search): Promise<Player> {
-  player ??= new URLSearchParams(search).has("replay")
+  player ??= (!new URLSearchParams(search).has("sample")
     ? json<Timeline>("timeline.json").then((t) => new DemoPlayer(t))
     : Promise.all(["cameras", "events", "recommendations", "congestion"].map((f) => json(`sample/${f}.json`)))
       .then(([cameras, events, recommendations, congestion]) => new SamplePlayer(
-        { cameras, events, recommendations, congestion } as SampleData));
+        { cameras, events, recommendations, congestion } as SampleData)))
+    .then((p) => (loaded = p));
   return player;
 }

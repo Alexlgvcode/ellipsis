@@ -2,7 +2,7 @@ import type {
   Camera, Congestion, Event, Feedback, FeedbackAction, Health, Recommendation, Summary,
 } from "./types";
 
-import { DEMO_BASE, demoPlayer } from "./demo";
+import { DEMO_BASE, demoFrameUrl, demoPlayer } from "./demo";
 
 /** All requests go through the Vite proxy (/api -> LW_API_URL). */
 export const API_BASE = "/api";
@@ -79,6 +79,16 @@ export async function postFeedback(eventId: string, action: FeedbackAction): Pro
 
 export const snapshotUrl = (eventId: string, path?: string | null) =>
   DEMO && path ? `${DEMO_BASE}${path}` : `${API_BASE}/events/${encodeURIComponent(eventId)}/snapshot`;
+
+/** What a camera's view shows: its live NYC DOT still, or in the demo the replay's recorded
+ * still for this moment ("" when the replay didn't record that camera). */
+export function cameraFrameUrl(cameraId: string, imageUrl: string | null, bucket: number): string {
+  if (DEMO) {
+    const frame = demoFrameUrl(cameraId);
+    if (frame !== undefined) return frame ?? "";
+  }
+  return imageUrl ? `${imageUrl}${imageUrl.includes("?") ? "&" : "?"}t=${bucket}` : "";
+}
 
 /** The spoken alert for an event (ElevenLabs), or null when there is none. */
 export async function voiceUrl(eventId: string): Promise<string | null> {

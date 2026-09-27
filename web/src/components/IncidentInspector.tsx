@@ -1,6 +1,6 @@
 import { ChevronRight, X } from "lucide-react";
 import { useEffect } from "react";
-import { LiveCameraFeed } from "./LiveCameraFeed";
+import { LiveCameraFeed, type FeedMode } from "./LiveCameraFeed";
 import { QueueChart, savedLabel } from "./QueueChart";
 import { clock, nyTime, pct } from "../lib/format";
 import type { FeedbackAction } from "../api/types";
@@ -17,13 +17,13 @@ interface Props {
   onDecide: (action: FeedbackAction) => void;
   saving: boolean;
   decideError: string | null;
-  /** The incident comes from a recording (sample data or a replay), not the live feed. */
-  recorded?: boolean;
+  /** Where the camera view comes from: see LiveCameraFeed. */
+  feedMode?: FeedMode;
 }
 
 const DECISIONS: [FeedbackAction, string][] = [["accept", "Accept"], ["reject", "Reject"], ["false_positive", "False positive"]];
 
-export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimulation, onDecide, saving, decideError, recorded = false }: Props) {
+export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimulation, onDecide, saving, decideError, feedMode = "live" }: Props) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -67,7 +67,7 @@ export function IncidentInspector({ incident: i, seen, now, onClose, onOpenSimul
       )}
 
       {/* 2. Live camera feed */}
-      <LiveCameraFeed camera={i.camera} incident={i} now={now} recorded={recorded} />
+      <LiveCameraFeed camera={i.camera} incident={i} now={now} mode={feedMode} />
 
       {/* 3. Traffic impact */}
       <section className="sec">

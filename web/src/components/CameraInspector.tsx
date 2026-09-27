@@ -1,10 +1,12 @@
 import { X } from "lucide-react";
 import { useEffect } from "react";
 import type { CameraView } from "../lib/incidents";
-import { LiveCameraFeed } from "./LiveCameraFeed";
+import { LiveCameraFeed, type FeedMode } from "./LiveCameraFeed";
 
 /** A camera opened from the map: the incident panel's frame with just the live feed. */
-export function CameraInspector({ camera, now, onClose }: { camera: CameraView; now: number; onClose: () => void }) {
+export function CameraInspector({ camera, now, onClose, feedMode = "live" }: {
+  camera: CameraView; now: number; onClose: () => void; feedMode?: FeedMode;
+}) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", onKey);
@@ -25,7 +27,7 @@ export function CameraInspector({ camera, now, onClose }: { camera: CameraView; 
             : <span className="offline-tag">OFFLINE</span>}
         </div>
       </section>
-      <LiveCameraFeed camera={camera} now={now} />
+      <LiveCameraFeed camera={camera} now={now} mode={feedMode === "replay" ? "replay" : "live"} />
     </aside>
   );
 }
